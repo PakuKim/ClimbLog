@@ -1,12 +1,9 @@
-import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import io.paku.kmp_template.configureKotlinMultiplatform
-import io.paku.kmp_template.configureKotlinMultiplatformLibrary
 import io.paku.kmp_template.ext.applyPlugin
 import io.paku.kmp_template.ext.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class KotlinMultiplatformConventionPlugin: Plugin<Project> {
