@@ -10,8 +10,11 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
+import io.ktor.client.request.url
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import io.paku.kmp_template.business.data.datasource.local.SessionLocalDataSource
@@ -20,10 +23,7 @@ import io.paku.kmp_template.business.model.CommonException
 import kotlinx.serialization.json.Json
 
 internal object KtorHttpClientFactory {
-    private const val BASE_URL = "/api/v1/"
-    private const val REFRESH_AUTHORIZATION_URL = "auth/getAuthorizeToken"
-    private const val RESPONSE_ERROR_MESSAGE = "resultMessage"
-    private const val RESPONSE_ERROR_CODE = "resultCode"
+    private const val BASE_URL = ""
     private const val CONNECTION_TIMEOUT = 10_000L
 
     fun create(
@@ -58,6 +58,8 @@ internal object KtorHttpClientFactory {
 
         createClientPlugin("SessionPlugin") {
             onRequest { request, _ ->
+                request.url(BASE_URL)
+                request.contentType(ContentType.Application.Json)
                 session.getAccessToken()?.let {
                     request.header(HttpHeaders.Authorization, "Bearer $it")
                 }
