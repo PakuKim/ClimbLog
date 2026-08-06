@@ -11,16 +11,14 @@ internal fun Project.configureComposeMultiplatform(
 ) {
     extension.apply {
         sourceSets.apply {
-
             commonMain.dependencies {
                 implementation(libs.findLibrary("compose.runtime").get())
                 implementation(libs.findLibrary("compose.foundation").get())
                 implementation(libs.findLibrary("compose.material3").get())
-//                implementation(libs.findLibrary("compose.navigation").get())
-                implementation(libs.findLibrary("compose.animation").get())
                 implementation(libs.findLibrary("compose.ui").get())
                 implementation(libs.findLibrary("compose.uiToolingPreview").get())
                 implementation(libs.findLibrary("compose.components.resources").get())
+                implementation(libs.findLibrary("compose.animation").get())
             }
         }
     }

@@ -2,8 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kmp.androidApp)
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.composeCompiler)
 }
 
 dependencies {
