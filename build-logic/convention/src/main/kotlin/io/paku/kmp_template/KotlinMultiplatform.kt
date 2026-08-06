@@ -51,7 +51,11 @@ internal fun Project.configureKotlinMultiplatformLibrary(
     target: KotlinMultiplatformAndroidLibraryTarget
 ) {
     with(target) {
-        namespace = "io.paku.kmp_template.${target.name.replace("-", ".")}"
+        val modulePath = project.path.substring(1)
+            .replace(":", ".")
+            .replace("-", "_")
+
+        namespace = "io.paku.kmp_template.$modulePath"
         compileSdk = libs.findVersion("android-compileSdk").get().requiredVersion.toInt()
         minSdk = libs.findVersion("android-minSdk").get().requiredVersion.toInt()
 

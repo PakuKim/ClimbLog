@@ -2,18 +2,17 @@ package io.paku.kmp_template.di
 
 import io.paku.kmp_template.business.data.datasource.local.SessionLocalDataSource
 import io.paku.kmp_template.business.local.SessionLocalDataSourceImpl
-import io.paku.kmp_template.business.remote.ktor.KtorHttpClientFactory
-import org.koin.core.context.loadKoinModules
+import io.paku.kmp_template.business.remote.di.KtorHttpClientFactory
+import io.paku.kmp_template.core.platformDataStoreModule
 import org.koin.dsl.module
 
 fun appModule() = module {
-    loadKoinModules(
-        listOf(
-            uiModule,
-            dataModule,
-            remoteModule,
-            localModule
-        )
+    includes(
+        uiModule,
+        dataModule,
+        remoteModule,
+        localModule,
+        platformDataStoreModule
     )
 }
 

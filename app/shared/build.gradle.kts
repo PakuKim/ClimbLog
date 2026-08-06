@@ -19,7 +19,7 @@ kotlin {
             implementation(libs.compose.uiTooling)
             implementation(libs.koin.android)
             implementation(libs.ktor.okhttp)
-//            implementation(libs.androidx.datastore.preferences.core)
+            implementation(libs.androidx.datastore.preferences)
             api(libs.coil3.core)
         }
         iosMain.dependencies {

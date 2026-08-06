@@ -1,4 +1,4 @@
-package io.paku.kmp_template.business.remote.ktor
+package io.paku.kmp_template.business.remote.di
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpRequestTimeoutException
