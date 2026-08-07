@@ -1,4 +1,4 @@
-package io.paku.kmp_template.business.remote.di
+package io.paku.kmp_template.business.remote.ktor
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpRequestTimeoutException
@@ -17,7 +17,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
-import io.paku.kmp_template.business.data.datasource.local.SessionLocalDataSource
+import io.paku.kmp_template.business.data.source.local.SessionLocalDataSource
 import io.paku.kmp_template.business.model.CommonError
 import io.paku.kmp_template.business.model.CommonException
 import kotlinx.serialization.json.Json

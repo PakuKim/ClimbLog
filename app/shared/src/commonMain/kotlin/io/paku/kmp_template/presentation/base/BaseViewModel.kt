@@ -31,7 +31,6 @@ abstract class BaseViewModel<STATE : State, EVENT : Event>: ViewModel() {
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     protected abstract fun createInitialState(): STATE
-
     protected abstract fun createTriggerEvent(event: Event)
 
     init {
@@ -94,6 +93,4 @@ abstract class BaseViewModel<STATE : State, EVENT : Event>: ViewModel() {
     protected fun setLoading(isVisible: Boolean) = viewModelScope.launch {
         _isLoading.emit(isVisible)
     }
-
-    interface State
 }

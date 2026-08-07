@@ -1,4 +1,4 @@
-package io.paku.kmp_template.business.data.datasource.local
+package io.paku.kmp_template.business.data.source.local
 
 import kotlinx.coroutines.flow.Flow
 

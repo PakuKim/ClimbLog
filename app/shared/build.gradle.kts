@@ -32,6 +32,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.androidx.datastore.preferences.core)
 
+            implementation(libs.compose.navigation)
+
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
 
