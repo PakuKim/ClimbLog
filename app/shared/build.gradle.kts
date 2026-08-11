@@ -15,16 +15,16 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
-            implementation(libs.compose.uiToolingPreview)
-            implementation(libs.compose.uiTooling)
+            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.compose.ui.tooling)
             implementation(libs.koin.android)
-            implementation(libs.ktor.okhttp)
+            implementation(libs.ktor.client.okhttp)
             implementation(libs.androidx.datastore.preferences)
             api(libs.coil3.core)
         }
         iosMain.dependencies {
-            implementation(libs.ktor.ios)
-            implementation(libs.ktor.darwin)
+            implementation(libs.ktor.client.ios)
+            implementation(libs.ktor.client.darwin)
         }
         commonMain.dependencies {
             api(project(":core"))
@@ -37,10 +37,10 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
 
-            implementation(libs.ktor.core)
-            implementation(libs.ktor.logging)
-            implementation(libs.ktor.negotiation)
             implementation(libs.ktor.serialization)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.negotiation)
 
 //            api(libs.coil3.core)
 //            api(libs.coil3.network)
@@ -55,5 +55,5 @@ kotlin {
 }
 
 dependencies {
-    androidRuntimeClasspath(libs.compose.uiTooling)
+    androidRuntimeClasspath(libs.compose.ui.tooling)
 }

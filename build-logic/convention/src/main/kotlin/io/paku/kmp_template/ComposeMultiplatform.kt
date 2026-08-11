@@ -14,7 +14,7 @@ internal fun Project.configureComposeMultiplatform(
                 implementation(libs.findLibrary("compose.foundation").get())
                 implementation(libs.findLibrary("compose.material3").get())
                 implementation(libs.findLibrary("compose.ui").get())
-                implementation(libs.findLibrary("compose.uiToolingPreview").get())
+                implementation(libs.findLibrary("compose.ui.tooling.preview").get())
                 implementation(libs.findLibrary("compose.components.resources").get())
                 implementation(libs.findLibrary("compose.animation").get())
             }

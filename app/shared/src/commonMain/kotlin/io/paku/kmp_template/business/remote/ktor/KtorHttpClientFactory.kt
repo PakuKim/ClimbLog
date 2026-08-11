@@ -100,7 +100,7 @@ internal object KtorHttpClientFactory {
 
             handleResponseExceptionWithRequest { cause, _ ->
                 when (cause) {
-                    is HttpRequestTimeoutException -> throw CommonException(message = "네트워크 오류가 발생하였습니다.")
+                    is HttpRequestTimeoutException -> throw CommonException(CommonError.PoorNetwork)
                 }
             }
 

@@ -22,11 +22,11 @@ class AndroidAppConventionPlugin : Plugin<Project> {
         dependencies {
             implementations(
                 libs.findLibrary("androidx.activity.compose").get(),
-                libs.findLibrary("compose.uiToolingPreview").get()
+                libs.findLibrary("compose.ui.tooling.preview").get()
             )
 
             debugImplementations(
-                libs.findLibrary("compose.uiTooling").get()
+                libs.findLibrary("compose.ui.tooling").get()
             )
         }
 

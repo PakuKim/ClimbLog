@@ -12,8 +12,23 @@ application {
 dependencies {
     api(project(":core"))
     implementation(libs.logback)
-    implementation(libs.ktor.serverCore)
-    implementation(libs.ktor.serverNetty)
-    testImplementation(libs.ktor.serverTestHost)
-    testImplementation(libs.kotlin.testJunit)
+    implementation(libs.kotlinx.datetime)
+
+    implementation(libs.ktor.serialization)
+    implementation(libs.ktor.server.core.jvm)
+    implementation(libs.ktor.server.netty.jvm)
+    implementation(libs.ktor.server.auth.jwt)
+    implementation(libs.ktor.server.negotiation)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.negotiation)
+
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.dao)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.kotlin.datetime)
+    implementation(libs.h2)
+
+    testImplementation(libs.ktor.server.test.host.jvm)
+    testImplementation(libs.kotlin.test.junit)
 }

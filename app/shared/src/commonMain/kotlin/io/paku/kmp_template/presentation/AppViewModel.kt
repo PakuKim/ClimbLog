@@ -1,4 +1,4 @@
-package io.paku.kmp_template
+package io.paku.kmp_template.presentation
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
