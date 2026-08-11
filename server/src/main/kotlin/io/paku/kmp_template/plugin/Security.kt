@@ -7,12 +7,15 @@ import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.response.respond
-import io.paku.kmp_template.config.JwtConfig
+import io.paku.kmp_template.domain.provider.JwtTokenProvider
+import org.koin.ktor.ext.inject
 
 fun Application.configureSecurity() {
+    val tokenManager: JwtTokenProvider by inject()
+
     install(Authentication) {
         jwt("auth-jwt") {
-            verifier(JwtConfig.verifier)
+            verifier(tokenManager.generateVerifier())
             validate { credential ->
                 if (credential.payload.getClaim("name").asString().isNotEmpty()) {
                     JWTPrincipal(credential.payload)

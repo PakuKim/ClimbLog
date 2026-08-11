@@ -3,7 +3,8 @@ package io.paku.kmp_template
 import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import io.paku.kmp_template.db.DatabaseFactory
+import io.paku.kmp_template.data.database.DatabaseFactory
+import io.paku.kmp_template.plugin.configureDI
 import io.paku.kmp_template.plugin.configureRouting
 import io.paku.kmp_template.plugin.configureSecurity
 import io.paku.kmp_template.plugin.configureSerialization
@@ -16,6 +17,7 @@ fun main() {
 fun Application.module() {
     DatabaseFactory.init()
 
+    configureDI()
     configureSecurity()
     configureSerialization()
     configureRouting()

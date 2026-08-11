@@ -1,10 +1,11 @@
-package io.paku.kmp_template.db
+package io.paku.kmp_template.data.database
 
-import io.paku.kmp_template.feature.user.UserEntity
+import io.paku.kmp_template.data.database.table.UserTable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 internal object DatabaseFactory {
@@ -17,10 +18,11 @@ internal object DatabaseFactory {
         val database = Database.connect(jdbcURL, driverClassName)
 
         transaction(database) {
-            SchemaUtils.create(UserEntity)
+            SchemaUtils.create(UserTable)
         }
     }
 
-    suspend fun <T> dbQuery(block: suspend () -> T): T =
-        withContext(Dispatchers.IO) { block() }
+    suspend fun <T> dbQuery(block: suspend () -> T): T {
+        return withContext(Dispatchers.IO) { suspendTransaction { block() } }
+    }
 }
