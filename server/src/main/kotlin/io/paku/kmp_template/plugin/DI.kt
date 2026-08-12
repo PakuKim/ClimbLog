@@ -15,20 +15,28 @@ import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 
 fun Application.configureDI() {
+    val jwtSecret = environment.config.property("jwt.secret").getString()
+    val jwtIssuer = environment.config.property("jwt.issuer").getString()
+    val jwtAudience = environment.config.property("jwt.audience").getString()
+
     install(Koin) {
-        modules(appModule)
+        modules(appModule(jwtSecret, jwtIssuer, jwtAudience))
     }
 }
 
-val appModule = module {
+fun appModule(
+    jwtSecret: String,
+    jwtIssuer: String,
+    jwtAudience: String
+) = module {
     // Data
     single<UserRepository> { UserRepositoryImpl() }
     single<BCryptEncodeProvider> { BCryptEncodeProviderImpl() }
     single<JwtTokenProvider> {
         JwtTokenProviderImpl(
-            secret = "your-secret-key",
-            issuer = "your-issuer",
-            audience = "your-audience"
+            secret = jwtSecret,
+            issuer = jwtIssuer,
+            audience = jwtAudience
         )
     }
     // Domain

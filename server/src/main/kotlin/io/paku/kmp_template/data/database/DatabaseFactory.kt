@@ -9,13 +9,14 @@ import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 internal object DatabaseFactory {
-    private const val DRIVER_CLASS_NAME = "org.h2.Driver"
-    private const val DATABASE_URL = "jdbc:h2:file:./build/db"
-
-    fun init() {
-        val driverClassName = DRIVER_CLASS_NAME
-        val jdbcURL = DATABASE_URL
-        val database = Database.connect(jdbcURL, driverClassName)
+    fun init(
+        driver: String,
+        url: String
+    ) {
+        val database = Database.connect(
+            url = url,
+            driver = driver
+        )
 
         transaction(database) {
             SchemaUtils.create(UserTable)
