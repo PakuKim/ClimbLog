@@ -99,25 +99,6 @@ internal object KtorHttpClientFactory {
             }
         }
 
-//        createClientPlugin("SessionPlugin") {
-//            onRequest { request, _ ->
-//                request.url(BASE_URL)
-//                request.contentType(ContentType.Application.Json)
-//                session.getAccessToken()?.let {
-//                    request.header(HttpHeaders.Authorization, "Bearer $it")
-//                }
-//            }
-//
-//            onResponse { response ->
-//                val newAccessToken = response.headers["X-New-Access-Token"]
-//                val newRefreshToken = response.headers["X-New-Refresh-Token"]
-//                if (newAccessToken != null && newRefreshToken != null) {
-//                    session.updateAccessToken(newAccessToken)
-//                    session.updateRefreshToken(newRefreshToken)
-//                }
-//            }
-//        }
-
         HttpResponseValidator {
             validateResponse { response ->
                 if (!response.status.isSuccess()) {
