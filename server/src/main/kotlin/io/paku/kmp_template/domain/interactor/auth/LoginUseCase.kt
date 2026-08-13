@@ -18,7 +18,7 @@ class LoginUseCase(
             return Result.failure(IllegalArgumentException("Invalid email or password"))
         }
 
-        val tokens = jwtTokenProvider.generateToken(user.id, user.email)
+        val tokens = jwtTokenProvider.generateToken(user.id)
         return Result.success(tokens)
     }
 }

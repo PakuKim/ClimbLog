@@ -3,9 +3,9 @@ package io.paku.kmp_template.business.data.source.local
 import kotlinx.coroutines.flow.Flow
 
 interface SessionLocalDataSource {
-    suspend fun saveUserId(userId: String)
+    suspend fun saveUserId(userId: Long)
 
-    fun fetchUserId(): Flow<String?>
+    fun fetchUserId(): Flow<Long?>
 
     suspend fun updateAccessToken(
         accessToken: String

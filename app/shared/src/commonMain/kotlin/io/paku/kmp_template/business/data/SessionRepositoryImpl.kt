@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 internal class SessionRepositoryImpl(
     private val local: SessionLocalDataSource
 ): SessionRepository {
-    override fun fetch(): Flow<String?> {
+    override fun fetch(): Flow<Long?> {
         return local.fetchUserId()
     }
 

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 class FetchSessionUseCase(
     private val repository: SessionRepository,
 ) {
-    operator fun invoke(): Flow<String?> {
+    operator fun invoke(): Flow<Long?> {
         return repository.fetch()
     }
 }

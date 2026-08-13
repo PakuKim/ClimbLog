@@ -17,6 +17,9 @@ fun Route.userRoutes() {
     authenticate("auth-jwt") {
         route("/user") {
             get("/me") {
+                val authHeaders = call.request.headers.getAll("Authorization")
+                println("Authorization Headers: $authHeaders")
+
                 val principal = call.principal<JWTPrincipal>()
                 val userId = principal?.payload?.subject?.toLongOrNull()
                 if (userId == null) {

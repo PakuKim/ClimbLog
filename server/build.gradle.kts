@@ -14,6 +14,7 @@ dependencies {
     api(project(":core"))
     implementation(libs.logback)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.kotlinx.coroutines.reactive)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.koin.core)
     implementation(libs.koin.ktor)
@@ -26,6 +27,7 @@ dependencies {
 
     implementation(libs.h2)
     implementation(libs.jbcrypt)
+    implementation(libs.lettuce)
     implementation(libs.exposed.core)
     implementation(libs.exposed.dao)
     implementation(libs.exposed.jdbc)

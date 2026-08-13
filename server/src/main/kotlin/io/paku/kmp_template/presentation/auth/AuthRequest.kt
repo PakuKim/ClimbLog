@@ -3,6 +3,11 @@ package io.paku.kmp_template.presentation.auth
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class RefreshTokenRequest(
+    val refreshToken: String
+)
+
+@Serializable
 data class CheckEmailRequest(
     val email: String
 )

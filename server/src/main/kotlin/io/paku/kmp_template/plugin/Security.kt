@@ -17,7 +17,7 @@ fun Application.configureSecurity() {
         jwt("auth-jwt") {
             verifier(tokenManager.generateVerifier())
             validate { credential ->
-                if (credential.payload.getClaim("name").asString().isNotEmpty()) {
+                if (!credential.payload.subject.isNullOrEmpty()) {
                     JWTPrincipal(credential.payload)
                 } else {
                     null

@@ -8,15 +8,33 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.paku.kmp_template.domain.interactor.auth.CheckEmailUseCase
 import io.paku.kmp_template.domain.interactor.auth.LoginUseCase
+import io.paku.kmp_template.domain.interactor.auth.RefreshTokenUseCase
 import io.paku.kmp_template.domain.interactor.auth.RegisterUseCase
 import org.koin.ktor.ext.inject
 
-fun Route.authRoutes() {
+internal fun Route.authRoutes() {
+    val refreshTokenUseCase: RefreshTokenUseCase by inject()
     val checkEmailUseCase: CheckEmailUseCase by inject()
     val registerUseCase: RegisterUseCase by inject()
     val loginUseCase: LoginUseCase by inject()
 
     route("/auth") {
+        post("/refresh") {
+            val request = call.receive<RefreshTokenRequest>()
+            val rawRefreshToken = request.refreshToken.removePrefix("Bearer ").trim()
+
+            refreshTokenUseCase(rawRefreshToken)
+                .onSuccess { tokens ->
+                    call.respond(
+                        HttpStatusCode.OK,
+                        AuthResponse(accessToken = tokens.accessToken, refreshToken = tokens.refreshToken)
+                    )
+                }
+                .onFailure {
+                    call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Invalid refresh token"))
+                }
+        }
+
         post("/check-email") {
             val request = call.receive<CheckEmailRequest>()
             val isAvailable = checkEmailUseCase(request.email)

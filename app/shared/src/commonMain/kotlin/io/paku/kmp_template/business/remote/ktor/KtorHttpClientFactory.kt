@@ -1,18 +1,22 @@
 package io.paku.kmp_template.business.remote.ktor
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.plugins.api.createClientPlugin
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
@@ -20,10 +24,14 @@ import io.ktor.serialization.kotlinx.json.json
 import io.paku.kmp_template.business.data.source.local.SessionLocalDataSource
 import io.paku.kmp_template.business.model.CommonError
 import io.paku.kmp_template.business.model.CommonException
+import io.paku.kmp_template.business.remote.dto.response.auth.AuthResponse
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 internal object KtorHttpClientFactory {
-    private const val BASE_URL = ""
+    private const val BASE_URL = "http://10.0.2.2:8080/"
+    private const val REFRESH_TOKEN_URL = "auth/refresh"
     private const val CONNECTION_TIMEOUT = 10_000L
 
     fun create(
@@ -41,6 +49,11 @@ internal object KtorHttpClientFactory {
             )
         }
 
+        install(DefaultRequest) {
+            url(BASE_URL)
+            contentType(ContentType.Application.Json)
+        }
+
         install(HttpTimeout) {
             connectTimeoutMillis = CONNECTION_TIMEOUT
             requestTimeoutMillis = CONNECTION_TIMEOUT
@@ -56,24 +69,54 @@ internal object KtorHttpClientFactory {
             }
         }
 
-        createClientPlugin("SessionPlugin") {
-            onRequest { request, _ ->
-                request.url(BASE_URL)
-                request.contentType(ContentType.Application.Json)
-                session.getAccessToken()?.let {
-                    request.header(HttpHeaders.Authorization, "Bearer $it")
-                }
-            }
+        install(Auth) {
+            bearer {
+                loadTokens {
+                    val accessToken = session.getAccessToken()?.removePrefix("Bearer ")
+                    val refreshToken = session.getRefreshToken()?.removePrefix("Bearer ")
 
-            onResponse { response ->
-                val newAccessToken = response.headers["X-New-Access-Token"]
-                val newRefreshToken = response.headers["X-New-Refresh-Token"]
-                if (newAccessToken != null && newRefreshToken != null) {
-                    session.updateAccessToken(newAccessToken)
-                    session.updateRefreshToken(newRefreshToken)
+                    if (accessToken != null && refreshToken != null) {
+                        BearerTokens(accessToken, refreshToken)
+                    } else null
+                }
+
+                refreshTokens {
+                    client.post {
+                        markAsRefreshTokenRequest()
+                        url(REFRESH_TOKEN_URL)
+                        setBody(
+                            buildJsonObject {
+                                put("refreshToken", session.getRefreshToken()?.removePrefix("Bearer "))
+                            }
+                        )
+                    }.body<AuthResponse>().let { (accessToken, refreshToken) ->
+                        session.updateAccessToken(accessToken)
+                        session.updateRefreshToken(refreshToken)
+
+                        BearerTokens(accessToken, refreshToken)
+                    }
                 }
             }
         }
+
+//        createClientPlugin("SessionPlugin") {
+//            onRequest { request, _ ->
+//                request.url(BASE_URL)
+//                request.contentType(ContentType.Application.Json)
+//                session.getAccessToken()?.let {
+//                    request.header(HttpHeaders.Authorization, "Bearer $it")
+//                }
+//            }
+//
+//            onResponse { response ->
+//                val newAccessToken = response.headers["X-New-Access-Token"]
+//                val newRefreshToken = response.headers["X-New-Refresh-Token"]
+//                if (newAccessToken != null && newRefreshToken != null) {
+//                    session.updateAccessToken(newAccessToken)
+//                    session.updateRefreshToken(newRefreshToken)
+//                }
+//            }
+//        }
 
         HttpResponseValidator {
             validateResponse { response ->

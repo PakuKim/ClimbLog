@@ -20,5 +20,5 @@ fun appModule() = module {
 }
 
 val uiModule = module {
-    factory { AppViewModel(get()) }
+    factory { AppViewModel(get(), get(), get()) }
 }

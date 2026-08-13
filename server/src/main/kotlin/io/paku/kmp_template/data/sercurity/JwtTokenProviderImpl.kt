@@ -12,14 +12,17 @@ internal class JwtTokenProviderImpl(
     private val issuer: String,
     private val audience: String
 ) : JwtTokenProvider {
+    companion object {
+        const val ACCESS_TOKEN_EXPIRATION_MS = 1 * 24 * 60 * 60 * 1000L // 1일
+        const val REFRESH_TOKEN_EXPIRATION_MS = 7 * 24 * 60 * 60 * 1000L // 7일
+    }
     private val algorithm = Algorithm.HMAC256(secret)
 
     override fun generateToken(
         userId: Long,
-        email: String
     ): AuthToken {
-        val accessToken = generateAccessToken(userId, email)
-        val refreshToken = generateRefreshToken(userId, email)
+        val accessToken = generateAccessToken(userId)
+        val refreshToken = generateRefreshToken(userId)
 
         return AuthToken(
             accessToken = accessToken,
@@ -27,23 +30,23 @@ internal class JwtTokenProviderImpl(
         )
     }
 
-    private fun generateAccessToken(userId: Long, email: String): String {
+    private fun generateAccessToken(userId: Long): String {
         return JWT.create()
             .withSubject(userId.toString())
             .withIssuer(issuer)
             .withAudience(audience)
-            .withClaim("email", email)
-            .withExpiresAt(Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 1시간
+//            .withClaim("email", email)
+            .withExpiresAt(Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_MS))
             .sign(algorithm)
     }
 
-    private fun generateRefreshToken(userId: Long, email: String): String {
+    private fun generateRefreshToken(userId: Long): String {
         return JWT.create()
             .withSubject(userId.toString())
             .withIssuer(issuer)
             .withAudience(audience)
-            .withClaim("email", email)
-            .withExpiresAt(Date(System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000)) // 30일
+//            .withClaim("email", email)
+            .withExpiresAt(Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_MS))
             .sign(algorithm)
     }
 
@@ -53,5 +56,15 @@ internal class JwtTokenProviderImpl(
             .withIssuer(issuer)
             .withAudience(audience)
             .build()
+    }
+
+    override fun verifyAndExtractUserId(token: String): Long? {
+        return try {
+            val verifier = generateVerifier()
+            val decodedJWT = verifier.verify(token)
+            decodedJWT.subject.toLongOrNull()
+        } catch (e: Exception) {
+            null
+        }
     }
 }

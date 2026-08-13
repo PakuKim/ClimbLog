@@ -3,6 +3,7 @@ package io.paku.kmp_template.business.local
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import io.paku.kmp_template.business.data.source.local.SessionLocalDataSource
 import kotlinx.coroutines.flow.Flow
@@ -13,18 +14,18 @@ class SessionLocalDataSourceImpl(
     private val dataStore: DataStore<Preferences>
 ): SessionLocalDataSource {
     companion object {
-        private val USER_ID = stringPreferencesKey("userId")
+        private val USER_ID = longPreferencesKey("userId")
         private val ACCESS_TOKEN = stringPreferencesKey("accessToken")
         private val REFRESH_TOKEN = stringPreferencesKey("refreshToken")
     }
 
-    override suspend fun saveUserId(userId: String) {
+    override suspend fun saveUserId(userId: Long) {
         dataStore.edit { pref ->
             pref[USER_ID] = userId
         }
     }
 
-    override fun fetchUserId(): Flow<String?> {
+    override fun fetchUserId(): Flow<Long?> {
         return dataStore.data.map { pref ->
             pref[USER_ID]
         }
