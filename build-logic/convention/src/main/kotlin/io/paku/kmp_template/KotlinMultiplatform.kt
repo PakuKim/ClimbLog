@@ -20,8 +20,10 @@ internal fun Project.configureKotlinMultiplatform(
             iosSimulatorArm64()
         ).forEach { iosTarget ->
             iosTarget.binaries.framework {
-                baseName = target.name
+                baseName = project.name.replaceFirstChar { it.uppercase() }
                 isStatic = true
+
+                binaryOption("bundleId", "io.paku.kmp-template.${project.name.lowercase()}")
             }
         }
         jvm()

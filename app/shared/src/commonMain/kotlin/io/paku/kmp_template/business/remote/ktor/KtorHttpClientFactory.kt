@@ -25,12 +25,18 @@ import io.paku.kmp_template.business.data.source.local.SessionLocalDataSource
 import io.paku.kmp_template.business.model.CommonError
 import io.paku.kmp_template.business.model.CommonException
 import io.paku.kmp_template.business.remote.dto.response.auth.AuthResponse
+import io.paku.kmp_template.core.Platform
+import io.paku.kmp_template.core.getPlatform
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
 internal object KtorHttpClientFactory {
-    private const val BASE_URL = "http://10.0.2.2:8080/"
+    private val BASE_URL = when(getPlatform()) {
+        Platform.ANDROID -> "http://10.0.2.2:8080/"
+        Platform.IOS -> "http://127.0.0.1:8080/"
+        else -> "http://localhost:8080/"
+    }
     private const val REFRESH_TOKEN_URL = "auth/refresh"
     private const val CONNECTION_TIMEOUT = 10_000L
 
