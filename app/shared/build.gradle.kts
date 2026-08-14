@@ -20,6 +20,10 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.androidx.datastore.preferences)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.media3.exoplayer)
+            implementation(libs.androidx.media3.ui)
+            implementation(libs.androidx.media3.session)
             api(libs.coil3.core)
         }
         iosMain.dependencies {
@@ -36,12 +40,16 @@ kotlin {
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+            
+            implementation(libs.material.icons.extended)
 
             implementation(libs.ktor.serialization)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.auth)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.client.negotiation)
+            implementation(libs.paging.common)
+            implementation(libs.paging.compose)
 
 //            api(libs.coil3.core)
 //            api(libs.coil3.network)

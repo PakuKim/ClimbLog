@@ -17,11 +17,11 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "io.paku.kmp_template.MainKt"
+        mainClass = "io.paku.climblog.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "io.paku.kmp_template"
+            packageName = "io.paku.climblog"
             packageVersion = "1.0.0"
         }
     }

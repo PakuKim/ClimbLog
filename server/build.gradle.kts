@@ -4,10 +4,10 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
-group = "io.paku.kmp_template"
+group = "io.paku.climblog"
 version = "1.0.0"
 application {
-    mainClass = "io.paku.kmp_template.ApplicationKt"
+    mainClass = "io.paku.climblog.ApplicationKt"
 }
 
 dependencies {
@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.exposed.dao)
     implementation(libs.exposed.jdbc)
     implementation(libs.exposed.kotlin.datetime)
+    implementation(libs.awsS3)
 
     testImplementation(libs.ktor.server.test.host.jvm)
     testImplementation(libs.kotlin.test.junit)

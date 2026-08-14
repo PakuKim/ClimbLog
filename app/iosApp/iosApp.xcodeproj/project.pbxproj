@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		5D5FA7702609666BF14B6BBB /* KMP-Template.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KMP-Template.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D5FA7702609666BF14B6BBB /* ClimbLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClimbLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -59,7 +59,7 @@
 		38FAE0086A8911D29A2BC192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5D5FA7702609666BF14B6BBB /* KMP-Template.app */,
+				5D5FA7702609666BF14B6BBB /* ClimbLog.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -87,7 +87,7 @@
 			packageProductDependencies = (
 			);
 			productName = iosApp;
-			productReference = 5D5FA7702609666BF14B6BBB /* KMP-Template.app */;
+			productReference = 5D5FA7702609666BF14B6BBB /* ClimbLog.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

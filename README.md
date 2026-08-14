@@ -1,4 +1,4 @@
-# KMP-Template
+# ClimbLog
 
 이 프로젝트는 Android, iOS, Web, Desktop (JVM), Server를 지원하는 Kotlin Multiplatform (KMP) 템플릿입니다.
 

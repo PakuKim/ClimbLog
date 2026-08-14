@@ -1,4 +1,4 @@
-rootProject.name = "KMP-Template"
+rootProject.name = "ClimbLog"
 
 pluginManagement {
     includeBuild("build-logic")

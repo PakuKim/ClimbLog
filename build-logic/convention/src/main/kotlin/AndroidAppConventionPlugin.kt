@@ -1,8 +1,8 @@
 import com.android.build.api.dsl.ApplicationExtension
-import io.paku.kmp_template.ext.applyPlugin
-import io.paku.kmp_template.ext.debugImplementations
-import io.paku.kmp_template.ext.implementations
-import io.paku.kmp_template.ext.libs
+import io.paku.climblog.ext.applyPlugin
+import io.paku.climblog.ext.debugImplementations
+import io.paku.climblog.ext.implementations
+import io.paku.climblog.ext.libs
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -37,11 +37,11 @@ class AndroidAppConventionPlugin : Plugin<Project> {
         }
 
         extensions.configure<ApplicationExtension> {
-            namespace = "io.paku.kmp_template"
+            namespace = "io.paku.climblog"
             compileSdk = libs.findVersion("android-compileSdk").get().requiredVersion.toInt()
 
             defaultConfig {
-                applicationId = "io.paku.kmp_template"
+                applicationId = "io.paku.climblog"
                 minSdk = libs.findVersion("android-minSdk").get().requiredVersion.toInt()
                 targetSdk = libs.findVersion("android-targetSdk").get().requiredVersion.toInt()
             }

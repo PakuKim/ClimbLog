@@ -1,6 +1,6 @@
-import io.paku.kmp_template.configureKotlinSerialization
-import io.paku.kmp_template.ext.applyPlugin
-import io.paku.kmp_template.ext.libs
+import io.paku.climblog.configureKotlinSerialization
+import io.paku.climblog.ext.applyPlugin
+import io.paku.climblog.ext.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure

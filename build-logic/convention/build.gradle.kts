@@ -1,12 +1,8 @@
-import org.gradle.api.provider.Provider
-import org.gradle.kotlin.dsl.`kotlin-dsl`
-import org.gradle.plugin.use.PluginDependency
-
 plugins {
     `kotlin-dsl`
 }
 
-group = "io.paku.kmp_template.buildlogic"
+group = "io.paku.climblog.buildlogic"
 
 dependencies {
     compileOnly(libs.plugins.androidApplication.toDep())
@@ -31,19 +27,19 @@ tasks {
 gradlePlugin {
     plugins {
         register("androidApp") {
-            id = "io.paku.kmp_template.androidApp"
+            id = "io.paku.climblog.androidApp"
             implementationClass = "AndroidAppConventionPlugin"
         }
         register("composeMultiplatform") {
-            id = "io.paku.kmp_template.composeMultiplatform"
+            id = "io.paku.climblog.composeMultiplatform"
             implementationClass = "ComposeMultiplatformConventionPlugin"
         }
         register("kotlinMultiplatform") {
-            id = "io.paku.kmp_template.kotlinMultiplatform"
+            id = "io.paku.climblog.kotlinMultiplatform"
             implementationClass = "KotlinMultiplatformConventionPlugin"
         }
         register("kotlinSerialization") {
-            id = "io.paku.kmp_template.kotlinSerialization"
+            id = "io.paku.climblog.kotlinSerialization"
             implementationClass = "KotlinSerializationConventionPlugin"
         }
     }
