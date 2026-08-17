@@ -27,8 +27,7 @@ data class CheckEmailRequest(
 
 @Serializable
 data class SocialLoginRequest(
-    val email: String,
-    val name: String,
-    val socialId: String,
-    val provider: String
+    val provider: String,
+    val accessToken: String? = null,
+    val idToken: String? = null
 )

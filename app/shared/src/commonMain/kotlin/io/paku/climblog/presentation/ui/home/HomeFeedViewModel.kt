@@ -1,10 +1,10 @@
 package io.paku.climblog.presentation.ui.home
 
 import androidx.lifecycle.viewModelScope
-import app.cash.paging.Pager
-import app.cash.paging.PagingConfig
-import app.cash.paging.PagingData
-import app.cash.paging.cachedIn
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import io.paku.climblog.business.data.source.remote.VideoPagingSource
 import io.paku.climblog.business.domain.VideoRepository
 import io.paku.climblog.business.domain.model.Comment
@@ -55,9 +55,7 @@ class HomeFeedViewModel(
                 pageSize = 10,
                 prefetchDistance = 10,
                 enablePlaceholders = false,
-                initialLoadSize = 10,
-                maxSize = Int.MAX_VALUE,
-                jumpThreshold = Int.MIN_VALUE
+                initialLoadSize = 10
             ),
             initialKey = null,
             pagingSourceFactory = { VideoPagingSource(videoRepository) }

@@ -15,4 +15,8 @@ internal class NotificationRepositoryImpl(
     override suspend fun checkUnread(): Result<Boolean> = runCatching {
         remote.checkUnread()
     }
+
+    override suspend fun sendDeviceToken(fcmToken: String): Result<Unit> = runCatching {
+        remote.sendDeviceToken(fcmToken)
+    }
 }

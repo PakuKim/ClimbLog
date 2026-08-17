@@ -7,4 +7,7 @@ interface NotificationRepository {
     suspend fun hasUnread(userId: Long): Boolean
     suspend fun markAsRead(userId: Long)
     suspend fun save(notification: Notification): Notification
+    
+    suspend fun saveDeviceToken(userId: Long, fcmToken: String)
+    suspend fun getDeviceToken(userId: Long): String?
 }

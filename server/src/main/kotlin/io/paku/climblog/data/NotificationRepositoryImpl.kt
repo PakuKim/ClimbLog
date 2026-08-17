@@ -1,6 +1,7 @@
 package io.paku.climblog.data
 
 import io.paku.climblog.data.database.DatabaseFactory.dbQuery
+import io.paku.climblog.data.database.table.DeviceTokenTable
 import io.paku.climblog.data.database.table.NotificationTable
 import io.paku.climblog.data.database.table.UserTable
 import io.paku.climblog.domain.NotificationRepository
@@ -11,6 +12,7 @@ import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.update
+import org.jetbrains.exposed.v1.jdbc.upsert
 
 internal class NotificationRepositoryImpl : NotificationRepository {
 
@@ -53,9 +55,26 @@ internal class NotificationRepositoryImpl : NotificationRepository {
             it[type] = notification.type
             it[fromUserId] = notification.fromUserId
             it[videoId] = notification.videoId
+            it[message] = "" // Placeholder or construct message
             it[isRead] = false
             it[createdAt] = System.currentTimeMillis()
         }
         notification.copy(id = insertedStatement[NotificationTable.id])
+    }
+
+    override suspend fun saveDeviceToken(userId: Long, fcmToken: String) = dbQuery {
+        DeviceTokenTable.upsert {
+            it[DeviceTokenTable.userId] = userId
+            it[DeviceTokenTable.fcmToken] = fcmToken
+            it[updatedAt] = System.currentTimeMillis()
+        }
+        Unit
+    }
+
+    override suspend fun getDeviceToken(userId: Long): String? = dbQuery {
+        DeviceTokenTable.selectAll()
+            .where { DeviceTokenTable.userId eq userId }
+            .map { it[DeviceTokenTable.fcmToken] }
+            .singleOrNull()
     }
 }

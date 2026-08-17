@@ -18,6 +18,7 @@ internal class AuthRemoteDataSourceImpl(
         const val API_BASE = "api/v1/"
         const val REGISTER_URL = "${API_BASE}auth/register"
         const val LOGIN_URL = "${API_BASE}auth/login"
+        const val LOGOUT_URL = "${API_BASE}auth/logout"
         const val SOCIAL_LOGIN_URL = "${API_BASE}auth/social-login"
         const val CHECK_EMAIL_URL = "${API_BASE}auth/check-email"
     }
@@ -53,16 +54,23 @@ internal class AuthRemoteDataSourceImpl(
     }
 
     override suspend fun socialLogin(
-        email: String,
-        name: String,
-        socialId: String,
-        provider: String
+        provider: String,
+        accessToken: String?,
+        idToken: String?
     ): Triple<String, String, Boolean> {
-        val request = SocialLoginRequest(email, name, socialId, provider)
+        val request = SocialLoginRequest(
+            provider = provider,
+            accessToken = accessToken,
+            idToken = idToken
+        )
         val response = client.post(SOCIAL_LOGIN_URL) {
             setBody(request)
         }.body<AuthResponse>()
         return Triple(response.accessToken, response.refreshToken, response.isRegistered)
+    }
+
+    override suspend fun logout() {
+        client.post(LOGOUT_URL)
     }
 
     override suspend fun checkEmail(email: String): Boolean {

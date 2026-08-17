@@ -24,6 +24,12 @@ kotlin {
             implementation(libs.androidx.media3.exoplayer)
             implementation(libs.androidx.media3.ui)
             implementation(libs.androidx.media3.session)
+            implementation(libs.firebaseMessaging)
+            api(libs.googleCredentials)
+            api(libs.googleCredentialsPlay)
+            api(libs.googleId)
+            api(libs.kakaoLogin)
+            api(libs.naverLogin)
             api(libs.coil3.core)
         }
         iosMain.dependencies {
@@ -48,11 +54,9 @@ kotlin {
             implementation(libs.ktor.client.auth)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.client.negotiation)
-            implementation(libs.paging.common)
-            implementation(libs.paging.compose)
-
-//            api(libs.coil3.core)
-//            api(libs.coil3.network)
+            implementation(libs.androidx.paging.common)
+            implementation(libs.androidx.paging.compose)
+            implementation(libs.gitliveFirebaseMessaging)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -5,12 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SocialLoginRequest(
-    @SerialName("email")
-    val email: String,
-    @SerialName("name")
-    val name: String,
-    @SerialName("socialId")
-    val socialId: String,
     @SerialName("provider")
-    val provider: String
+    val provider: String,
+    @SerialName("accessToken")
+    val accessToken: String? = null,
+    @SerialName("idToken")
+    val idToken: String? = null
 )

@@ -1,11 +1,7 @@
 package io.paku.climblog.business.data.source.remote
 
-import app.cash.paging.PagingSource
-import app.cash.paging.PagingSourceLoadParams
-import app.cash.paging.PagingSourceLoadResult
-import app.cash.paging.PagingSourceLoadResultError
-import app.cash.paging.PagingSourceLoadResultPage
-import app.cash.paging.PagingState
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import io.paku.climblog.business.domain.VideoRepository
 import io.paku.climblog.business.domain.model.Video
 
@@ -19,7 +15,7 @@ class VideoPagingSource(
         }
     }
 
-    override suspend fun load(params: PagingSourceLoadParams<Long>): PagingSourceLoadResult<Long, Video> {
+    override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Video> {
         val cursor = params.key
         val limit = params.loadSize
         
@@ -28,13 +24,13 @@ class VideoPagingSource(
         return if (result.isSuccess) {
             val videos = result.getOrThrow()
             val nextKey = if (videos.isEmpty() || videos.size < limit) null else videos.lastOrNull()?.id
-            PagingSourceLoadResultPage<Long, Video>(
+            LoadResult.Page(
                 data = videos,
                 prevKey = null,
                 nextKey = nextKey
-            ) as PagingSourceLoadResult<Long, Video>
+            )
         } else {
-            PagingSourceLoadResultError<Long, Video>(result.exceptionOrNull()!!) as PagingSourceLoadResult<Long, Video>
+            LoadResult.Error(result.exceptionOrNull()!!)
         }
     }
 }

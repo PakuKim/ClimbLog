@@ -13,8 +13,20 @@ import io.paku.climblog.di.appModule
 import io.paku.climblog.presentation.navigation.AppNavigation
 import io.paku.climblog.presentation.theme.AppTheme
 import io.paku.climblog.presentation.ui.main.MainScreen
+import io.paku.climblog.presentation.ui.notification.NotificationScreen
+import io.paku.climblog.presentation.ui.notification.NotificationViewModel
+import io.paku.climblog.presentation.ui.onboard.login.LoginScreen
+import io.paku.climblog.presentation.ui.onboard.login.LoginViewModel
 import io.paku.climblog.presentation.ui.onboard.register.RegisterScreen
 import io.paku.climblog.presentation.ui.onboard.register.RegisterViewModel
+import io.paku.climblog.presentation.ui.profile.ProfileViewModel
+import io.paku.climblog.presentation.ui.profile.UserProfileScreen
+import io.paku.climblog.presentation.ui.profile.edit.EditProfileScreen
+import io.paku.climblog.presentation.ui.profile.edit.EditProfileViewModel
+import io.paku.climblog.presentation.ui.settings.SettingsScreen
+import io.paku.climblog.presentation.ui.settings.SettingsViewModel
+import io.paku.climblog.presentation.ui.upload.VideoUploadScreen
+import io.paku.climblog.presentation.ui.upload.VideoUploadViewModel
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
 import org.koin.dsl.KoinConfiguration
@@ -38,7 +50,7 @@ fun App() {
                         popUpTo(AppNavigation.Splash) { inclusive = true }
                     }
                 } else {
-                    navController.navigate(AppNavigation.Onboard) {
+                    navController.navigate(AppNavigation.Login) {
                         popUpTo(AppNavigation.Splash) { inclusive = true }
                     }
                 }
@@ -52,7 +64,23 @@ fun App() {
                 exitTransition = { ExitTransition.None }
             ) {
                 composable<AppNavigation.Splash> {
-                    // Splash UI
+                }
+
+                composable<AppNavigation.Login> {
+                    val loginViewModel: LoginViewModel = koinInject()
+                    LoginScreen(
+                        viewModel = loginViewModel,
+                        onNavigateToMain = {
+                            navController.navigate(AppNavigation.Main) {
+                                popUpTo(AppNavigation.Login) { inclusive = true }
+                            }
+                        },
+                        onNavigateToOnboard = { _, _ ->
+                            navController.navigate(AppNavigation.Onboard) {
+                                popUpTo(AppNavigation.Login) { inclusive = true }
+                            }
+                        }
+                    )
                 }
 
                 composable<AppNavigation.Onboard> {
@@ -64,16 +92,74 @@ fun App() {
                     MainScreen(
                         onUploadClick = { navController.navigate(AppNavigation.Upload) },
                         onNotificationClick = { navController.navigate(AppNavigation.Notifications) },
-                        onVideoClick = { /* Handle video click */ }
+                        onVideoClick = { /* Handle video click */ },
+                        onUserClick = { userId ->
+                            navController.navigate(AppNavigation.UserProfile(userId))
+                        },
+                        onMenuClick = {
+                            navController.navigate(AppNavigation.Settings)
+                        },
+                        onEditClick = {
+                            navController.navigate(AppNavigation.EditProfile)
+                        }
                     )
                 }
                 
                 composable<AppNavigation.Notifications> {
-                    // NotificationListScreen()
+                    val notificationViewModel: NotificationViewModel = koinInject()
+                    NotificationScreen(
+                        viewModel = notificationViewModel,
+                        onNavigateBack = { navController.popBackStack() },
+                        onUserClick = { _ ->
+                        },
+                        onVideoClick = { _ ->
+                        }
+                    )
                 }
                 
                 composable<AppNavigation.Upload> {
-                    // VideoUploadScreen()
+                    val uploadViewModel: VideoUploadViewModel = koinInject()
+                    VideoUploadScreen(
+                        viewModel = uploadViewModel,
+                        onNavigateBack = { navController.popBackStack() },
+                        onUploadSuccess = {
+                            navController.navigate(AppNavigation.Main) {
+                                popUpTo(AppNavigation.Main) { inclusive = true }
+                            }
+                        }
+                    )
+                }
+
+                composable<AppNavigation.UserProfile> { backStackEntry ->
+                    val userId = 1L // Extracting args from backStackEntry in real app
+                    val profileViewModel: ProfileViewModel = koinInject()
+                    UserProfileScreen(
+                        userId = userId,
+                        viewModel = profileViewModel,
+                        onNavigateBack = { navController.popBackStack() },
+                        onVideoClick = { }
+                    )
+                }
+
+                composable<AppNavigation.EditProfile> {
+                    val editProfileViewModel: EditProfileViewModel = koinInject()
+                    EditProfileScreen(
+                        viewModel = editProfileViewModel,
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
+
+                composable<AppNavigation.Settings> {
+                    val settingsViewModel: SettingsViewModel = koinInject()
+                    SettingsScreen(
+                        viewModel = settingsViewModel,
+                        onNavigateBack = { navController.popBackStack() },
+                        onLogoutSuccess = {
+                            navController.navigate(AppNavigation.Login) {
+                                popUpTo(AppNavigation.Main) { inclusive = true }
+                            }
+                        }
+                    )
                 }
             }
         }

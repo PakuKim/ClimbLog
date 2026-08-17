@@ -18,4 +18,6 @@ interface UserRepository {
     suspend fun save(user: User): User
 
     suspend fun update(user: User): User
+
+    suspend fun delete(id: Long)
 }

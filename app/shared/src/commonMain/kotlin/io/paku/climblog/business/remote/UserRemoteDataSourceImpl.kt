@@ -2,9 +2,11 @@ package io.paku.climblog.business.remote
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.paku.climblog.business.data.source.remote.UserRemoteDataSource
 import io.paku.climblog.business.domain.model.User
@@ -19,7 +21,7 @@ internal class UserRemoteDataSourceImpl(
 ): UserRemoteDataSource {
     private companion object {
         const val API_BASE = "api/v1/users"
-        const val GET_USER_URL = "user/me" 
+        const val GET_USER_URL = "api/v1/users/me" 
         const val CHECK_HANDLE_URL = "$API_BASE/check-handle"
         const val SEARCH_URL = "$API_BASE/search"
         const val PROFILE_URL = "$API_BASE/{id}/profile"
@@ -48,9 +50,38 @@ internal class UserRemoteDataSourceImpl(
             .body<UserProfileResponse>().toDomain()
     }
 
-    override suspend fun toggleFollow(userId: Long): Boolean {
-        return client.post(FOLLOW_URL.replace("{id}", userId.toString()))
-            .body<Map<String, Boolean>>()["isFollowing"] ?: false
+    override suspend fun follow(userId: Long) {
+        client.post(FOLLOW_URL.replace("{id}", userId.toString()))
+    }
+
+    override suspend fun unfollow(userId: Long) {
+        client.delete(FOLLOW_URL.replace("{id}", userId.toString()))
+    }
+
+    override suspend fun updateUser(
+        name: String,
+        age: Int?,
+        height: Int?,
+        armReach: Int?,
+        gender: String?,
+        profilePhotoUrl: String?
+    ): User {
+        val request = RegisterUserInfoRequest(
+            handle = "", // Server ignores handle for PUT /me
+            name = name,
+            age = age,
+            height = height,
+            armReach = armReach,
+            gender = gender,
+            profilePhotoUrl = profilePhotoUrl
+        )
+        return client.put(GET_USER_URL) {
+            setBody(request)
+        }.body<GetUserResponse>().toDomain()
+    }
+
+    override suspend fun deleteUser() {
+        client.delete(GET_USER_URL)
     }
 
     override suspend fun registerUser(

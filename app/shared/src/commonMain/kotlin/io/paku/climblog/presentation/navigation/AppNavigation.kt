@@ -8,6 +8,9 @@ sealed interface AppNavigation {
     data object Splash : AppNavigation
 
     @Serializable
+    data object Login : AppNavigation
+
+    @Serializable
     data object Main : AppNavigation
 
     @Serializable
@@ -18,4 +21,13 @@ sealed interface AppNavigation {
 
     @Serializable
     data object Upload : AppNavigation
+
+    @Serializable
+    data class UserProfile(val userId: Long) : AppNavigation
+
+    @Serializable
+    data object EditProfile : AppNavigation
+
+    @Serializable
+    data object Settings : AppNavigation
 }

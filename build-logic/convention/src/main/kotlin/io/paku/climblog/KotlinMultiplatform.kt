@@ -21,7 +21,6 @@ internal fun Project.configureKotlinMultiplatform(
             iosTarget.binaries.framework {
                 baseName = project.name.replaceFirstChar { it.uppercase() }
                 isStatic = true
-
                 binaryOption("bundleId", "io.paku.climblog.${project.name.lowercase()}")
             }
         }

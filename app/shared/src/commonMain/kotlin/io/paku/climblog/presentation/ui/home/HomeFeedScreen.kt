@@ -54,7 +54,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import app.cash.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import io.paku.climblog.business.domain.model.Comment
 import io.paku.climblog.business.domain.model.Video
 import io.paku.climblog.core.shareLink

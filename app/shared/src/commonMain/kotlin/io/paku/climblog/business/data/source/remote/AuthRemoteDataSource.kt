@@ -13,11 +13,12 @@ interface AuthRemoteDataSource {
     ): Pair<String, String>
 
     suspend fun socialLogin(
-        email: String,
-        name: String,
-        socialId: String,
-        provider: String
+        provider: String,
+        accessToken: String?,
+        idToken: String?
     ): Triple<String, String, Boolean> // accessToken, refreshToken, isRegistered
+
+    suspend fun logout()
 
     suspend fun checkEmail(
         email: String

@@ -56,12 +56,19 @@ class ProfileViewModel(
         val profile = state.value.userProfile ?: return@launch
         updateState { copy(isFollowingInProgress = true) }
         
-        userRepository.toggleFollow(profile.user.id).onSuccess { isFollowing ->
+        val isFollowing = profile.isFollowing
+        val result = if (isFollowing) {
+            userRepository.unfollow(profile.user.id)
+        } else {
+            userRepository.follow(profile.user.id)
+        }
+
+        result.onSuccess {
             updateState { 
                 copy(
                     userProfile = profile.copy(
-                        isFollowing = isFollowing,
-                        followerCount = if (isFollowing) profile.followerCount + 1 else profile.followerCount - 1
+                        isFollowing = !isFollowing,
+                        followerCount = if (!isFollowing) profile.followerCount + 1 else profile.followerCount - 1
                     ),
                     isFollowingInProgress = false
                 ) 

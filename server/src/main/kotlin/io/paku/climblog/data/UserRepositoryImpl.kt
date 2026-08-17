@@ -8,6 +8,7 @@ import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.like
 import org.jetbrains.exposed.v1.core.or
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.update
@@ -105,5 +106,10 @@ internal class UserRepositoryImpl : UserRepository {
         }
 
         user
+    }
+
+    override suspend fun delete(id: Long) = dbQuery {
+        UserTable.deleteWhere { UserTable.id eq id }
+        Unit
     }
 }

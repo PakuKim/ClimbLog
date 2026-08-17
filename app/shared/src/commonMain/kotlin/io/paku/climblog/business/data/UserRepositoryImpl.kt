@@ -24,8 +24,34 @@ internal class UserRepositoryImpl(
         userRemoteDataSource.getUserProfile(userId)
     }
 
-    override suspend fun toggleFollow(userId: Long): Result<Boolean> = runCatching {
-        userRemoteDataSource.toggleFollow(userId)
+    override suspend fun follow(userId: Long): Result<Unit> = runCatching {
+        userRemoteDataSource.follow(userId)
+    }
+
+    override suspend fun unfollow(userId: Long): Result<Unit> = runCatching {
+        userRemoteDataSource.unfollow(userId)
+    }
+
+    override suspend fun updateUser(
+        name: String,
+        age: Int?,
+        height: Int?,
+        armReach: Int?,
+        gender: String?,
+        profilePhotoUrl: String?
+    ): Result<User> = runCatching {
+        userRemoteDataSource.updateUser(
+            name = name,
+            age = age,
+            height = height,
+            armReach = armReach,
+            gender = gender,
+            profilePhotoUrl = profilePhotoUrl
+        )
+    }
+
+    override suspend fun deleteUser(): Result<Unit> = runCatching {
+        userRemoteDataSource.deleteUser()
     }
 
     override suspend fun registerUser(

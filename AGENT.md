@@ -12,6 +12,7 @@ This document serves as the primary context, architecture guide, and rule set fo
     * Vertical short-form video feed with custom playback speed (0.5x ~ 2.0x).
     * Video section bookmarks (Crux section replay similar to YouTube Chapters).
     * Video upload with S3 Presigned URL + Native video picking.
+    * Real-time push notifications via Firebase Cloud Messaging (FCM).
     * Multiplatform support (Android, iOS, Web, Desktop, Server).
 
 ---
@@ -26,6 +27,7 @@ This document serves as the primary context, architecture guide, and rule set fo
 * **Serialization**: `kotlinx.serialization` (JSON)
 * **Pagination**: AndroidX Paging3 Multiplatform (`androidx.paging:paging-common`)
 * **Local Storage**: Multiplatform DataStore / SQLDelight
+* **Push Notification**: Firebase Cloud Messaging (FCM - Expect/Actual or KMP Firebase SDK)
 * **Media Player**: Expect/Actual implementation
     * Android: Media3 / ExoPlayer
     * iOS: AVFoundation (`AVPlayer`)
@@ -36,6 +38,7 @@ This document serves as the primary context, architecture guide, and rule set fo
 * **Database ORM**: Exposed ORM
 * **Cache & Token Storage**: Redis using Lettuce client (Refresh Tokens, Caching)
 * **Authentication**: JWT (JSON Web Token) with Access/Refresh Token cycle
+* **Push Notification Engine**: Firebase Admin SDK (FCM payload dispatching)
 
 ### Server Infrastructure (AWS Cloud)
 * **Compute / Server**: AWS EC2 or AWS ECS (Docker Container running Ktor Server)
@@ -44,6 +47,7 @@ This document serves as the primary context, architecture guide, and rule set fo
 * **Object Storage**: AWS S3 (Raw video & image storage, Presigned URL generation)
 * **Video Encoding & Transcoding**: AWS Elemental MediaConvert (Converts raw MP4 to HLS `.m3u8` streaming format)
 * **CDN (Content Delivery Network)**: AWS CloudFront (Fast streaming & caching for video/image assets)
+* **Push Messaging**: Firebase Cloud Messaging (FCM Infrastructure)
 
 ---
 
@@ -115,6 +119,8 @@ ClimbLog/
 
 ### ② Main - Home (Instagram Reels Style)
 * **Top Bar**: Notification icon (Red badge when unread notifications exist -> Navigate to Notification List).
+  * Use FirebaseMessaging for notifications.
+  
 * **Feed Video Player**:
   * Vertical Paging (Paging3 Multiplatform).
   * Auto-play current item, pause others. Click to pause/play.

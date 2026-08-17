@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
@@ -21,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,17 +34,18 @@ import io.paku.climblog.presentation.ui.search.SearchScreen
 import io.paku.climblog.presentation.ui.search.SearchViewModel
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    viewModel: MainViewModel = koinInject(),
     onUploadClick: () -> Unit,
     onNotificationClick: () -> Unit,
-    onVideoClick: (Long) -> Unit
+    onVideoClick: (Long) -> Unit,
+    onUserClick: (Long) -> Unit,
+    onMenuClick: () -> Unit,
+    onEditClick: () -> Unit
 ) {
+    val state by viewModel.state
     var selectedTab by remember { mutableIntStateOf(0) }
-    
-    // In a real app, unread check would be in a common ViewModel or polled
-    val hasUnreadNotifications by remember { mutableStateOf(true) } 
 
     Scaffold(
         topBar = {
@@ -57,7 +56,7 @@ fun MainScreen(
                         IconButton(onClick = onNotificationClick) {
                             Box {
                                 Icon(Icons.Default.Notifications, contentDescription = "Notifications")
-                                if (hasUnreadNotifications) {
+                                if (state.hasUnreadNotifications) {
                                     Surface(
                                         modifier = Modifier
                                             .size(8.dp)
@@ -98,25 +97,25 @@ fun MainScreen(
         Box(modifier = Modifier.padding(paddingValues)) {
             when (selectedTab) {
                 0 -> {
-                    val viewModel: HomeFeedViewModel = koinInject()
-                    HomeFeedScreen(viewModel = viewModel)
+                    val homeViewModel: HomeFeedViewModel = koinInject()
+                    HomeFeedScreen(viewModel = homeViewModel)
                 }
                 1 -> {
-                    val viewModel: SearchViewModel = koinInject()
+                    val searchViewModel: SearchViewModel = koinInject()
                     SearchScreen(
-                        viewModel = viewModel,
-                        onUserClick = { /* Navigate to profile */ },
+                        viewModel = searchViewModel,
+                        onUserClick = onUserClick,
                         onVideoClick = onVideoClick
                     )
                 }
                 2 -> {
-                    val viewModel: ProfileViewModel = koinInject()
-                    // Need to pass current userId here
+                    val profileViewModel: ProfileViewModel = koinInject()
                     ProfileScreen(
-                        viewModel = viewModel,
+                        viewModel = profileViewModel,
                         onUploadClick = onUploadClick,
                         onVideoClick = onVideoClick,
-                        onMenuClick = { /* Menu */ }
+                        onMenuClick = onMenuClick,
+                        onEditClick = onEditClick
                     )
                 }
             }

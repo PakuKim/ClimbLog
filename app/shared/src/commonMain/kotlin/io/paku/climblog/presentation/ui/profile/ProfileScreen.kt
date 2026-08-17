@@ -29,6 +29,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,7 +49,8 @@ fun ProfileScreen(
     viewModel: ProfileViewModel,
     onUploadClick: () -> Unit,
     onVideoClick: (Long) -> Unit,
-    onMenuClick: () -> Unit
+    onMenuClick: () -> Unit,
+    onEditClick: () -> Unit
 ) {
     val state = viewModel.state.value
     val profile = state.userProfile
@@ -80,9 +82,13 @@ fun ProfileScreen(
                     .padding(paddingValues)
                     .fillMaxSize()
             ) {
-                ProfileHeader(profile, state.isMyProfile, state.isFollowingInProgress) {
-                    viewModel.onEvent(ProfileEvent.ToggleFollow)
-                }
+                ProfileHeader(
+                    profile = profile, 
+                    isMyProfile = state.isMyProfile, 
+                    isFollowingInProgress = state.isFollowingInProgress,
+                    onFollowClick = { viewModel.onEvent(ProfileEvent.ToggleFollow) },
+                    onEditClick = onEditClick
+                )
 
                 UserStats(profile)
 
@@ -109,7 +115,8 @@ fun ProfileHeader(
     profile: UserProfile,
     isMyProfile: Boolean,
     isFollowingInProgress: Boolean,
-    onFollowClick: () -> Unit
+    onFollowClick: () -> Unit,
+    onEditClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -143,7 +150,17 @@ fun ProfileHeader(
         }
     }
 
-    if (!isMyProfile) {
+    if (isMyProfile) {
+        OutlinedButton(
+            onClick = onEditClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Text("Edit Profile", color = MaterialTheme.colorScheme.onSurface)
+        }
+    } else {
         Button(
             onClick = onFollowClick,
             modifier = Modifier
@@ -171,5 +188,4 @@ fun StatItem(label: String, count: String) {
 
 @Composable
 fun UserStats(profile: UserProfile) {
-    // Additional stats or bio could go here
 }

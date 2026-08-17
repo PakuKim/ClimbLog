@@ -14,6 +14,8 @@ import io.paku.climblog.domain.CommentRepository
 import io.paku.climblog.domain.LikeRepository
 import io.paku.climblog.domain.VideoRepository
 import io.paku.climblog.domain.interactor.video.GetRandomVideosUseCase
+import io.paku.climblog.domain.interactor.video.PostCommentUseCase
+import io.paku.climblog.domain.interactor.video.ToggleLikeUseCase
 import io.paku.climblog.domain.model.Comment
 import io.paku.climblog.domain.model.Video
 import io.paku.climblog.domain.provider.S3Provider
@@ -29,6 +31,8 @@ fun Route.videoRoutes(
     val commentRepository: CommentRepository by inject()
     val likeRepository: LikeRepository by inject()
     val getRandomVideosUseCase: GetRandomVideosUseCase by inject()
+    val toggleLikeUseCase: ToggleLikeUseCase by inject()
+    val postCommentUseCase: PostCommentUseCase by inject()
 
     authenticate("auth-jwt") {
         route("/api/v1/videos") {
@@ -110,8 +114,11 @@ fun Route.videoRoutes(
                     val userId = call.principal<JWTPrincipal>()?.payload?.subject?.toLongOrNull() ?: return@post call.respond(HttpStatusCode.Unauthorized)
                     val videoId = call.parameters["id"]?.toLongOrNull() ?: return@post call.respond(HttpStatusCode.BadRequest)
                     
-                    val isLiked = likeRepository.toggleLike(userId, videoId)
-                    call.respond(HttpStatusCode.OK, mapOf("liked" to isLiked))
+                    toggleLikeUseCase(userId, videoId).onSuccess { isLiked ->
+                        call.respond(HttpStatusCode.OK, mapOf("liked" to isLiked))
+                    }.onFailure {
+                        call.respond(HttpStatusCode.InternalServerError)
+                    }
                 }
 
                 route("/comments") {
@@ -126,17 +133,11 @@ fun Route.videoRoutes(
                         val videoId = call.parameters["id"]?.toLongOrNull() ?: return@post call.respond(HttpStatusCode.BadRequest)
                         val request = call.receive<CommentRequest>()
                         
-                        val comment = Comment(
-                            videoId = videoId,
-                            userId = userId,
-                            userName = "", // Implementation handles fetching user info via join
-                            userProfilePhotoUrl = null,
-                            content = request.content,
-                            createdAt = System.currentTimeMillis()
-                        )
-                        
-                        val savedComment = commentRepository.save(comment)
-                        call.respond(HttpStatusCode.Created, savedComment.toResponse())
+                        postCommentUseCase(userId, videoId, request.content).onSuccess { savedComment ->
+                            call.respond(HttpStatusCode.Created, savedComment.toResponse())
+                        }.onFailure {
+                            call.respond(HttpStatusCode.InternalServerError)
+                        }
                     }
                 }
             }

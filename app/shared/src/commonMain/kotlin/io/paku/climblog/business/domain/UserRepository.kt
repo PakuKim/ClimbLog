@@ -12,7 +12,19 @@ interface UserRepository {
     
     suspend fun getUserProfile(userId: Long): Result<UserProfile>
     
-    suspend fun toggleFollow(userId: Long): Result<Boolean>
+    suspend fun follow(userId: Long): Result<Unit>
+    suspend fun unfollow(userId: Long): Result<Unit>
+    
+    suspend fun updateUser(
+        name: String,
+        age: Int?,
+        height: Int?,
+        armReach: Int?,
+        gender: String?,
+        profilePhotoUrl: String?
+    ): Result<User>
+
+    suspend fun deleteUser(): Result<Unit>
     
     suspend fun registerUser(
         handle: String,

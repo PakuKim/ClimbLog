@@ -1,6 +1,7 @@
 package io.paku.climblog.data.database
 
 import io.paku.climblog.data.database.table.CommentTable
+import io.paku.climblog.data.database.table.DeviceTokenTable
 import io.paku.climblog.data.database.table.FollowTable
 import io.paku.climblog.data.database.table.LikeTable
 import io.paku.climblog.data.database.table.NotificationTable
@@ -34,7 +35,8 @@ internal object DatabaseFactory {
                 CommentTable,
                 LikeTable,
                 FollowTable,
-                NotificationTable
+                NotificationTable,
+                DeviceTokenTable
             )
         }
     }

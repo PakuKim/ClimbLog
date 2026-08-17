@@ -13,11 +13,12 @@ interface AuthRepository {
     ): Result<Unit>
 
     suspend fun socialLogin(
-        email: String,
-        name: String,
-        socialId: String,
-        provider: String
+        provider: String,
+        accessToken: String?,
+        idToken: String?
     ): Result<Boolean> // returns isRegistered
+
+    suspend fun logout(): Result<Unit>
 
     suspend fun checkEmail(
         email: String

@@ -33,7 +33,15 @@ lettuce = "6.5.3.RELEASE"
 aws-sdk = "1.12.767"
 androidx-media3 = "1.5.1"
 materialIconsExtended = "1.7.3"
-paging-multiplatform = "3.3.0-alpha02-0.5.1"
+androidx-paging = "3.4.2"
+firebase-admin = "9.5.0"
+firebase-bom = "33.10.0"
+firebase-messaging = "24.1.0"
+gitlive-firebase = "2.1.0"
+credentials-version = "1.5.0-rc01"
+googleid-version = "1.1.1"
+kakao-version = "2.20.6"
+naver-version = "5.10.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -64,9 +72,6 @@ compose-components-resources = { module = "org.jetbrains.compose.components:comp
 compose-animation = { module = "org.jetbrains.compose.animation:animation", version.ref = "composeMultiplatform" }
 compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
 compose-icons-extended = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
-# Note: Material icons are often part of the main compose library or specialized ones.
-# In KMP, they might be in androidx.compose.material:material-icons-extended-android (not multiplatform)
-# or org.jetbrains.compose.material:material-icons-extended
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
@@ -118,8 +123,17 @@ wrappers-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", ve
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "androidx-media3" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "androidx-media3" }
 androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "androidx-media3" }
-paging-common = { module = "app.cash.paging:paging-common", version.ref = "paging-multiplatform" }
-paging-compose = { module = "app.cash.paging:paging-compose-common", version.ref = "paging-multiplatform" }
+androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "androidx-paging" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidx-paging" }
+firebaseAdmin = { module = "com.google.firebase:firebase-admin", version.ref = "firebase-admin" }
+firebaseBom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebaseMessaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebase-messaging" }
+gitliveFirebaseMessaging = { module = "dev.gitlive:firebase-messaging", version.ref = "gitlive-firebase" }
+googleCredentials = { module = "androidx.credentials:credentials", version.ref = "credentials-version" }
+googleCredentialsPlay = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials-version" }
+googleId = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid-version" }
+kakaoLogin = { module = "com.kakao.sdk:v2-user", version.ref = "kakao-version" }
+naverLogin = { module = "com.navercorp.nid:oauth", version.ref = "naver-version" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

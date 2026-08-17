@@ -12,7 +12,19 @@ interface UserRemoteDataSource {
     
     suspend fun getUserProfile(userId: Long): UserProfile
     
-    suspend fun toggleFollow(userId: Long): Boolean
+    suspend fun follow(userId: Long)
+    suspend fun unfollow(userId: Long)
+    
+    suspend fun updateUser(
+        name: String,
+        age: Int?,
+        height: Int?,
+        armReach: Int?,
+        gender: String?,
+        profilePhotoUrl: String?
+    ): User
+
+    suspend fun deleteUser()
     
     suspend fun registerUser(
         handle: String,
