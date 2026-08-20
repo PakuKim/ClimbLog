@@ -44,7 +44,7 @@ import io.paku.climblog.core.rememberImagePicker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfileScreen(
+internal fun EditProfileScreen(
     viewModel: EditProfileViewModel,
     onNavigateBack: () -> Unit
 ) {
@@ -52,7 +52,7 @@ fun EditProfileScreen(
     val scrollState = rememberScrollState()
     
     val imagePicker = rememberImagePicker { bytes ->
-        viewModel.onEvent(EditProfileEvent.OnProfileImagePicked(bytes))
+        viewModel.onEvent(EditProfileViewModelEvent.OnProfileImageChanged(bytes))
     }
 
     LaunchedEffect(state.updateSuccess) {
@@ -102,7 +102,7 @@ fun EditProfileScreen(
             // Name
             OutlinedTextField(
                 value = state.name,
-                onValueChange = { viewModel.onEvent(EditProfileEvent.OnNameChanged(it)) },
+                onValueChange = { viewModel.onEvent(EditProfileViewModelEvent.OnNameChanged(it)) },
                 label = { Text("이름") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -113,7 +113,7 @@ fun EditProfileScreen(
             Row(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = state.age,
-                    onValueChange = { if (it.length <= 3) viewModel.onEvent(EditProfileEvent.OnAgeChanged(it)) },
+                    onValueChange = { if (it.length <= 3) viewModel.onEvent(EditProfileViewModelEvent.OnAgeChanged(it)) },
                     label = { Text("나이") },
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
@@ -121,7 +121,7 @@ fun EditProfileScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 Box(modifier = Modifier.weight(1f).height(56.dp).align(Alignment.CenterVertically)) {
                     TextButton(
-                        onClick = { viewModel.onEvent(EditProfileEvent.OnGenderChanged(if (state.gender == "M") "F" else "M")) },
+                        onClick = { viewModel.onEvent(EditProfileViewModelEvent.OnGenderChanged(if (state.gender == "M") "F" else "M")) },
                         modifier = Modifier.fillMaxSize()
                     ) {
                         Text("성별: ${if (state.gender == "M") "남성" else "여성"}")
@@ -135,7 +135,7 @@ fun EditProfileScreen(
             Row(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = state.height,
-                    onValueChange = { if (it.length <= 3) viewModel.onEvent(EditProfileEvent.OnHeightChanged(it)) },
+                    onValueChange = { if (it.length <= 3) viewModel.onEvent(EditProfileViewModelEvent.OnHeightChanged(it)) },
                     label = { Text("키 (cm)") },
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
@@ -143,7 +143,7 @@ fun EditProfileScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 OutlinedTextField(
                     value = state.armReach,
-                    onValueChange = { if (it.length <= 3) viewModel.onEvent(EditProfileEvent.OnArmReachChanged(it)) },
+                    onValueChange = { if (it.length <= 3) viewModel.onEvent(EditProfileViewModelEvent.OnArmReachChanged(it)) },
                     label = { Text("암리치 (cm)") },
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
@@ -154,7 +154,7 @@ fun EditProfileScreen(
 
             // Submit Button
             Button(
-                onClick = { viewModel.onEvent(EditProfileEvent.OnUpdateSubmit) },
+                onClick = { viewModel.onEvent(EditProfileViewModelEvent.OnUpdateSubmit) },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(12.dp),
                 enabled = state.name.isNotBlank() && !viewModel.isLoading.value

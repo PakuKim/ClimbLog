@@ -1,13 +1,18 @@
 package io.paku.climblog.domain.interactor.user
 
+import io.ktor.http.HttpStatusCode
 import io.paku.climblog.domain.UserRepository
-import io.paku.climblog.domain.model.User
+import io.paku.climblog.domain.model.AppException
+import io.paku.climblog.domain.model.user.User
 
-class GetUserUseCase(
+internal class GetUserUseCase(
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(userId: Long): Result<User> {
-        val user = userRepository.findById(userId) ?: return Result.failure(IllegalArgumentException("User not found"))
-        return Result.success(user)
+    suspend operator fun invoke(userId: Long): User {
+        val user = userRepository.findById(userId) ?: throw AppException(
+            HttpStatusCode.NotFound,
+            "User not found"
+        )
+        return user
     }
 }

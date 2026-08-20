@@ -1,12 +1,14 @@
 package io.paku.climblog.data.database
 
-import io.paku.climblog.data.database.table.CommentTable
-import io.paku.climblog.data.database.table.DeviceTokenTable
-import io.paku.climblog.data.database.table.FollowTable
-import io.paku.climblog.data.database.table.LikeTable
-import io.paku.climblog.data.database.table.NotificationTable
-import io.paku.climblog.data.database.table.UserTable
-import io.paku.climblog.data.database.table.VideoTable
+import io.paku.climblog.data.database.table.notification.NotificationTable
+import io.paku.climblog.data.database.table.user.UserDeviceTokenTable
+import io.paku.climblog.data.database.table.user.UserFollowTable
+import io.paku.climblog.data.database.table.user.UserSocialAccountsTable
+import io.paku.climblog.data.database.table.user.UserTable
+import io.paku.climblog.data.database.table.video.VideoCommentTable
+import io.paku.climblog.data.database.table.video.VideoCruxTable
+import io.paku.climblog.data.database.table.video.VideoLikeTable
+import io.paku.climblog.data.database.table.video.VideoTable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -31,12 +33,14 @@ internal object DatabaseFactory {
         transaction(database) {
             SchemaUtils.create(
                 UserTable,
+                UserSocialAccountsTable,
+                UserDeviceTokenTable,
+                UserFollowTable,
                 VideoTable,
-                CommentTable,
-                LikeTable,
-                FollowTable,
-                NotificationTable,
-                DeviceTokenTable
+                VideoCommentTable,
+                VideoLikeTable,
+                VideoCruxTable,
+                NotificationTable
             )
         }
     }

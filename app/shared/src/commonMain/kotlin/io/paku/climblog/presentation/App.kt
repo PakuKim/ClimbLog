@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import io.paku.climblog.di.appModule
 import io.paku.climblog.presentation.navigation.AppNavigation
 import io.paku.climblog.presentation.theme.AppTheme
@@ -29,6 +30,7 @@ import io.paku.climblog.presentation.ui.upload.VideoUploadScreen
 import io.paku.climblog.presentation.ui.upload.VideoUploadViewModel
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.dsl.KoinConfiguration
 
 @Composable
@@ -70,22 +72,24 @@ fun App() {
                     val loginViewModel: LoginViewModel = koinInject()
                     LoginScreen(
                         viewModel = loginViewModel,
-                        onNavigateToMain = {
-                            navController.navigate(AppNavigation.Main) {
-                                popUpTo(AppNavigation.Login) { inclusive = true }
-                            }
-                        },
-                        onNavigateToOnboard = { _, _ ->
-                            navController.navigate(AppNavigation.Onboard) {
+                        onNavigateToOnboard = {
+                            navController.navigate(
+                                AppNavigation.Register(
+                                    socialAuthType = it
+                                )
+                            ) {
                                 popUpTo(AppNavigation.Login) { inclusive = true }
                             }
                         }
                     )
                 }
 
-                composable<AppNavigation.Onboard> {
-                    val registerViewModel: RegisterViewModel = koinInject()
-                    RegisterScreen(viewModel = registerViewModel)
+                composable<AppNavigation.Register> {
+                    val registerViewModel: RegisterViewModel = koinViewModel()
+
+                    RegisterScreen(
+                        viewModel = registerViewModel
+                    )
                 }
 
                 composable<AppNavigation.Main> {
@@ -104,7 +108,7 @@ fun App() {
                         }
                     )
                 }
-                
+
                 composable<AppNavigation.Notifications> {
                     val notificationViewModel: NotificationViewModel = koinInject()
                     NotificationScreen(
@@ -116,7 +120,7 @@ fun App() {
                         }
                     )
                 }
-                
+
                 composable<AppNavigation.Upload> {
                     val uploadViewModel: VideoUploadViewModel = koinInject()
                     VideoUploadScreen(
@@ -131,10 +135,10 @@ fun App() {
                 }
 
                 composable<AppNavigation.UserProfile> { backStackEntry ->
-                    val userId = 1L // Extracting args from backStackEntry in real app
+                    val args: AppNavigation.UserProfile = backStackEntry.toRoute()
                     val profileViewModel: ProfileViewModel = koinInject()
                     UserProfileScreen(
-                        userId = userId,
+                        userId = args.userId,
                         viewModel = profileViewModel,
                         onNavigateBack = { navController.popBackStack() },
                         onVideoClick = { }

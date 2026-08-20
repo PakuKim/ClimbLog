@@ -36,7 +36,7 @@ internal object KtorHttpClientFactory {
         Platform.ANDROID -> "http://10.0.2.2:8080/"
         Platform.IOS -> "http://127.0.0.1:8080/"
         else -> "http://localhost:8080/"
-    }
+    } + "api/v1/"
     private const val REFRESH_TOKEN_URL = "auth/refresh"
     private const val CONNECTION_TIMEOUT = 10_000L
 

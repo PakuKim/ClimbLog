@@ -1,5 +1,6 @@
 package io.paku.climblog.presentation.video
 
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,5 +11,5 @@ data class CommentResponse(
     val userName: String,
     val userProfilePhotoUrl: String?,
     val content: String,
-    val createdAt: Long
+    val createdAt: LocalDateTime
 )

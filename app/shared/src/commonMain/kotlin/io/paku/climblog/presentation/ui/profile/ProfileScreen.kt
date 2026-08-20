@@ -45,7 +45,7 @@ import io.paku.climblog.presentation.ui.search.VideoThumbnailItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(
+internal fun ProfileScreen(
     viewModel: ProfileViewModel,
     onUploadClick: () -> Unit,
     onVideoClick: (Long) -> Unit,
@@ -86,7 +86,7 @@ fun ProfileScreen(
                     profile = profile, 
                     isMyProfile = state.isMyProfile, 
                     isFollowingInProgress = state.isFollowingInProgress,
-                    onFollowClick = { viewModel.onEvent(ProfileEvent.ToggleFollow) },
+                    onFollowClick = { viewModel.onEvent(ProfileViewModelEvent.ToggleFollow) },
                     onEditClick = onEditClick
                 )
 
@@ -143,7 +143,7 @@ fun ProfileHeader(
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(profile.user.name, fontWeight = FontWeight.Bold)
-        profile.user.age?.let { Text("Age: $it", fontSize = 14.sp) }
+        profile.user.age.let { Text("Age: $it", fontSize = 14.sp) }
         Row {
             profile.user.height?.let { Text("H: ${it}cm ", fontSize = 14.sp) }
             profile.user.armReach?.let { Text("A: ${it}cm", fontSize = 14.sp) }

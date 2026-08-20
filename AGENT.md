@@ -110,7 +110,6 @@ ClimbLog/
 ### ① Splash & Onboarding
 * **Splash**: Check JWT validity and route to Main or Login.
 * **Social Login**: Google, Kakao, Naver.
-  * Required fields: Name, Email, Phone, Gender.
 * **Additional User Info (Registration Step)**:
   * Profile Photo (Nullable)
   * Unique Handle/ID (Must perform duplication check API)

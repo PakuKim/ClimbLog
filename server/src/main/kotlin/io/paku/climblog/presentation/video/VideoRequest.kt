@@ -11,8 +11,13 @@ data class PresignedUrlRequest(
 @Serializable
 data class RegisterVideoRequest(
     val title: String,
-    val description: String? = null,
+    val description: String,
     val s3Key: String,
-    val cruxStartTime: Double? = null,
-    val cruxEndTime: Double? = null
-)
+    val cruxes: List<Crux>,
+) {
+    @Serializable
+    data class Crux(
+        val startTime: Double,
+        val endTime: Double
+    )
+}

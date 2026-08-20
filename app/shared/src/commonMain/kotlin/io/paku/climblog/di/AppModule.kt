@@ -1,7 +1,6 @@
 package io.paku.climblog.di
 
 import io.paku.climblog.business.data.di.DataModule
-import io.paku.climblog.business.domain.SocialAuthManager
 import io.paku.climblog.business.domain.di.DomainModule
 import io.paku.climblog.business.local.di.LocalModule
 import io.paku.climblog.business.remote.di.RemoteModule
@@ -17,6 +16,8 @@ import io.paku.climblog.presentation.ui.profile.edit.EditProfileViewModel
 import io.paku.climblog.presentation.ui.search.SearchViewModel
 import io.paku.climblog.presentation.ui.settings.SettingsViewModel
 import io.paku.climblog.presentation.ui.upload.VideoUploadViewModel
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 fun appModule() = module {
@@ -27,14 +28,14 @@ fun appModule() = module {
         LocalModule,
         RemoteModule,
         platformDataStoreModule,
+        platformSocialModule
     )
 }
 
 val uiModule = module {
-    single { SocialAuthManager() }
-    factory { AppViewModel(get(), get(), get(), get()) }
-    factory { LoginViewModel(get(), get()) }
-    factory { RegisterViewModel(get(), get()) }
+    factory { AppViewModel(get(), get()) }
+    factory { LoginViewModel(get()) }
+    viewModelOf(::RegisterViewModel)
     factory { HomeFeedViewModel(get()) }
     factory { SearchViewModel(get(), get()) }
     factory { ProfileViewModel(get(), get()) }
@@ -44,3 +45,5 @@ val uiModule = module {
     factory { VideoUploadViewModel(get()) }
     factory { MainViewModel(get()) }
 }
+
+expect val platformSocialModule: Module

@@ -1,5 +1,6 @@
 package io.paku.climblog.presentation.video
 
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,10 +14,16 @@ data class VideoResponse(
     val id: Long,
     val userId: Long,
     val title: String,
-    val description: String?,
+    val description: String,
     val hlsUrl: String,
     val thumbnailUrl: String?,
-    val cruxStartTime: Double?,
-    val cruxEndTime: Double?,
-    val createdAt: Long
-)
+    val cruxes: List<Crux>,
+    val createdAt: LocalDateTime
+) {
+    @Serializable
+    data class Crux(
+        val id: Long,
+        val cruxStartTime: Double,
+        val cruxEndTime: Double,
+    )
+}

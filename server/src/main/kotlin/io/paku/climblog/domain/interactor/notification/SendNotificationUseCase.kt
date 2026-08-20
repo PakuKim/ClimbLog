@@ -35,7 +35,6 @@ class SendNotificationUseCase(
             fromUserProfilePhotoUrl = fromUser.profilePhotoUrl,
             videoId = videoId,
             isRead = false,
-            createdAt = System.currentTimeMillis()
         )
 
         notificationRepository.save(notification)

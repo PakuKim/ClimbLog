@@ -42,7 +42,7 @@ import io.paku.climblog.business.domain.model.Video
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(
+internal fun SearchScreen(
     viewModel: SearchViewModel,
     onUserClick: (Long) -> Unit,
     onVideoClick: (Long) -> Unit

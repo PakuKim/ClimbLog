@@ -1,11 +1,11 @@
 package io.paku.climblog.domain.interactor.user
 
-import io.paku.climblog.domain.FollowRepository
+import io.paku.climblog.domain.UserFollowRepository
 
-class UnfollowUserUseCase(
-    private val followRepository: FollowRepository
+internal class UnfollowUserUseCase(
+    private val userFollowRepository: UserFollowRepository
 ) {
-    suspend operator fun invoke(followerId: Long, followingId: Long): Result<Unit> = runCatching {
-        followRepository.unfollow(followerId, followingId)
+    suspend operator fun invoke(followerId: Long, followingId: Long) {
+        userFollowRepository.unfollow(followerId, followingId)
     }
 }

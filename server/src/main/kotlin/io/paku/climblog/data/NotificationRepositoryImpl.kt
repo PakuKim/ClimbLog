@@ -1,12 +1,13 @@
 package io.paku.climblog.data
 
 import io.paku.climblog.data.database.DatabaseFactory.dbQuery
-import io.paku.climblog.data.database.table.DeviceTokenTable
-import io.paku.climblog.data.database.table.NotificationTable
-import io.paku.climblog.data.database.table.UserTable
+import io.paku.climblog.data.database.table.notification.NotificationTable
+import io.paku.climblog.data.database.table.user.UserDeviceTokenTable
+import io.paku.climblog.data.database.table.user.UserTable
 import io.paku.climblog.domain.NotificationRepository
 import io.paku.climblog.domain.model.Notification
 import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
@@ -15,15 +16,14 @@ import org.jetbrains.exposed.v1.jdbc.update
 import org.jetbrains.exposed.v1.jdbc.upsert
 
 internal class NotificationRepositoryImpl : NotificationRepository {
-
     private fun ResultRow.toDomainNotification(): Notification = Notification(
-        id = this[NotificationTable.id],
-        userId = this[NotificationTable.userId],
+        id = this[NotificationTable.id].value,
+        userId = this[NotificationTable.userId].value,
         type = this[NotificationTable.type],
-        fromUserId = this[NotificationTable.fromUserId],
+        fromUserId = this[NotificationTable.fromUserId].value,
         fromUserName = this[UserTable.name],
         fromUserProfilePhotoUrl = this[UserTable.profilePhotoUrl],
-        videoId = this[NotificationTable.videoId],
+        videoId = this[NotificationTable.videoId]?.value,
         isRead = this[NotificationTable.isRead],
         createdAt = this[NotificationTable.createdAt]
     )
@@ -32,7 +32,7 @@ internal class NotificationRepositoryImpl : NotificationRepository {
         (NotificationTable innerJoin UserTable)
             .selectAll()
             .where { NotificationTable.userId eq userId }
-            .orderBy(NotificationTable.createdAt, org.jetbrains.exposed.v1.core.SortOrder.DESC)
+            .orderBy(NotificationTable.createdAt, SortOrder.DESC)
             .map { it.toDomainNotification() }
     }
 
@@ -57,24 +57,24 @@ internal class NotificationRepositoryImpl : NotificationRepository {
             it[videoId] = notification.videoId
             it[message] = "" // Placeholder or construct message
             it[isRead] = false
-            it[createdAt] = System.currentTimeMillis()
         }
-        notification.copy(id = insertedStatement[NotificationTable.id])
+
+        notification.copy(id = insertedStatement[NotificationTable.id].value)
     }
 
     override suspend fun saveDeviceToken(userId: Long, fcmToken: String) = dbQuery {
-        DeviceTokenTable.upsert {
-            it[DeviceTokenTable.userId] = userId
-            it[DeviceTokenTable.fcmToken] = fcmToken
+        UserDeviceTokenTable.upsert {
+            it[UserDeviceTokenTable.userId] = userId
+            it[UserDeviceTokenTable.fcmToken] = fcmToken
             it[updatedAt] = System.currentTimeMillis()
         }
         Unit
     }
 
     override suspend fun getDeviceToken(userId: Long): String? = dbQuery {
-        DeviceTokenTable.selectAll()
-            .where { DeviceTokenTable.userId eq userId }
-            .map { it[DeviceTokenTable.fcmToken] }
+        UserDeviceTokenTable.selectAll()
+            .where { UserDeviceTokenTable.userId eq userId }
+            .map { it[UserDeviceTokenTable.fcmToken] }
             .singleOrNull()
     }
 }

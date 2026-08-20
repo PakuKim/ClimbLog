@@ -1,55 +1,93 @@
 package io.paku.climblog.data
 
 import io.paku.climblog.data.database.DatabaseFactory.dbQuery
-import io.paku.climblog.data.database.table.VideoTable
+import io.paku.climblog.data.database.table.video.VideoCruxTable
+import io.paku.climblog.data.database.table.video.VideoTable
 import io.paku.climblog.domain.VideoRepository
-import io.paku.climblog.domain.model.Video
+import io.paku.climblog.domain.model.video.Video
+import io.paku.climblog.domain.model.video.VideoCrux
+import org.jetbrains.exposed.v1.core.Random
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.less
+import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 
 internal class VideoRepositoryImpl : VideoRepository {
 
-    private fun ResultRow.toDomainVideo(): Video = Video(
-        id = this[VideoTable.id],
-        userId = this[VideoTable.userId],
+    private fun ResultRow.toDomainVideo(videoCruxes: List<VideoCrux>): Video = Video(
+        id = this[VideoTable.id].value,
+        userId = this[VideoTable.userId].value,
         title = this[VideoTable.title],
         description = this[VideoTable.description],
         hlsUrl = this[VideoTable.hlsUrl],
         thumbnailUrl = this[VideoTable.thumbnailUrl],
-        cruxStartTime = this[VideoTable.cruxStartTime],
-        cruxEndTime = this[VideoTable.cruxEndTime],
-        createdAt = this[VideoTable.createdAt]
+        createdAt = this[VideoTable.createdAt],
+        videoCruxes = videoCruxes
     )
 
+    private fun ResultRow.toDomainCrux(): VideoCrux = VideoCrux(
+        id = this[VideoCruxTable.id].value,
+        videoId = this[VideoCruxTable.videoId].value,
+        startTime = this[VideoCruxTable.cruxStartTime],
+        endTime = this[VideoCruxTable.cruxEndTime]
+    )
+
+    private fun getCruxesForVideos(videoIds: List<Long>): Map<Long, List<VideoCrux>> {
+        if (videoIds.isEmpty()) return emptyMap()
+        
+        return VideoCruxTable.selectAll()
+            .where { 
+                videoIds.map { id -> VideoCruxTable.videoId eq id }
+                    .reduce { acc, op -> acc or op }
+            }
+            .map { it.toDomainCrux() }
+            .groupBy { it.videoId }
+    }
+
     override suspend fun save(video: Video): Video = dbQuery {
-        val insertedStatement = VideoTable.insert {
+        val videoId = VideoTable.insert {
             it[userId] = video.userId
             it[title] = video.title
             it[description] = video.description
             it[hlsUrl] = video.hlsUrl
             it[thumbnailUrl] = video.thumbnailUrl
-            it[cruxStartTime] = video.cruxStartTime
-            it[cruxEndTime] = video.cruxEndTime
-            it[createdAt] = video.createdAt
+        }[VideoTable.id].value
+
+        video.videoCruxes.forEach { crux ->
+            VideoCruxTable.insert {
+                it[VideoCruxTable.videoId] = videoId
+                it[cruxStartTime] = crux.startTime
+                it[cruxEndTime] = crux.endTime
+            }
         }
-        video.copy(id = insertedStatement[VideoTable.id])
+        
+        findById(videoId)!!
     }
 
     override suspend fun findById(id: Long): Video? = dbQuery {
-        VideoTable.selectAll()
+        val videoRow = VideoTable.selectAll()
             .where { VideoTable.id eq id }
-            .map { it.toDomainVideo() }
-            .singleOrNull()
+            .singleOrNull() ?: return@dbQuery null
+
+        val cruxes = VideoCruxTable.selectAll()
+            .where { VideoCruxTable.videoId eq id }
+            .map { it.toDomainCrux() }
+
+        videoRow.toDomainVideo(cruxes)
     }
 
     override suspend fun findAllByUserId(userId: Long): List<Video> = dbQuery {
-        VideoTable.selectAll()
+        val videoRows = VideoTable.selectAll()
             .where { VideoTable.userId eq userId }
-            .map { it.toDomainVideo() }
+            .toList()
+        
+        val videoIds = videoRows.map { it[VideoTable.id].value }
+        val cruxesMap = getCruxesForVideos(videoIds)
+
+        videoRows.map { it.toDomainVideo(cruxesMap[it[VideoTable.id].value] ?: emptyList()) }
     }
 
     override suspend fun findAllPaged(cursor: Long?, limit: Int): List<Video> = dbQuery {
@@ -59,16 +97,25 @@ internal class VideoRepositoryImpl : VideoRepository {
             VideoTable.selectAll()
         }
         
-        query.orderBy(VideoTable.id to SortOrder.DESC)
+        val videoRows = query.orderBy(VideoTable.id to SortOrder.DESC)
             .limit(limit)
-            .map { it.toDomainVideo() }
+            .toList()
+
+        val videoIds = videoRows.map { it[VideoTable.id].value }
+        val cruxesMap = getCruxesForVideos(videoIds)
+
+        videoRows.map { it.toDomainVideo(cruxesMap[it[VideoTable.id].value] ?: emptyList()) }
     }
 
     override suspend fun findRandom(limit: Int): List<Video> = dbQuery {
-        // Simple random: in real production we might use Native function 'RANDOM()'
-        VideoTable.selectAll()
-            .orderBy(org.jetbrains.exposed.v1.core.CustomFunction<Double>("RANDOM", org.jetbrains.exposed.v1.core.DoubleColumnType()))
+        val videoRows = VideoTable.selectAll()
+            .orderBy(Random())
             .limit(limit)
-            .map { it.toDomainVideo() }
+            .toList()
+
+        val videoIds = videoRows.map { it[VideoTable.id].value }
+        val cruxesMap = getCruxesForVideos(videoIds)
+
+        videoRows.map { it.toDomainVideo(cruxesMap[it[VideoTable.id].value] ?: emptyList()) }
     }
 }

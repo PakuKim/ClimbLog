@@ -1,12 +1,12 @@
 package io.paku.climblog.domain.interactor.video
 
-import io.paku.climblog.domain.CommentRepository
+import io.paku.climblog.domain.VideoCommentRepository
 import io.paku.climblog.domain.VideoRepository
 import io.paku.climblog.domain.interactor.notification.SendNotificationUseCase
-import io.paku.climblog.domain.model.Comment
+import io.paku.climblog.domain.model.video.VideoComment
 
 class PostCommentUseCase(
-    private val commentRepository: CommentRepository,
+    private val videoCommentRepository: VideoCommentRepository,
     private val videoRepository: VideoRepository,
     private val sendNotificationUseCase: SendNotificationUseCase
 ) {
@@ -14,17 +14,16 @@ class PostCommentUseCase(
         userId: Long,
         videoId: Long,
         content: String
-    ): Result<Comment> = runCatching {
-        val comment = Comment(
+    ): Result<VideoComment> = runCatching {
+        val videoComment = VideoComment(
             videoId = videoId,
             userId = userId,
-            userName = "", // Filled by repo
+            userName = "",
             userProfilePhotoUrl = null,
             content = content,
-            createdAt = System.currentTimeMillis()
         )
         
-        val savedComment = commentRepository.save(comment)
+        val savedComment = videoCommentRepository.save(videoComment)
         
         val video = videoRepository.findById(videoId)
         if (video != null) {

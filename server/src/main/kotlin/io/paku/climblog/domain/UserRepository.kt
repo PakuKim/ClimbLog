@@ -1,15 +1,13 @@
 package io.paku.climblog.domain
 
-import io.paku.climblog.domain.model.User
+import io.paku.climblog.domain.model.user.User
 
 interface UserRepository {
     suspend fun findById(id: Long): User?
 
-    suspend fun findByEmail(email: String): User?
-
     suspend fun findByHandle(handle: String): User?
 
-    suspend fun existsByEmail(email: String): Boolean
+    suspend fun findBySocialId(provider: String, providerId: String): User?
 
     suspend fun existsByHandle(handle: String): Boolean
 

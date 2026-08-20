@@ -15,7 +15,6 @@ class S3ProviderImpl(
     secretKey: String,
     region: String
 ) : S3Provider {
-
     private val s3Client: AmazonS3 = AmazonS3ClientBuilder.standard()
         .withCredentials(AWSStaticCredentialsProvider(BasicAWSCredentials(accessKey, secretKey)))
         .withRegion(region)

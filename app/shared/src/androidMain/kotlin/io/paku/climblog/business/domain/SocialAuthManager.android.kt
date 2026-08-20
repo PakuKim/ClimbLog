@@ -5,8 +5,8 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.kakao.sdk.user.UserApiClient
-import com.navercorp.nid.NaverIdLoginSDK
-import com.navercorp.nid.oauth.OAuthLoginCallback
+import com.navercorp.nid.NidOAuth
+import com.navercorp.nid.oauth.util.NidOAuthCallback
 import io.paku.climblog.business.domain.model.SocialAuthResult
 import io.paku.climblog.business.domain.model.SocialProvider
 import io.paku.climblog.core.ActivityProvider
@@ -91,9 +91,9 @@ actual class SocialAuthManager actual constructor() {
     }
 
     private suspend fun loginNaver(activity: android.app.Activity): Result<SocialAuthResult> = suspendCancellableCoroutine { continuation ->
-        val oauthLoginCallback = object : OAuthLoginCallback {
+        val callback = object : NidOAuthCallback {
             override fun onSuccess() {
-                val accessToken = NaverIdLoginSDK.getAccessToken()
+                val accessToken = NidOAuth.getAccessToken()
                 continuation.resume(
                     Result.success(
                         SocialAuthResult(
@@ -106,14 +106,15 @@ actual class SocialAuthManager actual constructor() {
                     )
                 )
             }
-            override fun onFailure(httpStatus: Int, message: String) {
-                continuation.resume(Result.failure(Exception("Naver login failed: $message")))
-            }
-            override fun onError(errorCode: Int, message: String) {
-                onFailure(errorCode, message)
+
+            override fun onFailure(errorCode: String, errorDesc: String) {
+                continuation.resume(Result.failure(Exception("Naver login failed: $errorDesc")))
             }
         }
-        
-        NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
+
+        NidOAuth.requestLogin(
+            context = activity,
+            callback = callback
+        )
     }
 }

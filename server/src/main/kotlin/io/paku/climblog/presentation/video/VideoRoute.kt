@@ -10,14 +10,15 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import io.paku.climblog.domain.CommentRepository
-import io.paku.climblog.domain.LikeRepository
+import io.paku.climblog.domain.VideoCommentRepository
+import io.paku.climblog.domain.VideoLikeRepository
 import io.paku.climblog.domain.VideoRepository
 import io.paku.climblog.domain.interactor.video.GetRandomVideosUseCase
 import io.paku.climblog.domain.interactor.video.PostCommentUseCase
 import io.paku.climblog.domain.interactor.video.ToggleLikeUseCase
-import io.paku.climblog.domain.model.Comment
-import io.paku.climblog.domain.model.Video
+import io.paku.climblog.domain.model.video.Video
+import io.paku.climblog.domain.model.video.VideoComment
+import io.paku.climblog.domain.model.video.VideoCrux
 import io.paku.climblog.domain.provider.S3Provider
 import org.koin.ktor.ext.inject
 import java.util.UUID
@@ -28,8 +29,8 @@ fun Route.videoRoutes(
 ) {
     val s3Provider: S3Provider by inject()
     val videoRepository: VideoRepository by inject()
-    val commentRepository: CommentRepository by inject()
-    val likeRepository: LikeRepository by inject()
+    val videoCommentRepository: VideoCommentRepository by inject()
+    val videoLikeRepository: VideoLikeRepository by inject()
     val getRandomVideosUseCase: GetRandomVideosUseCase by inject()
     val toggleLikeUseCase: ToggleLikeUseCase by inject()
     val postCommentUseCase: PostCommentUseCase by inject()
@@ -100,9 +101,12 @@ fun Route.videoRoutes(
                     description = request.description,
                     hlsUrl = hlsUrl,
                     thumbnailUrl = thumbnailUrl,
-                    cruxStartTime = request.cruxStartTime,
-                    cruxEndTime = request.cruxEndTime,
-                    createdAt = System.currentTimeMillis()
+                    videoCruxes = request.cruxes.map {
+                        VideoCrux(
+                            startTime = it.startTime,
+                            endTime = it.endTime
+                        )
+                    }
                 )
 
                 val savedVideo = videoRepository.save(video)
@@ -124,7 +128,7 @@ fun Route.videoRoutes(
                 route("/comments") {
                     get {
                         val videoId = call.parameters["id"]?.toLongOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
-                        val comments = commentRepository.findAllByVideoId(videoId)
+                        val comments = videoCommentRepository.findAllByVideoId(videoId)
                         call.respond(HttpStatusCode.OK, comments.map { it.toResponse() })
                     }
 
@@ -145,7 +149,7 @@ fun Route.videoRoutes(
     }
 }
 
-private fun Comment.toResponse() = CommentResponse(
+private fun VideoComment.toResponse() = CommentResponse(
     id = id,
     videoId = videoId,
     userId = userId,
@@ -162,7 +166,13 @@ private fun Video.toResponse() = VideoResponse(
     description = description,
     hlsUrl = hlsUrl,
     thumbnailUrl = thumbnailUrl,
-    cruxStartTime = cruxStartTime,
-    cruxEndTime = cruxEndTime,
+    cruxes = videoCruxes.map {
+        VideoResponse.Crux(
+            id = it.id,
+            cruxStartTime = it.startTime,
+            cruxEndTime = it.endTime
+        )
+    },
     createdAt = createdAt
 )
+

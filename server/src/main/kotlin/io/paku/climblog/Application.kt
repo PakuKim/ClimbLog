@@ -8,6 +8,7 @@ import io.paku.climblog.plugin.configureFirebaseAdmin
 import io.paku.climblog.plugin.configureRouting
 import io.paku.climblog.plugin.configureSecurity
 import io.paku.climblog.plugin.configureSerialization
+import io.paku.climblog.plugin.configureStatusPages
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
@@ -18,4 +19,5 @@ fun Application.module() {
     configureSecurity()
     configureSerialization()
     configureRouting()
+    configureStatusPages()
 }

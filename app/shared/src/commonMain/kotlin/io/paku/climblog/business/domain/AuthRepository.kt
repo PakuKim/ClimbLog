@@ -1,26 +1,24 @@
 package io.paku.climblog.business.domain
 
+import io.paku.climblog.business.domain.model.SocialAuthType
+
 interface AuthRepository {
-    suspend fun register(
-        email: String,
-        password: String,
-        name: String,
-    ): Result<Unit>
-
-    suspend fun login(
-        email: String,
-        password: String,
-    ): Result<Unit>
-
     suspend fun socialLogin(
-        provider: String,
-        accessToken: String?,
-        idToken: String?
-    ): Result<Boolean> // returns isRegistered
+        socialAuthType: SocialAuthType,
+        socialToken: String,
+    )
 
-    suspend fun logout(): Result<Unit>
+    suspend fun socialRegister(
+        socialToken: String,
+        socialAuthType: SocialAuthType,
+        handle: String,
+        name: String,
+        age: Int,
+        height: Int,
+        armReach: Int,
+        gender: String,
+        profilePhotoUrl: String?
+    )
 
-    suspend fun checkEmail(
-        email: String
-    ): Result<Boolean>
+    suspend fun logout()
 }

@@ -1,6 +1,6 @@
 package io.paku.climblog.domain
 
-import io.paku.climblog.domain.model.Video
+import io.paku.climblog.domain.model.video.Video
 
 interface VideoRepository {
     suspend fun save(video: Video): Video

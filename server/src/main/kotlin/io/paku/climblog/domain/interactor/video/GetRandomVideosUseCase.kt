@@ -1,7 +1,7 @@
 package io.paku.climblog.domain.interactor.video
 
 import io.paku.climblog.domain.VideoRepository
-import io.paku.climblog.domain.model.Video
+import io.paku.climblog.domain.model.video.Video
 
 class GetRandomVideosUseCase(
     private val videoRepository: VideoRepository

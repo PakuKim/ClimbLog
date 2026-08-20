@@ -1,5 +1,6 @@
 package io.paku.climblog.presentation.notification
 
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,7 +12,7 @@ data class NotificationResponse(
     val fromUserProfilePhotoUrl: String?,
     val videoId: Long?,
     val isRead: Boolean,
-    val createdAt: Long
+    val createdAt: LocalDateTime
 )
 
 @Serializable

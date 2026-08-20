@@ -16,7 +16,7 @@ sealed class SettingsEvent : Event {
     object OnDeleteAccountClick : SettingsEvent()
 }
 
-class SettingsViewModel(
+internal class SettingsViewModel(
     private val logoutUseCase: LogoutUseCase,
     private val deleteUserUseCase: DeleteUserUseCase
 ) : BaseViewModel<SettingsState, SettingsEvent>() {
@@ -37,14 +37,10 @@ class SettingsViewModel(
     }
 
     private fun logout() = launchWithLoading {
-        logoutUseCase().onSuccess {
-            updateState { copy(isLogoutSuccess = true) }
-        }
+        logoutUseCase()
     }
 
     private fun deleteAccount() = launchWithLoading {
-        deleteUserUseCase().onSuccess {
-            updateState { copy(isDeleteAccountSuccess = true) }
-        }
+        deleteUserUseCase()
     }
 }

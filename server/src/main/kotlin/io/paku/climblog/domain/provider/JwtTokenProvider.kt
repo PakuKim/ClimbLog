@@ -1,7 +1,7 @@
 package io.paku.climblog.domain.provider
 
 import com.auth0.jwt.JWTVerifier
-import io.paku.climblog.domain.model.AuthToken
+import io.paku.climblog.domain.model.token.AuthToken
 
 interface JwtTokenProvider {
     fun generateToken(userId: Long): AuthToken

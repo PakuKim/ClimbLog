@@ -1,29 +1,31 @@
 package io.paku.climblog.domain.interactor.user
 
+import io.ktor.http.HttpStatusCode
 import io.paku.climblog.domain.UserRepository
-import io.paku.climblog.domain.model.User
+import io.paku.climblog.domain.model.AppException
+import io.paku.climblog.domain.model.user.User
 
-class UpdateUserUseCase(
+internal class UpdateUserUseCase(
     private val userRepository: UserRepository
 ) {
     suspend operator fun invoke(
         userId: Long,
-        name: String,
-        age: Int?,
-        height: Int?,
-        armReach: Int?,
-        gender: String?,
+        name: String? = null,
+        age: Int? = null,
+        height: Int? = null,
+        armReach: Int? = null,
+        gender: String? = null,
         profilePhotoUrl: String?
-    ): Result<User> = runCatching {
-        val user = userRepository.findById(userId) ?: throw Exception("User not found")
+    ): User {
+        val user = userRepository.findById(userId) ?: throw AppException(HttpStatusCode.NotFound, "User not found")
         val updatedUser = user.copy(
-            name = name,
-            age = age,
-            height = height,
-            armReach = armReach,
-            gender = gender,
+            name = name ?: user.name,
+            age = age ?: user.age,
+            height = height ?: user.height,
+            armReach = armReach ?: user.armReach,
+            gender = gender ?: user.gender,
             profilePhotoUrl = profilePhotoUrl
         )
-        userRepository.update(updatedUser)
+        return userRepository.update(updatedUser)
     }
 }

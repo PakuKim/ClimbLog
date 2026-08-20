@@ -13,6 +13,7 @@ import org.koin.dsl.module
 
 val RemoteModule = module {
     single { KtorHttpClientFactory.create(get()) }
+
     single<AuthRemoteDataSource> { AuthRemoteDataSourceImpl(get()) }
     single<UserRemoteDataSource> { UserRemoteDataSourceImpl(get()) }
     single<VideoRemoteDataSource> { VideoRemoteDataSourceImpl(get()) }

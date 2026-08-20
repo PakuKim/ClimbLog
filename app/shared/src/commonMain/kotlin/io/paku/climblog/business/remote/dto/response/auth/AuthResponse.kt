@@ -8,7 +8,5 @@ data class AuthResponse(
     @SerialName("accessToken")
     val accessToken: String,
     @SerialName("refreshToken")
-    val refreshToken: String,
-    @SerialName("isRegistered")
-    val isRegistered: Boolean = true
+    val refreshToken: String
 )

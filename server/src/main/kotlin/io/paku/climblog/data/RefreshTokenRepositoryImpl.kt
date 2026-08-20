@@ -2,7 +2,7 @@ package io.paku.climblog.data
 
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
 import io.lettuce.core.api.coroutines.RedisCoroutinesCommands
-import io.paku.climblog.data.sercurity.JwtTokenProviderImpl.Companion.REFRESH_TOKEN_EXPIRATION_MS
+import io.paku.climblog.data.provider.JwtTokenProviderImpl.Companion.REFRESH_TOKEN_EXPIRATION_MS
 import io.paku.climblog.domain.RefreshTokenRepository
 
 @OptIn(ExperimentalLettuceCoroutinesApi::class)

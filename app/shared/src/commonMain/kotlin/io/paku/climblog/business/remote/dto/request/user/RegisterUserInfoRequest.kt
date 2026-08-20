@@ -5,10 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RegisterUserInfoRequest(
-    @SerialName("handle")
-    val handle: String,
     @SerialName("name")
-    val name: String,
+    val name: String? = null,
     @SerialName("age")
     val age: Int? = null,
     @SerialName("height")

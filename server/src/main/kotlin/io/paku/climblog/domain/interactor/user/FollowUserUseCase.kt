@@ -1,16 +1,21 @@
 package io.paku.climblog.domain.interactor.user
 
-import io.paku.climblog.domain.FollowRepository
+import io.ktor.http.HttpStatusCode
+import io.paku.climblog.domain.UserFollowRepository
 import io.paku.climblog.domain.interactor.notification.SendNotificationUseCase
+import io.paku.climblog.domain.model.AppException
 
-class FollowUserUseCase(
-    private val followRepository: FollowRepository,
+internal class FollowUserUseCase(
+    private val userFollowRepository: UserFollowRepository,
     private val sendNotificationUseCase: SendNotificationUseCase
 ) {
-    suspend operator fun invoke(followerId: Long, followingId: Long): Result<Unit> = runCatching {
-        if (followerId == followingId) throw Exception("Cannot follow yourself")
+    suspend operator fun invoke(followerId: Long, followingId: Long) {
+        if (followerId == followingId) throw AppException(
+            HttpStatusCode.BadRequest,
+            "Cannot follow yourself"
+        )
         
-        val newlyFollowed = followRepository.follow(followerId, followingId)
+        val newlyFollowed = userFollowRepository.follow(followerId, followingId)
         
         if (newlyFollowed) {
             sendNotificationUseCase(

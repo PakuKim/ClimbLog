@@ -22,7 +22,7 @@ sealed class SearchEvent : Event {
     object LoadRandomVideos : SearchEvent()
 }
 
-class SearchViewModel(
+internal class SearchViewModel(
     private val userRepository: UserRepository,
     private val videoRepository: VideoRepository
 ) : BaseViewModel<SearchState, SearchEvent>() {
@@ -63,11 +63,8 @@ class SearchViewModel(
         searchJob = launch {
             delay(300) // Debounce
             updateState { copy(isSearching = true) }
-            userRepository.searchUsers(query).onSuccess { users ->
-                updateState { copy(searchResults = users, isSearching = false) }
-            }.onFailure {
-                updateState { copy(isSearching = false) }
-            }
+            val users = userRepository.searchUsers(query)
+            updateState { copy(searchResults = users, isSearching = false) }
         }
     }
 

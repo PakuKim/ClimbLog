@@ -21,23 +21,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.business.domain.model.SocialProvider
+import io.paku.climblog.business.domain.model.SocialAuthType
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun LoginScreen(
+internal fun LoginScreen(
     viewModel: LoginViewModel,
-    onNavigateToMain: () -> Unit,
-    onNavigateToOnboard: (email: String, name: String) -> Unit
+    onNavigateToOnboard: (SocialAuthType) -> Unit
 ) {
     val state = viewModel.state.value
 
-    LaunchedEffect(state.isRegistered) {
-        if (state.isRegistered != null) {
-            if (state.isRegistered == true) {
-                onNavigateToMain()
-            } else {
-                onNavigateToOnboard(state.socialEmail, state.socialName)
-            }
+    LaunchedEffect(Unit) {
+        viewModel.error.collectLatest {
+            onNavigateToOnboard(SocialAuthType.KAKAO)
         }
     }
 
@@ -66,7 +62,7 @@ fun LoginScreen(
             text = "Continue with Google",
             containerColor = Color.White,
             contentColor = Color.Black,
-            onClick = { viewModel.onEvent(LoginEvent.OnSocialLoginClick(SocialProvider.GOOGLE)) }
+            onClick = { viewModel.onEvent(LoginViewModelEvent.OnSocialLoginClick(SocialAuthType.GOOGLE)) }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -75,7 +71,7 @@ fun LoginScreen(
             text = "Continue with Kakao",
             containerColor = Color(0xFFFEE500),
             contentColor = Color.Black,
-            onClick = { viewModel.onEvent(LoginEvent.OnSocialLoginClick(SocialProvider.KAKAO)) }
+            onClick = { viewModel.onEvent(LoginViewModelEvent.OnSocialLoginClick(SocialAuthType.KAKAO)) }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -84,7 +80,7 @@ fun LoginScreen(
             text = "Continue with Naver",
             containerColor = Color(0xFF03C75A),
             contentColor = Color.White,
-            onClick = { viewModel.onEvent(LoginEvent.OnSocialLoginClick(SocialProvider.NAVER)) }
+            onClick = { viewModel.onEvent(LoginViewModelEvent.OnSocialLoginClick(SocialAuthType.NAVER)) }
         )
 
         if (state.loginError != null) {
@@ -103,7 +99,7 @@ fun LoginScreen(
 }
 
 @Composable
-fun SocialLoginButton(
+private fun SocialLoginButton(
     text: String,
     containerColor: Color,
     contentColor: Color,

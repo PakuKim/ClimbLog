@@ -16,7 +16,7 @@ interface UserRemoteDataSource {
     suspend fun unfollow(userId: Long)
     
     suspend fun updateUser(
-        name: String,
+        name: String?,
         age: Int?,
         height: Int?,
         armReach: Int?,
@@ -25,14 +25,4 @@ interface UserRemoteDataSource {
     ): User
 
     suspend fun deleteUser()
-    
-    suspend fun registerUser(
-        handle: String,
-        name: String,
-        age: Int?,
-        height: Int?,
-        armReach: Int?,
-        gender: String?,
-        profilePhotoUrl: String?
-    ): User
 }

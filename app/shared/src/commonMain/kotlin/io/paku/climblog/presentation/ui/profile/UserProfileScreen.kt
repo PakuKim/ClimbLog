@@ -38,7 +38,7 @@ import io.paku.climblog.presentation.ui.search.VideoThumbnailItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileScreen(
+internal fun UserProfileScreen(
     userId: Long,
     viewModel: ProfileViewModel,
     onNavigateBack: () -> Unit,
@@ -48,7 +48,7 @@ fun UserProfileScreen(
     val profile = state.userProfile
 
     LaunchedEffect(userId) {
-        viewModel.onEvent(ProfileEvent.LoadProfile(userId, isMyProfile = false))
+        viewModel.onEvent(ProfileViewModelEvent.LoadProfile(userId, isMyProfile = false))
     }
 
     Scaffold(
@@ -78,7 +78,7 @@ fun UserProfileScreen(
                     profile = profile, 
                     isMyProfile = false, 
                     isFollowingInProgress = state.isFollowingInProgress,
-                    onFollowClick = { viewModel.onEvent(ProfileEvent.ToggleFollow) },
+                    onFollowClick = { viewModel.onEvent(ProfileViewModelEvent.ToggleFollow) },
                     onEditClick = { }
                 )
 

@@ -7,8 +7,6 @@ import kotlinx.serialization.Serializable
 data class SocialLoginRequest(
     @SerialName("provider")
     val provider: String,
-    @SerialName("accessToken")
-    val accessToken: String? = null,
-    @SerialName("idToken")
-    val idToken: String? = null
+    @SerialName("socialToken")
+    val socialToken: String
 )

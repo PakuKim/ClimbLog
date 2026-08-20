@@ -46,7 +46,9 @@ kotlin {
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
-            
+            implementation(libs.koin.compose.viewModel)
+            implementation(libs.koin.compose.viewModel.navigation)
+
             implementation(libs.material.icons.extended)
 
             implementation(libs.ktor.serialization)

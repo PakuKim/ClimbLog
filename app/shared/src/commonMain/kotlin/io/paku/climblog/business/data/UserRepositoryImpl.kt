@@ -8,39 +8,39 @@ import io.paku.climblog.business.domain.model.UserProfile
 internal class UserRepositoryImpl(
     private val userRemoteDataSource: UserRemoteDataSource
 ): UserRepository {
-    override suspend fun getUser(): Result<User> = runCatching {
-        userRemoteDataSource.getUser()
+    override suspend fun getUser(): User {
+        return userRemoteDataSource.getUser()
     }
 
-    override suspend fun checkHandle(handle: String): Result<Boolean> = runCatching {
-        userRemoteDataSource.checkHandle(handle)
+    override suspend fun checkHandle(handle: String): Boolean {
+        return userRemoteDataSource.checkHandle(handle)
     }
 
-    override suspend fun searchUsers(query: String): Result<List<User>> = runCatching {
-        userRemoteDataSource.searchUsers(query)
+    override suspend fun searchUsers(query: String): List<User> {
+        return userRemoteDataSource.searchUsers(query)
     }
 
-    override suspend fun getUserProfile(userId: Long): Result<UserProfile> = runCatching {
-        userRemoteDataSource.getUserProfile(userId)
+    override suspend fun getUserProfile(userId: Long): UserProfile {
+        return userRemoteDataSource.getUserProfile(userId)
     }
 
-    override suspend fun follow(userId: Long): Result<Unit> = runCatching {
-        userRemoteDataSource.follow(userId)
-    }
-
-    override suspend fun unfollow(userId: Long): Result<Unit> = runCatching {
-        userRemoteDataSource.unfollow(userId)
+    override suspend fun toggleFollow(userId: Long, isFollowing: Boolean) {
+        if (isFollowing) {
+            userRemoteDataSource.unfollow(userId)
+        } else {
+            userRemoteDataSource.follow(userId)
+        }
     }
 
     override suspend fun updateUser(
-        name: String,
+        name: String?,
         age: Int?,
         height: Int?,
         armReach: Int?,
         gender: String?,
         profilePhotoUrl: String?
-    ): Result<User> = runCatching {
-        userRemoteDataSource.updateUser(
+    ): User {
+        return userRemoteDataSource.updateUser(
             name = name,
             age = age,
             height = height,
@@ -50,27 +50,7 @@ internal class UserRepositoryImpl(
         )
     }
 
-    override suspend fun deleteUser(): Result<Unit> = runCatching {
+    override suspend fun deleteUser() {
         userRemoteDataSource.deleteUser()
-    }
-
-    override suspend fun registerUser(
-        handle: String,
-        name: String,
-        age: Int?,
-        height: Int?,
-        armReach: Int?,
-        gender: String?,
-        profilePhotoUrl: String?
-    ): Result<User> = runCatching {
-        userRemoteDataSource.registerUser(
-            handle = handle,
-            name = name,
-            age = age,
-            height = height,
-            armReach = armReach,
-            gender = gender,
-            profilePhotoUrl = profilePhotoUrl
-        )
     }
 }

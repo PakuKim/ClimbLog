@@ -7,34 +7,32 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
-import io.paku.climblog.data.CommentRepositoryImpl
-import io.paku.climblog.data.FollowRepositoryImpl
-import io.paku.climblog.data.LikeRepositoryImpl
 import io.paku.climblog.data.NotificationRepositoryImpl
 import io.paku.climblog.data.RefreshTokenRepositoryImpl
+import io.paku.climblog.data.UserFollowRepositoryImpl
 import io.paku.climblog.data.UserRepositoryImpl
+import io.paku.climblog.data.VideoCommentRepositoryImpl
+import io.paku.climblog.data.VideoLikeRepositoryImpl
 import io.paku.climblog.data.VideoRepositoryImpl
+import io.paku.climblog.data.provider.BCryptEncodeProviderImpl
+import io.paku.climblog.data.provider.JwtTokenProviderImpl
 import io.paku.climblog.data.provider.PushProviderImpl
 import io.paku.climblog.data.provider.S3ProviderImpl
 import io.paku.climblog.data.redis.RedisManager
-import io.paku.climblog.data.sercurity.BCryptEncodeProviderImpl
-import io.paku.climblog.data.sercurity.JwtTokenProviderImpl
-import io.paku.climblog.domain.CommentRepository
-import io.paku.climblog.domain.FollowRepository
-import io.paku.climblog.domain.LikeRepository
 import io.paku.climblog.domain.NotificationRepository
 import io.paku.climblog.domain.RefreshTokenRepository
+import io.paku.climblog.domain.UserFollowRepository
 import io.paku.climblog.domain.UserRepository
+import io.paku.climblog.domain.VideoCommentRepository
+import io.paku.climblog.domain.VideoLikeRepository
 import io.paku.climblog.domain.VideoRepository
-import io.paku.climblog.domain.interactor.auth.CheckEmailUseCase
-import io.paku.climblog.domain.interactor.auth.LoginUseCase
 import io.paku.climblog.domain.interactor.auth.LogoutUseCase
 import io.paku.climblog.domain.interactor.auth.RefreshTokenUseCase
-import io.paku.climblog.domain.interactor.auth.RegisterUseCase
 import io.paku.climblog.domain.interactor.auth.SocialLoginUseCase
+import io.paku.climblog.domain.interactor.auth.SocialRegisterUseCase
+import io.paku.climblog.domain.interactor.auth.VerifySocialTokenUseCase
 import io.paku.climblog.domain.interactor.notification.SendNotificationUseCase
 import io.paku.climblog.domain.interactor.user.CheckHandleUseCase
-import io.paku.climblog.domain.interactor.user.CompleteRegistrationUseCase
 import io.paku.climblog.domain.interactor.user.DeleteUserUseCase
 import io.paku.climblog.domain.interactor.user.FollowUserUseCase
 import io.paku.climblog.domain.interactor.user.GetUserProfileUseCase
@@ -107,9 +105,9 @@ private fun appModule(
     }
     single<UserRepository> { UserRepositoryImpl() }
     single<VideoRepository> { VideoRepositoryImpl() }
-    single<CommentRepository> { CommentRepositoryImpl() }
-    single<LikeRepository> { LikeRepositoryImpl() }
-    single<FollowRepository> { FollowRepositoryImpl() }
+    single<VideoCommentRepository> { VideoCommentRepositoryImpl() }
+    single<VideoLikeRepository> { VideoLikeRepositoryImpl() }
+    single<UserFollowRepository> { UserFollowRepositoryImpl() }
     single<NotificationRepository> { NotificationRepositoryImpl() }
     single<S3Provider> { S3ProviderImpl(awsAccessKey, awsSecretKey, awsRegion) }
     single<PushProvider> { PushProviderImpl() }
@@ -127,14 +125,12 @@ private fun appModule(
 
     // Domain
     factory { RefreshTokenUseCase(get(), get()) }
-    factory { CheckEmailUseCase(get()) }
-    factory { LoginUseCase(get(), get(), get()) }
-    factory { RegisterUseCase(get(), get()) }
+    factory { VerifySocialTokenUseCase(get()) }
     factory { SocialLoginUseCase(get(), get(), get()) }
+    factory { SocialRegisterUseCase(get(), get()) }
     factory { LogoutUseCase(get()) }
     factory { GetUserUseCase(get()) }
     factory { CheckHandleUseCase(get()) }
-    factory { CompleteRegistrationUseCase(get()) }
     factory { SearchUsersUseCase(get()) }
     factory { GetUserProfileUseCase(get(), get(), get()) }
     factory { FollowUserUseCase(get(), get()) }

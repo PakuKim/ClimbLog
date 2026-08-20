@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ApplicationExtension
+import io.paku.climblog.ext.Configs
 import io.paku.climblog.ext.applyPlugin
 import io.paku.climblog.ext.debugImplementations
 import io.paku.climblog.ext.implementations
@@ -44,6 +45,12 @@ class AndroidAppConventionPlugin : Plugin<Project> {
                 applicationId = "io.paku.climblog"
                 minSdk = libs.findVersion("android-minSdk").get().requiredVersion.toInt()
                 targetSdk = libs.findVersion("android-targetSdk").get().requiredVersion.toInt()
+
+                addManifestPlaceholders(Configs.DEV.toManifestPlaceholders(project))
+                Configs.DEV.toBuildConfig(project)
+                    .onEach { (name, value) ->
+                        buildConfigField("String", name, value)
+                    }
             }
 
             compileOptions {

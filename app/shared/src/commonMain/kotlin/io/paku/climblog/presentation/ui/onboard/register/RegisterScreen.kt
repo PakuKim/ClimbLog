@@ -38,14 +38,14 @@ import io.paku.climblog.core.rememberImagePicker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(
+internal fun RegisterScreen(
     viewModel: RegisterViewModel
 ) {
     val state = viewModel.state.value
     val scrollState = rememberScrollState()
     
     val imagePicker = rememberImagePicker { bytes ->
-        viewModel.onEvent(RegisterEvent.OnProfileImagePicked(bytes))
+        viewModel.onEvent(RegisterViewModelEvent.OnProfileImagePicked(bytes))
     }
 
     Scaffold(
@@ -82,24 +82,23 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             // Email (Disabled if social)
-            OutlinedTextField(
-                value = state.email,
-                onValueChange = { },
-                label = { Text("이메일") },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !state.isSocialUser,
-                readOnly = true
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Name
+//            OutlinedTextField(
+//                value = state.email,
+//                onValueChange = { },
+//                label = { Text("이메일") },
+//                modifier = Modifier.fillMaxWidth(),
+//                enabled = !state.isSocialUser,
+//                readOnly = true
+//            )
+//
+//            Spacer(modifier = Modifier.height(16.dp))
+//
+//            // Name
             OutlinedTextField(
                 value = state.name,
-                onValueChange = { viewModel.onEvent(RegisterEvent.OnNameChanged(it)) },
+                onValueChange = { viewModel.onEvent(RegisterViewModelEvent.OnNameChanged(it)) },
                 label = { Text("이름") },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !state.isSocialUser
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -111,7 +110,7 @@ fun RegisterScreen(
             ) {
                 OutlinedTextField(
                     value = state.handle,
-                    onValueChange = { viewModel.onEvent(RegisterEvent.OnHandleChanged(it)) },
+                    onValueChange = { viewModel.onEvent(RegisterViewModelEvent.OnHandleChanged(it)) },
                     label = { Text("사용자 아이디 (Handle)") },
                     modifier = Modifier.weight(1f),
                     placeholder = { Text("영문, 숫자, 밑줄, 마침표") },
@@ -119,7 +118,7 @@ fun RegisterScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
-                    onClick = { viewModel.onEvent(RegisterEvent.OnCheckHandle) },
+                    onClick = { viewModel.onEvent(RegisterViewModelEvent.OnCheckHandle) },
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Text("중복확인")
@@ -140,7 +139,7 @@ fun RegisterScreen(
             Row(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = state.age,
-                    onValueChange = { if (it.length <= 3) viewModel.onEvent(RegisterEvent.OnAgeChanged(it)) },
+                    onValueChange = { if (it.length <= 3) viewModel.onEvent(RegisterViewModelEvent.OnAgeChanged(it)) },
                     label = { Text("나이") },
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
@@ -149,7 +148,7 @@ fun RegisterScreen(
                 // Gender Selection (Simple Toggle for now)
                 Box(modifier = Modifier.weight(1f).height(56.dp).align(Alignment.CenterVertically)) {
                     TextButton(
-                        onClick = { viewModel.onEvent(RegisterEvent.OnGenderChanged(if (state.gender == "M") "F" else "M")) },
+                        onClick = { viewModel.onEvent(RegisterViewModelEvent.OnGenderChanged(if (state.gender == "M") "F" else "M")) },
                         modifier = Modifier.fillMaxSize()
                     ) {
                         Text("성별: ${if (state.gender == "M") "남성" else "여성"}")
@@ -162,7 +161,7 @@ fun RegisterScreen(
             Row(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = state.height,
-                    onValueChange = { if (it.length <= 3) viewModel.onEvent(RegisterEvent.OnHeightChanged(it)) },
+                    onValueChange = { if (it.length <= 3) viewModel.onEvent(RegisterViewModelEvent.OnHeightChanged(it)) },
                     label = { Text("키 (cm)") },
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
@@ -170,7 +169,7 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 OutlinedTextField(
                     value = state.armReach,
-                    onValueChange = { if (it.length <= 3) viewModel.onEvent(RegisterEvent.OnArmReachChanged(it)) },
+                    onValueChange = { if (it.length <= 3) viewModel.onEvent(RegisterViewModelEvent.OnArmReachChanged(it)) },
                     label = { Text("암리치 (cm)") },
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
@@ -181,7 +180,7 @@ fun RegisterScreen(
 
             // Submit Button
             Button(
-                onClick = { viewModel.onEvent(RegisterEvent.OnRegisterSubmit) },
+                onClick = { viewModel.onEvent(RegisterViewModelEvent.OnRegisterSubmit) },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = MaterialTheme.shapes.medium,
                 enabled = state.isHandleAvailable && state.name.isNotBlank() && state.handle.isNotBlank()

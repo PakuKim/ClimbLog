@@ -20,13 +20,11 @@ internal class UserRemoteDataSourceImpl(
     private val client: HttpClient
 ): UserRemoteDataSource {
     private companion object {
-        const val API_BASE = "api/v1/users"
-        const val GET_USER_URL = "api/v1/users/me" 
-        const val CHECK_HANDLE_URL = "$API_BASE/check-handle"
-        const val SEARCH_URL = "$API_BASE/search"
-        const val PROFILE_URL = "$API_BASE/{id}/profile"
-        const val FOLLOW_URL = "$API_BASE/{id}/follow"
-        const val REGISTER_URL = "$API_BASE/register"
+        const val GET_USER_URL = "users/me"
+        const val CHECK_HANDLE_URL = "users/check/handle"
+        const val SEARCH_URL = "users/search"
+        const val PROFILE_URL = "users/{id}/profile"
+        const val FOLLOW_URL = "users/{id}/follow"
     }
 
     override suspend fun getUser(): User {
@@ -59,7 +57,7 @@ internal class UserRemoteDataSourceImpl(
     }
 
     override suspend fun updateUser(
-        name: String,
+        name: String?,
         age: Int?,
         height: Int?,
         armReach: Int?,
@@ -67,7 +65,6 @@ internal class UserRemoteDataSourceImpl(
         profilePhotoUrl: String?
     ): User {
         val request = RegisterUserInfoRequest(
-            handle = "", // Server ignores handle for PUT /me
             name = name,
             age = age,
             height = height,
@@ -83,29 +80,6 @@ internal class UserRemoteDataSourceImpl(
     override suspend fun deleteUser() {
         client.delete(GET_USER_URL)
     }
-
-    override suspend fun registerUser(
-        handle: String,
-        name: String,
-        age: Int?,
-        height: Int?,
-        armReach: Int?,
-        gender: String?,
-        profilePhotoUrl: String?
-    ): User {
-        val request = RegisterUserInfoRequest(
-            handle = handle,
-            name = name,
-            age = age,
-            height = height,
-            armReach = armReach,
-            gender = gender,
-            profilePhotoUrl = profilePhotoUrl
-        )
-        return client.post(REGISTER_URL) {
-            setBody(request)
-        }.body<GetUserResponse>().toDomain()
-    }
 }
 
 private fun UserProfileResponse.toDomain() = UserProfile(
@@ -118,7 +92,6 @@ private fun UserProfileResponse.toDomain() = UserProfile(
 
 private fun GetUserResponse.toDomain() = User(
     id = id,
-    email = email,
     name = name,
     handle = handle,
     age = age,
