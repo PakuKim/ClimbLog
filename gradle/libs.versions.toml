@@ -23,6 +23,7 @@ kotlinx-serialization-json = "1.11.0"
 ktor = "3.5.2"
 koin = "4.2.2"
 logback = "1.6.1"
+build-konfig = "0.17.1"
 material3 = "1.11.0-alpha07"
 kotlinStdlib = "2.4.10"
 coil3 = "3.5.0"
@@ -149,6 +150,7 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlinParcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 androidLint = { id = "com.android.lint", version.ref = "agp" }
+buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "build-konfig" }
 
 # Plugins defined by this project
 kmp-androidApp = { id = "io.paku.climblog.androidApp", version = "unspecified" }

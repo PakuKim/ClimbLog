@@ -9,7 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.paku.climblog.core.ActivityProvider
 import io.paku.climblog.presentation.App
 
-class MainActivity : ComponentActivity() {
+internal class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)

@@ -1,7 +1,7 @@
 package io.paku.climblog.presentation.ui.onboard.register
 
-import io.paku.climblog.business.domain.model.SocialAuthType
-import io.paku.climblog.presentation.base.State
+import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.presentation.base.ViewModelState
 
 data class RegisterViewModelState(
     val name: String = "",
@@ -14,8 +14,8 @@ data class RegisterViewModelState(
     val profileImageBytes: ByteArray? = null,
     val isHandleChecked: Boolean = false,
     val isHandleAvailable: Boolean = false,
-    val socialAuthType: SocialAuthType = SocialAuthType.GOOGLE
-): State {
+    val socialLoginType: SocialLoginType = SocialLoginType.GOOGLE
+): ViewModelState {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false

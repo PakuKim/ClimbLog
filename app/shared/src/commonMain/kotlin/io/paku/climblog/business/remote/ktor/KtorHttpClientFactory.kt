@@ -16,6 +16,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
@@ -29,6 +30,8 @@ import io.paku.climblog.core.Platform
 import io.paku.climblog.core.getPlatform
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 
 internal object KtorHttpClientFactory {
@@ -117,7 +120,12 @@ internal object KtorHttpClientFactory {
                             code = HttpStatusCode.Unauthorized.value
                         )
                     } else {
-                        throw CommonException(message = "errorMessage", code = 0)
+                        val message = Json.parseToJsonElement(response.bodyAsText())
+                            .jsonObject["message"]
+                            ?.jsonPrimitive
+                            ?.content
+
+                        throw CommonException(message = message, code = response.status.value)
                     }
                 }
             }

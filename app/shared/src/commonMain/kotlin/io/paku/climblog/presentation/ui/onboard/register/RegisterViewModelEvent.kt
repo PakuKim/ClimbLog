@@ -1,8 +1,8 @@
 package io.paku.climblog.presentation.ui.onboard.register
 
-import io.paku.climblog.presentation.base.Event
+import io.paku.climblog.presentation.base.ViewModelEvent
 
-sealed class RegisterViewModelEvent : Event {
+sealed class RegisterViewModelEvent : ViewModelEvent {
     data class OnNameChanged(val name: String) : RegisterViewModelEvent()
     data class OnHandleChanged(val handle: String) : RegisterViewModelEvent()
     data class OnAgeChanged(val age: String) : RegisterViewModelEvent()
@@ -10,6 +10,6 @@ sealed class RegisterViewModelEvent : Event {
     data class OnArmReachChanged(val armReach: String) : RegisterViewModelEvent()
     data class OnGenderChanged(val gender: String) : RegisterViewModelEvent()
     data class OnProfileImagePicked(val bytes: ByteArray?) : RegisterViewModelEvent()
-    object OnCheckHandle : RegisterViewModelEvent()
-    object OnRegisterSubmit : RegisterViewModelEvent()
+    object OnHandleCheckClick : RegisterViewModelEvent()
+    object OnRegisterClick : RegisterViewModelEvent()
 }

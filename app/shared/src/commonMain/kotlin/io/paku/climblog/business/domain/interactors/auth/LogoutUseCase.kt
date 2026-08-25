@@ -1,8 +1,8 @@
 package io.paku.climblog.business.domain.interactors.auth
 
 import io.paku.climblog.business.domain.AuthRepository
-import io.paku.climblog.business.domain.model.SocialAuthType
-import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
+import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.core.SocialLoginProvider
 
 internal class LogoutUseCase(
     private val authRepository: AuthRepository,
@@ -10,7 +10,7 @@ internal class LogoutUseCase(
 ) {
     suspend operator fun invoke() {
         authRepository.logout()
-        SocialAuthType.entries.forEach {
+        SocialLoginType.entries.forEach {
             socialLoginProvider.logout(it)
         }
     }

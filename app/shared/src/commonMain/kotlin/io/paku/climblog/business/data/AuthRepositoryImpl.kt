@@ -3,18 +3,18 @@ package io.paku.climblog.business.data
 import io.paku.climblog.business.data.source.local.SessionLocalDataSource
 import io.paku.climblog.business.data.source.remote.AuthRemoteDataSource
 import io.paku.climblog.business.domain.AuthRepository
-import io.paku.climblog.business.domain.model.SocialAuthType
+import io.paku.climblog.business.domain.model.SocialLoginType
 
 internal class AuthRepositoryImpl(
     private val authRemoteDataSource: AuthRemoteDataSource,
     private val sessionLocal: SessionLocalDataSource
 ): AuthRepository {
     override suspend fun socialLogin(
-        socialAuthType: SocialAuthType,
+        socialLoginType: SocialLoginType,
         socialToken: String
     ) {
         val (accessToken, refreshToken) = authRemoteDataSource.socialLogin(
-            provider = socialAuthType.name,
+            provider = socialLoginType.name,
             socialToken = socialToken
         )
 
@@ -24,7 +24,7 @@ internal class AuthRepositoryImpl(
 
     override suspend fun socialRegister(
         socialToken: String,
-        socialAuthType: SocialAuthType,
+        socialLoginType: SocialLoginType,
         handle: String,
         name: String,
         age: Int,
@@ -35,7 +35,7 @@ internal class AuthRepositoryImpl(
     ) {
         authRemoteDataSource.socialRegister(
             socialToken = socialToken,
-            provider = socialAuthType.name,
+            provider = socialLoginType.name,
             handle = handle,
             name = name,
             age = age,

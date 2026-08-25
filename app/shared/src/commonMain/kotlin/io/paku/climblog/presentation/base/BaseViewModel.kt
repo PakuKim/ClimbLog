@@ -1,6 +1,7 @@
 package io.paku.climblog.presentation.base
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,12 +18,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseViewModel<STATE : State, EVENT : Event>: ViewModel() {
+abstract class BaseViewModel<STATE : ViewModelState, EVENT : ViewModelEvent, ACTION: ViewModelAction>: ViewModel() {
     private val initialState: STATE by lazy { createInitialState() }
     private val _state: MutableState<STATE> = mutableStateOf(initialState)
-    val state = _state
+    val state: State<STATE> = _state
 
-    private val _event: MutableSharedFlow<Event> = MutableSharedFlow()
+    private val _event: MutableSharedFlow<ViewModelEvent> = MutableSharedFlow()
+
+    private val _action: MutableSharedFlow<ACTION> = MutableSharedFlow()
+    val action: SharedFlow<ACTION> = _action.asSharedFlow()
 
     private val _error: MutableSharedFlow<String> = MutableSharedFlow()
     val error: SharedFlow<String> = _error.asSharedFlow()
@@ -31,7 +35,7 @@ abstract class BaseViewModel<STATE : State, EVENT : Event>: ViewModel() {
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     protected abstract fun createInitialState(): STATE
-    protected abstract fun createTriggerEvent(event: Event)
+    protected abstract fun createTriggerEvent(event: ViewModelEvent)
 
     init {
         subscribeEvents()
@@ -59,6 +63,10 @@ abstract class BaseViewModel<STATE : State, EVENT : Event>: ViewModel() {
                 createTriggerEvent(it)
             }
         }
+    }
+
+    protected fun setAction(builder: () -> ACTION) = viewModelScope.launch {
+        _action.emit(builder())
     }
 
     protected inline fun launch(

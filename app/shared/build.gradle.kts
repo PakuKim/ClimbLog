@@ -1,7 +1,20 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
+import io.paku.climblog.ext.Configs
+
 plugins {
     alias(libs.plugins.kmp.kotlinMultiplatform)
     alias(libs.plugins.kmp.kotlinSerialization)
     alias(libs.plugins.kmp.composeMultiplatform)
+    alias(libs.plugins.buildKonfig)
+}
+
+buildkonfig {
+    packageName = "io.paku.climblog"
+    defaultConfigs {
+        Configs.DEV.toBuildKonfig(project).forEach { (key, value) ->
+            buildConfigField(FieldSpec.Type.STRING, key, value)
+        }
+    }
 }
 
 kotlin {

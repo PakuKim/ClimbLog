@@ -1,23 +1,23 @@
 package io.paku.climblog.presentation.navigation
 
-import io.paku.climblog.business.domain.model.SocialAuthType
+import io.paku.climblog.business.domain.model.SocialLoginType
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface AppNavigation {
     @Serializable
-    data object Splash : AppNavigation
+    data object Splash: AppNavigation
 
     @Serializable
     data object Login : AppNavigation
 
     @Serializable
-    data object Main : AppNavigation
+    data class Register(
+        val socialLoginType: SocialLoginType
+    ) : AppNavigation
 
     @Serializable
-    data class Register(
-        val socialAuthType: SocialAuthType
-    ) : AppNavigation
+    data object Main : AppNavigation
 
     @Serializable
     data object Notifications : AppNavigation

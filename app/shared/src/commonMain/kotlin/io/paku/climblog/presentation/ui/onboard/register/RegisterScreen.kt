@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,18 +36,46 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.paku.climblog.core.rememberImagePicker
+import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun RegisterScreen(
-    viewModel: RegisterViewModel
+internal fun RegisterRoute(
+    viewModel: RegisterViewModel = koinViewModel()
 ) {
-    val state = viewModel.state.value
-    val scrollState = rememberScrollState()
-    
+    val state by viewModel.state
     val imagePicker = rememberImagePicker { bytes ->
         viewModel.onEvent(RegisterViewModelEvent.OnProfileImagePicked(bytes))
     }
+
+    RegisterScreen(
+        state = state,
+        onProfileImageChanged = { imagePicker.pickImage() },
+        onNameChanged = { viewModel.onEvent(RegisterViewModelEvent.OnNameChanged(it)) },
+        onHandleChanged = { viewModel.onEvent(RegisterViewModelEvent.OnHandleChanged(it)) },
+        onHandleCheckClick = { viewModel.onEvent(RegisterViewModelEvent.OnHandleCheckClick) },
+        onAgeChanged = { viewModel.onEvent(RegisterViewModelEvent.OnAgeChanged(it)) },
+        onGenderChanged = { viewModel.onEvent(RegisterViewModelEvent.OnGenderChanged(it)) },
+        onHeightChanged = { viewModel.onEvent(RegisterViewModelEvent.OnHeightChanged(it)) },
+        onArmReachChanged = { viewModel.onEvent(RegisterViewModelEvent.OnArmReachChanged(it)) },
+        onRegisterClick = { viewModel.onEvent(RegisterViewModelEvent.OnRegisterClick) }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RegisterScreen(
+    state: RegisterViewModelState,
+    onProfileImageChanged: () -> Unit = {},
+    onNameChanged: (String) -> Unit = {},
+    onHandleChanged: (String) -> Unit = {},
+    onHandleCheckClick: () -> Unit = {},
+    onAgeChanged: (String) -> Unit = {},
+    onGenderChanged: (String) -> Unit = {},
+    onHeightChanged: (String) -> Unit = {},
+    onArmReachChanged: (String) -> Unit = {},
+    onRegisterClick: () -> Unit = {}
+) {
+    val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -69,7 +98,7 @@ internal fun RegisterScreen(
                     .size(100.dp)
                     .clip(CircleShape)
                     .background(Color.LightGray)
-                    .clickable { imagePicker.pickImage() },
+                    .clickable { onProfileImageChanged() },
                 contentAlignment = Alignment.Center
             ) {
                 if (state.profileImageBytes != null) {
@@ -96,7 +125,7 @@ internal fun RegisterScreen(
 //            // Name
             OutlinedTextField(
                 value = state.name,
-                onValueChange = { viewModel.onEvent(RegisterViewModelEvent.OnNameChanged(it)) },
+                onValueChange = { onNameChanged(it) },
                 label = { Text("이름") },
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -110,7 +139,7 @@ internal fun RegisterScreen(
             ) {
                 OutlinedTextField(
                     value = state.handle,
-                    onValueChange = { viewModel.onEvent(RegisterViewModelEvent.OnHandleChanged(it)) },
+                    onValueChange = { onHandleChanged(it) },
                     label = { Text("사용자 아이디 (Handle)") },
                     modifier = Modifier.weight(1f),
                     placeholder = { Text("영문, 숫자, 밑줄, 마침표") },
@@ -118,7 +147,7 @@ internal fun RegisterScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
-                    onClick = { viewModel.onEvent(RegisterViewModelEvent.OnCheckHandle) },
+                    onClick = { onHandleCheckClick() },
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Text("중복확인")
@@ -139,7 +168,7 @@ internal fun RegisterScreen(
             Row(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = state.age,
-                    onValueChange = { if (it.length <= 3) viewModel.onEvent(RegisterViewModelEvent.OnAgeChanged(it)) },
+                    onValueChange = { onAgeChanged(it) },
                     label = { Text("나이") },
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
@@ -148,7 +177,7 @@ internal fun RegisterScreen(
                 // Gender Selection (Simple Toggle for now)
                 Box(modifier = Modifier.weight(1f).height(56.dp).align(Alignment.CenterVertically)) {
                     TextButton(
-                        onClick = { viewModel.onEvent(RegisterViewModelEvent.OnGenderChanged(if (state.gender == "M") "F" else "M")) },
+                        onClick = { onGenderChanged(if (state.gender == "M") "F" else "M") },
                         modifier = Modifier.fillMaxSize()
                     ) {
                         Text("성별: ${if (state.gender == "M") "남성" else "여성"}")
@@ -161,7 +190,7 @@ internal fun RegisterScreen(
             Row(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = state.height,
-                    onValueChange = { if (it.length <= 3) viewModel.onEvent(RegisterViewModelEvent.OnHeightChanged(it)) },
+                    onValueChange = { onHeightChanged(it) },
                     label = { Text("키 (cm)") },
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
@@ -169,7 +198,7 @@ internal fun RegisterScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 OutlinedTextField(
                     value = state.armReach,
-                    onValueChange = { if (it.length <= 3) viewModel.onEvent(RegisterViewModelEvent.OnArmReachChanged(it)) },
+                    onValueChange = { onArmReachChanged(it) },
                     label = { Text("암리치 (cm)") },
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
@@ -180,7 +209,7 @@ internal fun RegisterScreen(
 
             // Submit Button
             Button(
-                onClick = { viewModel.onEvent(RegisterViewModelEvent.OnRegisterSubmit) },
+                onClick = { onRegisterClick() },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = MaterialTheme.shapes.medium,
                 enabled = state.isHandleAvailable && state.name.isNotBlank() && state.handle.isNotBlank()

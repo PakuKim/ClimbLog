@@ -1,4 +1,6 @@
 package io.paku.climblog.presentation.base
 
-interface State
-interface Event
+interface ViewModelState
+interface ViewModelEvent
+
+interface ViewModelAction

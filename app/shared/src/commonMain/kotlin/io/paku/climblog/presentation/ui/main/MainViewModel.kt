@@ -2,25 +2,25 @@ package io.paku.climblog.presentation.ui.main
 
 import io.paku.climblog.business.domain.NotificationRepository
 import io.paku.climblog.presentation.base.BaseViewModel
-import io.paku.climblog.presentation.base.Event
-import io.paku.climblog.presentation.base.State
+import io.paku.climblog.presentation.base.ViewModelEvent
+import io.paku.climblog.presentation.base.ViewModelState
 
-data class MainState(
+data class MainViewModelState(
     val hasUnreadNotifications: Boolean = false
-) : State
+) : ViewModelState
 
-sealed class MainEvent : Event {
-    object CheckUnreadNotifications : MainEvent()
+sealed class MainViewModelEvent : ViewModelEvent {
+    object CheckUnreadNotifications : MainViewModelEvent()
 }
 
-class MainViewModel(
+internal class MainViewModel(
     private val notificationRepository: NotificationRepository
-) : BaseViewModel<MainState, MainEvent>() {
+) : BaseViewModel<MainViewModelState, MainViewModelEvent, Nothing>() {
 
-    override fun createInitialState(): MainState = MainState()
+    override fun createInitialState(): MainViewModelState = MainViewModelState()
 
-    override fun createTriggerEvent(event: Event) {
-        if (event is MainEvent.CheckUnreadNotifications) {
+    override fun createTriggerEvent(event: ViewModelEvent) {
+        if (event is MainViewModelEvent.CheckUnreadNotifications) {
             checkUnread()
         }
     }

@@ -17,6 +17,12 @@ enum class Configs(
     val packageName: String,
     @ConfigKey("KAKAO_NATIVE_APP_KEY")
     val kakaoNativeAppKey: String = "",
+    @ConfigKey("NAVER_CLIENT_ID")
+    val naverClientId: String = "",
+    @ConfigKey("NAVER_CLIENT_SECRET")
+    val naverClientSecret: String = "",
+    @ConfigKey("GOOGLE_WEB_CLIENT_ID")
+    val googleWebClientId: String = "",
 ) {
     DEV(
         packageName = "io.paku.climblog.dev"
@@ -31,6 +37,10 @@ enum class Configs(
 
     fun toBuildConfig(project: Project): Map<String, String> {
         return toMap(project, valueConverter = { "\"$it\"" })
+    }
+
+    fun toBuildKonfig(project: Project): Map<String, String> {
+        return toMap(project, valueConverter = { it })
     }
 
     fun toResValues(project: Project): Map<String, String> {

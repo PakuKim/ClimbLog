@@ -19,8 +19,6 @@ val BorderColor = Color(0xFFDBDBDC)
 
 val splashBackground = Color(0xFF272320)
 
-
-
 val grey_050 = Color(0xFFfafafa) // Use with black text
 val grey_700 = Color(0xFF616161) // Use with white text
 

@@ -10,33 +10,51 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.business.domain.model.SocialAuthType
+import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.presentation.theme.AppTheme
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun LoginScreen(
-    viewModel: LoginViewModel,
-    onNavigateToOnboard: (SocialAuthType) -> Unit
+internal fun LoginRoute(
+    viewModel: LoginViewModel = koinViewModel(),
+    navigateToRegister: (SocialLoginType) -> Unit
 ) {
-    val state = viewModel.state.value
+    val state by viewModel.state
 
     LaunchedEffect(Unit) {
-        viewModel.error.collectLatest {
-            onNavigateToOnboard(SocialAuthType.KAKAO)
+        viewModel.action.collectLatest {
+            when (it) {
+                is LoginViewModelAction.NavigateToRegister -> navigateToRegister(it.socialLoginType)
+            }
         }
     }
 
+    LoginScreen(
+        state = state,
+        onLoginClick = {
+            viewModel.onEvent(LoginViewModelEvent.OnSocialLoginClick(it))
+        }
+    )
+}
+
+@Composable
+private fun LoginScreen(
+    state: LoginViewModelState,
+    onLoginClick: (SocialLoginType) -> Unit = {},
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,7 +80,7 @@ internal fun LoginScreen(
             text = "Continue with Google",
             containerColor = Color.White,
             contentColor = Color.Black,
-            onClick = { viewModel.onEvent(LoginViewModelEvent.OnSocialLoginClick(SocialAuthType.GOOGLE)) }
+            onClick = { onLoginClick(SocialLoginType.GOOGLE) }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -71,7 +89,7 @@ internal fun LoginScreen(
             text = "Continue with Kakao",
             containerColor = Color(0xFFFEE500),
             contentColor = Color.Black,
-            onClick = { viewModel.onEvent(LoginViewModelEvent.OnSocialLoginClick(SocialAuthType.KAKAO)) }
+            onClick = { onLoginClick(SocialLoginType.KAKAO) }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -80,7 +98,7 @@ internal fun LoginScreen(
             text = "Continue with Naver",
             containerColor = Color(0xFF03C75A),
             contentColor = Color.White,
-            onClick = { viewModel.onEvent(LoginViewModelEvent.OnSocialLoginClick(SocialAuthType.NAVER)) }
+            onClick = { onLoginClick(SocialLoginType.NAVER) }
         )
 
         if (state.loginError != null) {
@@ -90,10 +108,6 @@ internal fun LoginScreen(
                 fontSize = 14.sp,
                 modifier = Modifier.padding(top = 16.dp)
             )
-        }
-        
-        if (viewModel.isLoading.value) {
-            CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
         }
     }
 }
@@ -118,5 +132,15 @@ private fun SocialLoginButton(
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
     ) {
         Text(text = text, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+    }
+}
+
+@Preview
+@Composable
+private fun LoginScreenPreview() {
+    AppTheme {
+        LoginScreen(
+            state = LoginViewModelState()
+        )
     }
 }

@@ -1,15 +1,15 @@
 package io.paku.climblog.business.domain.interactors.auth
 
 import io.paku.climblog.business.domain.AuthRepository
-import io.paku.climblog.business.domain.model.SocialAuthType
-import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
+import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.core.SocialLoginProvider
 
 internal class SocialRegisterUseCase(
     private val authRepository: AuthRepository,
     private val socialLoginProvider: SocialLoginProvider
 ) {
     suspend operator fun invoke(
-        type: SocialAuthType,
+        type: SocialLoginType,
         handle: String,
         name: String,
         age: Int,
@@ -22,7 +22,7 @@ internal class SocialRegisterUseCase(
 
         authRepository.socialRegister(
             socialToken = socialLoginResult.token,
-            socialAuthType = socialLoginResult.type,
+            socialLoginType = socialLoginResult.type,
             handle = handle,
             name = name,
             age = age,

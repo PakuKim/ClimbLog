@@ -2,6 +2,7 @@ package io.paku.climblog.presentation.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import io.paku.climblog.core.VideoPlayerController
 
 actual class VideoPlayerController {
     actual fun play() {}
@@ -12,7 +13,8 @@ actual class VideoPlayerController {
 }
 
 @Composable
-actual fun rememberVideoPlayerController(url: String): VideoPlayerController = VideoPlayerController()
+actual fun rememberVideoPlayerController(url: String): VideoPlayerController =
+    io.paku.climblog.core.VideoPlayerController()
 
 @Composable
 actual fun VideoPlayerView(
