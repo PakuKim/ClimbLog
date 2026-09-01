@@ -12,8 +12,10 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.paku.climblog.business.data.source.remote.VideoRemoteDataSource
 import io.paku.climblog.business.domain.model.Comment
+import io.paku.climblog.business.domain.model.Crux
 import io.paku.climblog.business.domain.model.Video
 import io.paku.climblog.business.remote.dto.response.video.CommentResponse
+import io.paku.climblog.business.remote.dto.response.video.CruxResponse
 import io.paku.climblog.business.remote.dto.response.video.PresignedUrlResponse
 import io.paku.climblog.business.remote.dto.response.video.VideoFeedResponse
 import io.paku.climblog.business.remote.dto.response.video.VideoResponse
@@ -38,7 +40,7 @@ internal class VideoRemoteDataSourceImpl(
 
     override suspend fun uploadToS3(url: String, bytes: ByteArray, onProgress: (Float) -> Unit) {
         client.put(url) {
-            contentType(ContentType.Video.Any) // Adjust based on input if possible
+            contentType(ContentType.Video.Any)
             setBody(bytes)
             onUpload { bytesSentTotal, contentLength ->
                 if (contentLength != null && contentLength > 0) {
@@ -61,6 +63,9 @@ internal class VideoRemoteDataSourceImpl(
                     put("title", title)
                     put("description", description)
                     put("s3Key", s3Key)
+                    // Currently server accepts cruxStartTime/End as top level in RegisterVideoRequest
+                    // but returns cruxes: List<Crux> in VideoResponse.
+                    // This mismatch should be handled or updated in future.
                     put("cruxStartTime", cruxStartTime)
                     put("cruxEndTime", cruxEndTime)
                 }
@@ -82,8 +87,6 @@ internal class VideoRemoteDataSourceImpl(
     }
 
     override suspend fun getUserVideos(userId: Long): List<Video> {
-        // We might need a specific endpoint for user's videos, 
-        // or just use feed with filter. For now assume an endpoint.
         return client.get("api/v1/users/$userId/videos")
             .body<List<VideoResponse>>().map { it.toDomain() }
     }
@@ -120,7 +123,13 @@ private fun VideoResponse.toDomain() = Video(
     description = description,
     hlsUrl = hlsUrl,
     thumbnailUrl = thumbnailUrl,
-    cruxStartTime = cruxStartTime,
-    cruxEndTime = cruxEndTime,
+    cruxes = cruxes.map { it.toDomain(id) },
     createdAt = createdAt
+)
+
+private fun CruxResponse.toDomain(videoId: Long) = Crux(
+    id = id,
+    videoId = videoId,
+    startTime = cruxStartTime,
+    endTime = cruxEndTime
 )

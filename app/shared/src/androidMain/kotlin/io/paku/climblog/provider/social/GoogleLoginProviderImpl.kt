@@ -9,12 +9,12 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import io.paku.climblog.BuildKonfig
 import io.paku.climblog.business.domain.model.SocialLoginResult
 import io.paku.climblog.business.domain.model.SocialLoginType
-import io.paku.climblog.core.ActivityProvider
-import io.paku.climblog.core.SocialLoginProvider
+import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
+import io.paku.climblog.util.ActivityUtil
 
 internal class GoogleLoginProviderImpl : SocialLoginProvider {
     private val activity: ComponentActivity by lazy {
-        ActivityProvider.getActivity() ?: throw IllegalStateException("Activity not found")
+        ActivityUtil.getActivity() ?: throw IllegalStateException("Activity not found")
     }
 
     private val credentialManager: CredentialManager by lazy {

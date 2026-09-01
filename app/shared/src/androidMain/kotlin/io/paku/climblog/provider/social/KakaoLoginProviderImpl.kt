@@ -3,16 +3,17 @@ package io.paku.climblog.provider.social
 import android.content.Context
 import com.kakao.sdk.auth.TokenManagerProvider
 import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import io.paku.climblog.business.domain.model.SocialLoginResult
 import io.paku.climblog.business.domain.model.SocialLoginType
-import io.paku.climblog.core.ActivityProvider
-import io.paku.climblog.core.SocialLoginProvider
+import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resumeWithException
 
 internal class KakaoLoginProviderImpl(
-    private val context: Context
+    private val applicationContext: Context
 ) : SocialLoginProvider {
     companion object {
         private const val USER_CANCELLED = "user cancelled."
@@ -24,9 +25,8 @@ internal class KakaoLoginProviderImpl(
     }
 
     override suspend fun login(type: SocialLoginType): SocialLoginResult {
-        val activity = ActivityProvider.getActivity() ?: throw IllegalStateException("Activity not found")
         logout(type)
-        val authToken = loginWithKakao(activity)
+        val authToken = loginWithKakao(applicationContext)
         return accessTokenToResult(authToken.accessToken)
     }
 
@@ -48,7 +48,6 @@ internal class KakaoLoginProviderImpl(
                 error?.let {
                     if (it.message == USER_CANCELLED) return@loginWithKakaoTalk
                     continuation.resumeWithException(Exception(it))
-                    return@loginWithKakaoTalk
                 }
                 continuation.resumeWith(Result.success(token ?: return@loginWithKakaoTalk))
             }
@@ -60,7 +59,6 @@ internal class KakaoLoginProviderImpl(
                 error?.let {
                     if (it.message == USER_CANCELLED) return@loginWithKakaoAccount
                     continuation.resumeWithException(Exception(it))
-                    return@loginWithKakaoAccount
                 }
                 continuation.resumeWith(Result.success(token ?: return@loginWithKakaoAccount))
             }
@@ -87,8 +85,10 @@ internal class KakaoLoginProviderImpl(
     override suspend fun logout(type: SocialLoginType) = suspendCancellableCoroutine { continuation ->
         UserApiClient.instance.logout {
             it?.let {
+                if (it is ClientError && it.reason == ClientErrorCause.TokenNotFound) {
+                    return@let
+                }
                 continuation.resumeWithException(it)
-                return@logout
             }
             continuation.resumeWith(Result.success(Unit))
         }

@@ -7,11 +7,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import kotlinx.coroutines.CoroutineScope
 import okio.Path
-import org.koin.core.module.Module
 
 internal const val DATA_STORE_FILE_NAME = "settings.preferences_pb"
-
-expect val platformDataStoreModule: Module
 
 object DataStoreFactory {
     fun create(

@@ -1,5 +1,5 @@
 [versions]
-agp = "9.3.1"
+agp = "9.3.2"
 android-compileSdk = "37"
 android-minSdk = "24"
 android-targetSdk = "36"
@@ -27,6 +27,7 @@ build-konfig = "0.17.1"
 material3 = "1.11.0-alpha07"
 kotlinStdlib = "2.4.10"
 coil3 = "3.5.0"
+spectrum = "1.3.0"
 exposed = "1.4.0"
 h2 = "2.4.240"
 jbcrypt = "0.4"
@@ -43,6 +44,7 @@ credentials-version = "1.6.0"
 googleid-version = "1.2.0"
 kakao-login = "2.24.0"
 naver-login = "5.12.0"
+accompanist-permissions = "0.32.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -115,12 +117,15 @@ exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exp
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
 exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
 
-coil3 = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
+coil3 = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
+coil3-core = { module = "io.coil-kt.coil3:coil-core", version.ref = "coil3" }
+coil3-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
 coil3-network = { module = "io.coil-kt.coil3:coil-network", version.ref = "coil3" }
 coil3-video = { module = "io.coil-kt.coil3:coil-video", version.ref = "coil3" }
 coil3-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil3" }
 coil3-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil3" }
-coil3-core = { module = "io.coil-kt.coil3:coil-core", version.ref = "coil3" }
+
+spectrum = { group = "com.facebook.spectrum", name = "spectrum-default", version.ref = "spectrum" }
 
 material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 wrappers-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-wrappers" }
@@ -138,6 +143,8 @@ googleCredentialsPlay = { module = "androidx.credentials:credentials-play-servic
 googleId = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid-version" }
 kakaoLogin = { module = "com.kakao.sdk:v2-user", version.ref = "kakao-login" }
 naverLogin = { module = "com.navercorp.nid:oauth", version.ref = "naver-login" }
+#system-ui-controller = {module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist-version"}
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist-permissions" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

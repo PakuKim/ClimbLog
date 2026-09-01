@@ -38,6 +38,8 @@ kotlin {
             implementation(libs.androidx.media3.ui)
             implementation(libs.androidx.media3.session)
             implementation(libs.firebaseMessaging)
+            implementation(libs.spectrum)
+            implementation(libs.accompanist.permissions)
             api(libs.googleCredentials)
             api(libs.googleCredentialsPlay)
             api(libs.googleId)
@@ -62,6 +64,8 @@ kotlin {
             implementation(libs.koin.compose.viewModel)
             implementation(libs.koin.compose.viewModel.navigation)
 
+            implementation(libs.coil3)
+            implementation(libs.coil3.compose)
             implementation(libs.material.icons.extended)
 
             implementation(libs.ktor.serialization)

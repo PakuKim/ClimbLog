@@ -1,9 +1,9 @@
-package io.paku.climblog.core
+package io.paku.climblog.util
 
 import androidx.activity.ComponentActivity
 import java.lang.ref.WeakReference
 
-object ActivityProvider {
+object ActivityUtil {
     private var activityRef: WeakReference<ComponentActivity>? = null
 
     fun setActivity(activity: ComponentActivity) {

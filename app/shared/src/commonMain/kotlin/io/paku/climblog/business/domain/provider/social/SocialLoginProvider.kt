@@ -1,8 +1,7 @@
-package io.paku.climblog.core
+package io.paku.climblog.business.domain.provider.social
 
 import io.paku.climblog.business.domain.model.SocialLoginResult
 import io.paku.climblog.business.domain.model.SocialLoginType
-import org.koin.core.module.Module
 
 interface SocialLoginProvider {
     suspend fun latestLoginResult(type: SocialLoginType): SocialLoginResult
@@ -11,5 +10,3 @@ interface SocialLoginProvider {
 
     suspend fun logout(type: SocialLoginType)
 }
-
-expect val platformSocialModule: Module

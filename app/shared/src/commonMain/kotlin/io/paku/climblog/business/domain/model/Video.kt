@@ -7,7 +7,6 @@ data class Video(
     val description: String?,
     val hlsUrl: String,
     val thumbnailUrl: String?,
-    val cruxStartTime: Double?,
-    val cruxEndTime: Double?,
-    val createdAt: Long
+    val createdAt: Long,
+    val cruxes: List<Crux> = emptyList()
 )

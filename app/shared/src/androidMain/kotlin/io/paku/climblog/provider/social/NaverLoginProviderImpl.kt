@@ -4,8 +4,8 @@ import com.navercorp.nid.NidOAuth
 import com.navercorp.nid.oauth.util.NidOAuthCallback
 import io.paku.climblog.business.domain.model.SocialLoginResult
 import io.paku.climblog.business.domain.model.SocialLoginType
-import io.paku.climblog.core.ActivityProvider
-import io.paku.climblog.core.SocialLoginProvider
+import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
+import io.paku.climblog.util.ActivityUtil
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -22,7 +22,7 @@ internal class NaverLoginProviderImpl : SocialLoginProvider {
 
     override suspend fun login(type: SocialLoginType): SocialLoginResult =
         suspendCancellableCoroutine { continuation ->
-            val activity = ActivityProvider.getActivity()
+            val activity = ActivityUtil.getActivity()
                 ?: return@suspendCancellableCoroutine continuation.resumeWithException(Exception(""))
             val callback = object : NidOAuthCallback {
                 override fun onSuccess() {

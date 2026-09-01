@@ -6,14 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import io.paku.climblog.core.ActivityProvider
 import io.paku.climblog.presentation.App
+import io.paku.climblog.util.ActivityUtil
 
 internal class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        ActivityProvider.setActivity(this)
+        ActivityUtil.setActivity(this)
         setContent {
             App()
         }

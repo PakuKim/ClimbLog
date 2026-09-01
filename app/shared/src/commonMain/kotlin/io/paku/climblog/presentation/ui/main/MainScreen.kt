@@ -20,7 +20,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import io.paku.climblog.presentation.navigation.MainBottomNavigation
-import io.paku.climblog.presentation.theme.DefaultNavigationBarItemTheme
+import io.paku.climblog.presentation.theme.AppComponentColors
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -75,8 +75,8 @@ private fun MainBottomNavigationScreen(
     val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.background,
-        contentColor = MaterialTheme.colorScheme.background,
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
         tonalElevation = 8.dp
     ) {
         listOf(
@@ -85,7 +85,7 @@ private fun MainBottomNavigationScreen(
             MainBottomNavigation.Profile
         ).forEach { screen ->
             NavigationBarItem(
-                colors = DefaultNavigationBarItemTheme(),
+                colors = AppComponentColors.navigationBarColors(),
                 selected = screen.route == currentRoute,
                 icon = {
                     Icon(

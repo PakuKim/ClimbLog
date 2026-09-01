@@ -60,6 +60,7 @@ import io.paku.climblog.business.domain.model.Video
 import io.paku.climblog.core.VideoPlayerView
 import io.paku.climblog.core.rememberVideoPlayerController
 import io.paku.climblog.core.shareLink
+import io.paku.climblog.presentation.theme.AppComponentColors
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -188,13 +189,16 @@ fun VideoItem(
                 )
             }
             
-            if (video.cruxStartTime != null && video.cruxEndTime != null) {
+            if (video.cruxes.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
                 SuggestionChip(
                     onClick = { 
-                        controller.seekTo((video.cruxStartTime * 1000).toLong()) 
-                        controller.play()
-                        isPaused = false
+                        // Seek to first crux as example
+                        video.cruxes.firstOrNull()?.startTime?.let {
+                            controller.seekTo((it * 1000).toLong())
+                            controller.play()
+                            isPaused = false
+                        }
                     },
                     label = { Text("Crux Section", color = Color.White) },
                     shape = RoundedCornerShape(16.dp),
@@ -311,7 +315,8 @@ fun CommentsBottomSheet(
                     onValueChange = { commentText = it },
                     placeholder = { Text("댓글 달기...") },
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(24.dp)
+                    shape = RoundedCornerShape(24.dp),
+                    colors = AppComponentColors.outlinedTextFieldColors()
                 )
                 TextButton(
                     onClick = {
@@ -320,7 +325,8 @@ fun CommentsBottomSheet(
                             commentText = ""
                         }
                     },
-                    enabled = commentText.isNotBlank()
+                    enabled = commentText.isNotBlank(),
+                    colors = AppComponentColors.textButtonColors()
                 ) {
                     Text("게시")
                 }
@@ -333,13 +339,13 @@ fun CommentsBottomSheet(
 fun CommentItem(comment: Comment) {
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
         Box(
-            modifier = Modifier.size(32.dp).background(Color.LightGray, CircleShape)
+            modifier = Modifier.size(32.dp).background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
         )
         Spacer(modifier = Modifier.width(12.dp))
         Column {
             Text(comment.userName, fontWeight = FontWeight.Bold, fontSize = 12.sp)
             Text(comment.content, fontSize = 14.sp)
-            Text("방금 전", color = Color.Gray, fontSize = 10.sp, modifier = Modifier.padding(top = 4.dp))
+            Text("방금 전", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f), fontSize = 10.sp, modifier = Modifier.padding(top = 4.dp))
         }
     }
 }

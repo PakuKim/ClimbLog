@@ -25,10 +25,18 @@ data class VideoResponse(
     val hlsUrl: String,
     @SerialName("thumbnailUrl")
     val thumbnailUrl: String?,
-    @SerialName("cruxStartTime")
-    val cruxStartTime: Double?,
-    @SerialName("cruxEndTime")
-    val cruxEndTime: Double?,
+    @SerialName("cruxes")
+    val cruxes: List<CruxResponse>,
     @SerialName("createdAt")
     val createdAt: Long
+)
+
+@Serializable
+data class CruxResponse(
+    @SerialName("id")
+    val id: Long,
+    @SerialName("cruxStartTime")
+    val cruxStartTime: Double,
+    @SerialName("cruxEndTime")
+    val cruxEndTime: Double
 )

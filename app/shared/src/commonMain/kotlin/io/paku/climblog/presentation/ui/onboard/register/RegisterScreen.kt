@@ -1,9 +1,8 @@
 package io.paku.climblog.presentation.ui.onboard.register
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,28 +13,36 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import io.paku.climblog.core.rememberImagePicker
+import coil3.compose.AsyncImage
+import io.paku.climblog.core.Media
+import io.paku.climblog.core.rememberGalleryManager
+import io.paku.climblog.presentation.component.PreviewWrapper
+import io.paku.climblog.presentation.component.SharedButton
+import io.paku.climblog.presentation.component.SharedInputLayout
+import io.paku.climblog.presentation.component.SharedTextField
+import io.paku.climblog.presentation.component.SharedTopAppBar
+import io.paku.climblog.presentation.ext.noRippleClickable
+import io.paku.climblog.presentation.theme.AppComponentColors
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -43,13 +50,16 @@ internal fun RegisterRoute(
     viewModel: RegisterViewModel = koinViewModel()
 ) {
     val state by viewModel.state
-    val imagePicker = rememberImagePicker { bytes ->
-        viewModel.onEvent(RegisterViewModelEvent.OnProfileImagePicked(bytes))
+    val galleryManager = rememberGalleryManager {
+        when (it) {
+            is Media.Image -> viewModel.onEvent(RegisterViewModelEvent.OnProfileImageChanged(it))
+            else -> {}
+        }
     }
 
     RegisterScreen(
         state = state,
-        onProfileImageChanged = { imagePicker.pickImage() },
+        onProfileImageChanged = { galleryManager.launch() },
         onNameChanged = { viewModel.onEvent(RegisterViewModelEvent.OnNameChanged(it)) },
         onHandleChanged = { viewModel.onEvent(RegisterViewModelEvent.OnHandleChanged(it)) },
         onHandleCheckClick = { viewModel.onEvent(RegisterViewModelEvent.OnHandleCheckClick) },
@@ -61,7 +71,6 @@ internal fun RegisterRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RegisterScreen(
     state: RegisterViewModelState,
@@ -79,8 +88,8 @@ private fun RegisterScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("프로필 완성", fontWeight = FontWeight.Bold, fontSize = 18.sp) }
+            SharedTopAppBar(
+                title = "회원가입"
             )
         }
     ) { paddingValues ->
@@ -92,93 +101,101 @@ private fun RegisterScreen(
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Profile Photo Picker (Placeholder)
-            Box(
+            var image: ByteArray? by remember { mutableStateOf(null) }
+            LaunchedEffect(state.profileImage) {
+                image = state.profileImage?.source?.readBytes()
+            }
+
+            AsyncImage(
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)
-                    .background(Color.LightGray)
-                    .clickable { onProfileImageChanged() },
-                contentAlignment = Alignment.Center
-            ) {
-                if (state.profileImageBytes != null) {
-                    Text("이미지 선택됨", fontSize = 12.sp, color = Color(0xFF4CAF50))
-                } else {
-                    Text("사진 변경", fontSize = 12.sp, color = Color.DarkGray)
-                }
-            }
+                    .background(MaterialTheme.colorScheme.surface)
+                    .noRippleClickable(onProfileImageChanged),
+                model = image,
+                contentDescription = "Profile Image"
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Email (Disabled if social)
-//            OutlinedTextField(
-//                value = state.email,
-//                onValueChange = { },
-//                label = { Text("이메일") },
-//                modifier = Modifier.fillMaxWidth(),
-//                enabled = !state.isSocialUser,
-//                readOnly = true
-//            )
-//
-//            Spacer(modifier = Modifier.height(16.dp))
-//
-//            // Name
-            OutlinedTextField(
-                value = state.name,
-                onValueChange = { onNameChanged(it) },
-                label = { Text("이름") },
-                modifier = Modifier.fillMaxWidth(),
-            )
+            SharedInputLayout {
+                SharedTextField(
+                    value = state.name,
+                    onValueChange = onNameChanged,
+                    placeholderText = "이름",
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next
+                    ),
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Handle (Unique ID)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            SharedInputLayout(
+                guideText = when (state.handleChecked) {
+                    true -> "사용 가능한 아이디입니다."
+                    false -> "사용할 수 없는 아이디입니다."
+                    else -> null
+                },
+                isValid = state.handleChecked == true
             ) {
-                OutlinedTextField(
-                    value = state.handle,
-                    onValueChange = { onHandleChanged(it) },
-                    label = { Text("사용자 아이디 (Handle)") },
-                    modifier = Modifier.weight(1f),
-                    placeholder = { Text("영문, 숫자, 밑줄, 마침표") },
-                    isError = state.isHandleChecked && !state.isHandleAvailable
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(
-                    onClick = { onHandleCheckClick() },
-                    shape = MaterialTheme.shapes.medium
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("중복확인")
+                    SharedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = state.handle,
+                        onValueChange = onHandleChanged,
+                        placeholderText = "사용자 ID",
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = { onHandleCheckClick() }
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    SharedButton(
+                        onClick = onHandleCheckClick,
+                        title = "중복확인",
+                        contentPadding = PaddingValues(
+                            vertical = 14.dp, horizontal = 24.dp
+                        ),
+                        enabled = state.handle.isNotBlank()
+                    )
                 }
             }
-            if (state.isHandleChecked) {
-                Text(
-                    text = if (state.isHandleAvailable) "사용 가능한 아이디입니다." else "이미 사용 중인 아이디입니다.",
-                    color = if (state.isHandleAvailable) Color(0xFF4CAF50) else Color.Red,
-                    fontSize = 12.sp,
-                    modifier = Modifier.align(Alignment.Start).padding(top = 4.dp)
-                )
-            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Physical Info Section
-            Row(modifier = Modifier.fillMaxWidth()) {
-                OutlinedTextField(
-                    value = state.age,
-                    onValueChange = { onAgeChanged(it) },
-                    label = { Text("나이") },
-                    modifier = Modifier.weight(1f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                // Gender Selection (Simple Toggle for now)
-                Box(modifier = Modifier.weight(1f).height(56.dp).align(Alignment.CenterVertically)) {
+            SharedInputLayout {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SharedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = state.age,
+                        onValueChange = onAgeChanged,
+                        placeholderText = "나이(만)",
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+
                     TextButton(
+                        modifier = Modifier.weight(1f),
                         onClick = { onGenderChanged(if (state.gender == "M") "F" else "M") },
-                        modifier = Modifier.fillMaxSize()
+                        colors = AppComponentColors.textButtonColors()
                     ) {
                         Text("성별: ${if (state.gender == "M") "남성" else "여성"}")
                     }
@@ -187,35 +204,55 @@ private fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(modifier = Modifier.fillMaxWidth()) {
-                OutlinedTextField(
-                    value = state.height,
-                    onValueChange = { onHeightChanged(it) },
-                    label = { Text("키 (cm)") },
-                    modifier = Modifier.weight(1f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                OutlinedTextField(
-                    value = state.armReach,
-                    onValueChange = { onArmReachChanged(it) },
-                    label = { Text("암리치 (cm)") },
-                    modifier = Modifier.weight(1f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
-                )
+            SharedInputLayout {
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    SharedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = state.height,
+                        onValueChange = { onHeightChanged(it) },
+                        placeholderText = "키 (cm)",
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        ),
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    SharedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = state.armReach,
+                        onValueChange = { onArmReachChanged(it) },
+                        placeholderText = "암리치 (cm)",
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = { onHandleCheckClick() }
+                        )
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            // Submit Button
-            Button(
-                onClick = { onRegisterClick() },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                shape = MaterialTheme.shapes.medium,
-                enabled = state.isHandleAvailable && state.name.isNotBlank() && state.handle.isNotBlank()
-            ) {
-                Text("가입 완료", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            }
+            SharedButton(
+                modifier = Modifier.fillMaxWidth(),
+                title = "가입 완료",
+                onClick = onRegisterClick,
+                enabled = state.registrationAvailable
+            )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun RegisterScreenPreview() {
+    PreviewWrapper {
+        RegisterScreen(RegisterViewModelState())
     }
 }

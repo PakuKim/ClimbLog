@@ -3,7 +3,6 @@ package io.paku.climblog.business.domain.provider.social
 import io.paku.climblog.business.domain.model.SocialLoginResult
 import io.paku.climblog.business.domain.model.SocialLoginType
 import io.paku.climblog.business.domain.provider.Provider
-import io.paku.climblog.core.SocialLoginProvider
 
 internal class SocialLoginProviderImpl(
     private val providers: Map<SocialLoginType, Provider<SocialLoginProvider>>
