@@ -6,7 +6,7 @@ import io.paku.climblog.data.provider.JwtTokenProviderImpl.Companion.REFRESH_TOK
 import io.paku.climblog.domain.RefreshTokenRepository
 
 @OptIn(ExperimentalLettuceCoroutinesApi::class)
-internal class RefreshTokenRepositoryImpl(
+class RefreshTokenRepositoryImpl(
     private val redisCommand: RedisCoroutinesCommands<String, String>
 ): RefreshTokenRepository {
     private fun getKey(userId: Long) = "refreshToken:$userId"

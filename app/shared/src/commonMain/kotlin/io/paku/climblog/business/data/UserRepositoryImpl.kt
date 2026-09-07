@@ -1,15 +1,19 @@
 package io.paku.climblog.business.data
 
+import io.paku.climblog.business.data.source.local.SessionLocalDataSource
 import io.paku.climblog.business.data.source.remote.UserRemoteDataSource
 import io.paku.climblog.business.domain.UserRepository
 import io.paku.climblog.business.domain.model.User
 import io.paku.climblog.business.domain.model.UserProfile
 
 internal class UserRepositoryImpl(
-    private val userRemoteDataSource: UserRemoteDataSource
+    private val userRemoteDataSource: UserRemoteDataSource,
+    private val sessionLocalDataSource: SessionLocalDataSource,
 ): UserRepository {
     override suspend fun getUser(): User {
-        return userRemoteDataSource.getUser()
+        return userRemoteDataSource.getUser().also {
+            sessionLocalDataSource.saveUserId(it.id)
+        }
     }
 
     override suspend fun checkHandle(handle: String): Boolean {

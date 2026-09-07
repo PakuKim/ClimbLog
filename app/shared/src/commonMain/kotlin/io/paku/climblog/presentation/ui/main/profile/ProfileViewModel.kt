@@ -1,13 +1,15 @@
 package io.paku.climblog.presentation.ui.main.profile
 
-import io.paku.climblog.business.domain.UserRepository
-import io.paku.climblog.business.domain.VideoRepository
+import io.paku.climblog.business.domain.interactors.user.GetUserProfileUseCase
+import io.paku.climblog.business.domain.interactors.user.ToggleFollowUseCase
+import io.paku.climblog.business.domain.interactors.video.GetUserVideosUseCase
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
 
 internal class ProfileViewModel(
-    private val userRepository: UserRepository,
-    private val videoRepository: VideoRepository
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val toggleFollowUseCase: ToggleFollowUseCase,
+    private val getUserVideosUseCase: GetUserVideosUseCase
 ) : BaseViewModel<ProfileViewModelState, ProfileViewModelEvent, Nothing>() {
 
     override fun createInitialState(): ProfileViewModelState = ProfileViewModelState()
@@ -28,10 +30,10 @@ internal class ProfileViewModel(
     private fun loadProfile(userId: Long, isMyProfile: Boolean) = launch {
         updateState { copy(isMyProfile = isMyProfile) }
         
-        val profile = userRepository.getUserProfile(userId)
+        val profile = getUserProfileUseCase(userId)
         updateState { copy(userProfile = profile) }
         
-        videoRepository.getUserVideos(userId).onSuccess { videos ->
+        getUserVideosUseCase(userId).onSuccess { videos ->
             updateState { copy(userVideos = videos) }
         }
     }
@@ -41,7 +43,7 @@ internal class ProfileViewModel(
         updateState { copy(isFollowingInProgress = true) }
         
         val isFollowing = profile.isFollowing
-        userRepository.toggleFollow(profile.user.id, isFollowing)
+        toggleFollowUseCase(profile.user.id, isFollowing)
 
         updateState {
             copy(

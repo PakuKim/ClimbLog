@@ -2,46 +2,77 @@ package io.paku.climblog.business.remote
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.onUpload
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
+import io.ktor.utils.io.ByteReadChannel
 import io.paku.climblog.business.data.source.remote.VideoRemoteDataSource
 import io.paku.climblog.business.domain.model.Comment
 import io.paku.climblog.business.domain.model.Crux
 import io.paku.climblog.business.domain.model.Video
+import io.paku.climblog.business.domain.model.video.PresignedPostRequest
+import io.paku.climblog.business.domain.model.video.PresignedPostResponse
 import io.paku.climblog.business.remote.dto.response.video.CommentResponse
 import io.paku.climblog.business.remote.dto.response.video.CruxResponse
 import io.paku.climblog.business.remote.dto.response.video.PresignedUrlResponse
 import io.paku.climblog.business.remote.dto.response.video.VideoFeedResponse
 import io.paku.climblog.business.remote.dto.response.video.VideoResponse
+import kotlinx.serialization.json.addJsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
 
 internal class VideoRemoteDataSourceImpl(
     private val client: HttpClient
 ) : VideoRemoteDataSource {
-
-    override suspend fun getPresignedUrl(fileName: String, contentType: String): Pair<String, String> {
-        val response = client.post("api/v1/videos/presigned-url") {
-            setBody(
-                buildJsonObject {
-                    put("fileName", fileName)
-                    put("contentType", contentType)
-                }
-            )
-        }.body<PresignedUrlResponse>()
-        return response.presignedUrl to response.s3Key
+    private companion object {
+        const val GET_PRESIGNED_URL = "videos/presigned-url"
+        const val PRESIGNED_POST = "videos/uploads/presigned-post"
+        const val REGISTER = "videos"
     }
 
-    override suspend fun uploadToS3(url: String, bytes: ByteArray, onProgress: (Float) -> Unit) {
-        client.put(url) {
-            contentType(ContentType.Video.Any)
-            setBody(bytes)
+    override suspend fun getPresignedPost(fileName: String, contentType: String): PresignedPostResponse {
+        return client.post(PRESIGNED_POST) {
+            setBody(PresignedPostRequest(fileName, contentType))
+        }.body()
+    }
+
+    override suspend fun uploadVideoToS3Post(
+        url: String,
+        fields: Map<String, String>,
+        videoBytes: ByteArray,
+        onProgress: (Float) -> Unit
+    ) {
+        val uploadClient = HttpClient {
+            install(HttpTimeout) {
+                requestTimeoutMillis = 600_000 // 10 mins
+            }
+        }
+        
+        uploadClient.post(url) {
+            setBody(MultiPartFormDataContent(
+                formData {
+                    // S3 POST fields MUST come before 'file'
+                    fields.forEach { (key, value) ->
+                        append(key, value)
+                    }
+                    // 'file' MUST be the last field
+                    append("file", videoBytes, Headers.build {
+                        append(HttpHeaders.ContentType, "video/mp4")
+                        append(HttpHeaders.ContentDisposition, "filename=\"video.mp4\"")
+                    })
+                }
+            ))
             onUpload { bytesSentTotal, contentLength ->
                 if (contentLength != null && contentLength > 0) {
                     onProgress(bytesSentTotal.toFloat() / contentLength.toFloat())
@@ -57,17 +88,20 @@ internal class VideoRemoteDataSourceImpl(
         cruxStartTime: Double?,
         cruxEndTime: Double?
     ): Video {
-        return client.post("api/v1/videos") {
+        return client.post(REGISTER) {
             setBody(
                 buildJsonObject {
                     put("title", title)
-                    put("description", description)
+                    put("description", description ?: "")
                     put("s3Key", s3Key)
-                    // Currently server accepts cruxStartTime/End as top level in RegisterVideoRequest
-                    // but returns cruxes: List<Crux> in VideoResponse.
-                    // This mismatch should be handled or updated in future.
-                    put("cruxStartTime", cruxStartTime)
-                    put("cruxEndTime", cruxEndTime)
+                    putJsonArray("cruxes") {
+                        if (cruxStartTime != null && cruxEndTime != null) {
+                            addJsonObject {
+                                put("startTime", cruxStartTime)
+                                put("endTime", cruxEndTime)
+                            }
+                        }
+                    }
                 }
             )
         }.body<VideoResponse>().toDomain()
@@ -103,6 +137,36 @@ internal class VideoRemoteDataSourceImpl(
         return client.post("api/v1/videos/$videoId/comments") {
             setBody(buildJsonObject { put("content", content) })
         }.body<CommentResponse>().toDomain()
+    }
+
+    override suspend fun getPresignedUrl(fileName: String, contentType: String): Pair<String, String> {
+        val response = client.post(GET_PRESIGNED_URL) {
+            setBody(
+                buildJsonObject {
+                    put("fileName", fileName)
+                    put("contentType", contentType)
+                }
+            )
+        }.body<PresignedUrlResponse>()
+        return response.presignedUrl to response.s3Key
+    }
+
+    override suspend fun uploadToS3(url: String, bytes: ByteArray, onProgress: (Float) -> Unit) {
+        val a = ByteReadChannel(bytes)
+        val uploadClient = HttpClient {
+            install(HttpTimeout) {
+                requestTimeoutMillis = 600_000
+            }
+        }
+        uploadClient.put(url) {
+            contentType(ContentType.Video.Any)
+            setBody(a)
+            onUpload { bytesSentTotal, contentLength ->
+                if (contentLength != null && contentLength > 0) {
+                    onProgress(bytesSentTotal.toFloat() / contentLength.toFloat())
+                }
+            }
+        }
     }
 }
 

@@ -37,6 +37,25 @@ fun Route.videoRoutes(
 
     authenticate("auth-jwt") {
         route("/api/v1/videos") {
+            route("/uploads") {
+                post("/presigned-post") {
+                    val request = call.receive<PresignedPostRequest>()
+                    val s3Key = "raw/${UUID.randomUUID()}_${request.fileName}"
+                    
+                    val postData = s3Provider.generatePresignedPost(
+                        bucketName = s3Bucket,
+                        key = s3Key,
+                        contentType = request.contentType
+                    )
+                    
+                    call.respond(HttpStatusCode.OK, PresignedPostResponse(
+                        url = postData.url,
+                        fields = postData.fields,
+                        objectKey = s3Key
+                    ))
+                }
+            }
+
             get("/random") {
                 val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 18
                 getRandomVideosUseCase(limit).onSuccess { videos ->
@@ -44,25 +63,6 @@ fun Route.videoRoutes(
                 }.onFailure {
                     call.respond(HttpStatusCode.InternalServerError)
                 }
-            }
-
-            post("/presigned-url") {
-                val request = call.receive<PresignedUrlRequest>()
-                val s3Key = "raw/${UUID.randomUUID()}_${request.fileName}"
-                
-                val url = s3Provider.generatePresignedUploadUrl(
-                    bucketName = s3Bucket,
-                    key = s3Key,
-                    contentType = request.contentType
-                )
-                
-                call.respond(
-                    HttpStatusCode.OK,
-                    PresignedUrlResponse(
-                        presignedUrl = url.toString(),
-                        s3Key = s3Key
-                    )
-                )
             }
 
             get("/feed") {
@@ -175,4 +175,3 @@ private fun Video.toResponse() = VideoResponse(
     },
     createdAt = createdAt
 )
-

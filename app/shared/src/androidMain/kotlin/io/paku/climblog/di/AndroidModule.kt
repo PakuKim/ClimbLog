@@ -5,6 +5,8 @@ import io.paku.climblog.business.domain.provider.Provider
 import io.paku.climblog.business.domain.provider.encode.EncodeFileProvider
 import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 import io.paku.climblog.business.domain.provider.social.SocialLoginProviderImpl
+import io.paku.climblog.core.AndroidVideoCompressor
+import io.paku.climblog.core.VideoCompressor
 import io.paku.climblog.provider.encode.EncodeFileProviderImpl
 import io.paku.climblog.provider.social.GoogleLoginProviderImpl
 import io.paku.climblog.provider.social.KakaoLoginProviderImpl
@@ -35,6 +37,9 @@ actual val platformModule: Module = module {
 
     //encode
     single<EncodeFileProvider> { EncodeFileProviderImpl(androidContext()) }
+    
+    //video
+    single<VideoCompressor> { AndroidVideoCompressor(androidContext()) }
 
     //dataStore
     val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())

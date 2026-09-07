@@ -35,6 +35,8 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.media3.exoplayer)
+            implementation(libs.androidx.media3.transformer)
+            implementation(libs.androidx.media3.effect)
             implementation(libs.androidx.media3.ui)
             implementation(libs.androidx.media3.session)
             implementation(libs.firebaseMessaging)
@@ -79,6 +81,7 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.testing)
         }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)

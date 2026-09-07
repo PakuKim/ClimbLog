@@ -9,6 +9,12 @@ data class PresignedUrlRequest(
 )
 
 @Serializable
+data class PresignedPostRequest(
+    val fileName: String,
+    val contentType: String
+)
+
+@Serializable
 data class RegisterVideoRequest(
     val title: String,
     val description: String,

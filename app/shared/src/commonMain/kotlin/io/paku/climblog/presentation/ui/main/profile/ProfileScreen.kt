@@ -22,9 +22,7 @@ import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +31,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,25 +40,45 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.paku.climblog.business.domain.model.UserProfile
+import io.paku.climblog.presentation.component.SharedTopAppBar
 import io.paku.climblog.presentation.ui.main.search.VideoThumbnailItem
 import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ProfileScreen(
+internal fun ProfileRoute(
     viewModel: ProfileViewModel = koinViewModel(),
     onUploadClick: () -> Unit,
     onVideoClick: (Long) -> Unit,
     onMenuClick: () -> Unit,
     onEditClick: () -> Unit
 ) {
-    val state = viewModel.state.value
+    val state by viewModel.state
+
+    ProfileScreen(
+        state = state,
+        onUploadClick = onUploadClick,
+        onVideoClick = onVideoClick,
+        onMenuClick = onMenuClick,
+        onEditClick = onEditClick,
+        onFollowClick = { viewModel.onEvent(ProfileViewModelEvent.ToggleFollow) }
+    )
+}
+
+@Composable
+private fun ProfileScreen(
+    state: ProfileViewModelState,
+    onUploadClick: () -> Unit,
+    onVideoClick: (Long) -> Unit,
+    onMenuClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onFollowClick: () -> Unit
+) {
     val profile = state.userProfile
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(profile?.user?.handle ?: "Profile", fontWeight = FontWeight.Bold) },
+            SharedTopAppBar(
+                title = profile?.user?.handle ?: "프로필",
                 actions = {
                     if (state.isMyProfile) {
                         IconButton(onClick = onUploadClick) {
@@ -87,7 +106,7 @@ internal fun ProfileScreen(
                     profile = profile, 
                     isMyProfile = state.isMyProfile, 
                     isFollowingInProgress = state.isFollowingInProgress,
-                    onFollowClick = { viewModel.onEvent(ProfileViewModelEvent.ToggleFollow) },
+                    onFollowClick = onFollowClick,
                     onEditClick = onEditClick
                 )
 
@@ -180,7 +199,7 @@ fun ProfileHeader(
 }
 
 @Composable
-fun StatItem(label: String, count: String) {
+private fun StatItem(label: String, count: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(count, fontWeight = FontWeight.Bold, fontSize = 18.sp)
         Text(label, fontSize = 12.sp)

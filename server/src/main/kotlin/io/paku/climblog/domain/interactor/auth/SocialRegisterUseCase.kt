@@ -5,7 +5,7 @@ import io.paku.climblog.domain.UserRepository
 import io.paku.climblog.domain.model.AppException
 import io.paku.climblog.domain.model.user.User
 
-internal class SocialRegisterUseCase(
+class SocialRegisterUseCase(
     private val userRepository: UserRepository,
     private val verifySocialTokenUseCase: VerifySocialTokenUseCase
 ) {

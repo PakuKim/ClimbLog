@@ -1,13 +1,16 @@
 package io.paku.climblog.presentation.ui.main.upload
 
 import io.paku.climblog.business.domain.interactors.video.UploadVideoUseCase
-import io.paku.climblog.core.VideoFile
+import io.paku.climblog.business.domain.model.VideoQuality
+import io.paku.climblog.core.Media
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
 import io.paku.climblog.presentation.base.ViewModelState
 
 data class VideoUploadViewModelState(
-    val selectedVideo: VideoFile? = null,
+    val selectedMedia: Media.Video? = null,
+    val selectedQuality: VideoQuality = VideoQuality.STANDARD,
+    val isQualitySheetVisible: Boolean = false,
     val title: String = "",
     val description: String = "",
     val cruxStartTime: String = "",
@@ -18,7 +21,9 @@ data class VideoUploadViewModelState(
 ) : ViewModelState
 
 sealed class VideoUploadViewModelEvent : ViewModelEvent {
-    data class OnVideoSelected(val video: VideoFile?) : VideoUploadViewModelEvent()
+    data class OnMediaSelected(val video: Media.Video?) : VideoUploadViewModelEvent()
+    data class OnQualitySelected(val quality: VideoQuality) : VideoUploadViewModelEvent()
+    data class SetQualitySheetVisible(val visible: Boolean) : VideoUploadViewModelEvent()
     data class OnTitleChanged(val title: String) : VideoUploadViewModelEvent()
     data class OnDescriptionChanged(val description: String) : VideoUploadViewModelEvent()
     data class OnCruxStartChanged(val time: String) : VideoUploadViewModelEvent()
@@ -26,7 +31,7 @@ sealed class VideoUploadViewModelEvent : ViewModelEvent {
     object OnUploadClick : VideoUploadViewModelEvent()
 }
 
-class VideoUploadViewModel(
+internal class VideoUploadViewModel(
     private val uploadVideoUseCase: UploadVideoUseCase
 ) : BaseViewModel<VideoUploadViewModelState, VideoUploadViewModelEvent, Nothing>() {
 
@@ -40,7 +45,9 @@ class VideoUploadViewModel(
 
     fun onEvent(event: VideoUploadViewModelEvent) {
         when (event) {
-            is VideoUploadViewModelEvent.OnVideoSelected -> updateState { copy(selectedVideo = event.video) }
+            is VideoUploadViewModelEvent.OnMediaSelected -> updateState { copy(selectedMedia = event.video) }
+            is VideoUploadViewModelEvent.OnQualitySelected -> updateState { copy(selectedQuality = event.quality, isQualitySheetVisible = false) }
+            is VideoUploadViewModelEvent.SetQualitySheetVisible -> updateState { copy(isQualitySheetVisible = event.visible) }
             is VideoUploadViewModelEvent.OnTitleChanged -> updateState { copy(title = event.title) }
             is VideoUploadViewModelEvent.OnDescriptionChanged -> updateState { copy(description = event.description) }
             is VideoUploadViewModelEvent.OnCruxStartChanged -> updateState { copy(cruxStartTime = event.time) }
@@ -51,15 +58,14 @@ class VideoUploadViewModel(
 
     private fun uploadVideo() = launch {
         val s = state.value
-        val video = s.selectedVideo ?: return@launch
+        val media = s.selectedMedia ?: return@launch
         
         setLoading(true)
         uploadVideoUseCase(
             title = s.title,
             description = s.description,
-            fileName = video.name,
-            contentType = video.contentType,
-            bytes = video.bytes,
+            media = media.source,
+            quality = s.selectedQuality,
             cruxStartTime = s.cruxStartTime.toDoubleOrNull(),
             cruxEndTime = s.cruxEndTime.toDoubleOrNull(),
             onProgress = { progress ->

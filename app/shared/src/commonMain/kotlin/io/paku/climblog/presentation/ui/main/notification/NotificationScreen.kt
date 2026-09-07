@@ -24,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,17 +36,35 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.paku.climblog.business.domain.model.Notification
+import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationScreen(
-    viewModel: NotificationViewModel,
+internal fun NotificationRoute(
+    viewModel: NotificationViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
     onUserClick: (Long) -> Unit,
     onVideoClick: (Long) -> Unit
 ) {
-    val state = viewModel.state.value
+    val state by viewModel.state
 
+    NotificationScreen(
+        state = state,
+        isLoading = viewModel.isLoading.value,
+        onNavigateBack = onNavigateBack,
+        onUserClick = onUserClick,
+        onVideoClick = onVideoClick
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun NotificationScreen(
+    state: NotificationViewModelState,
+    isLoading: Boolean,
+    onNavigateBack: () -> Unit,
+    onUserClick: (Long) -> Unit,
+    onVideoClick: (Long) -> Unit
+) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -60,7 +79,7 @@ fun NotificationScreen(
     ) { paddingValues ->
         if (state.notifications.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
-                if (viewModel.isLoading.value) {
+                if (isLoading) {
                     CircularProgressIndicator()
                 } else {
                     Text("알림이 없습니다.", color = Color.Gray)

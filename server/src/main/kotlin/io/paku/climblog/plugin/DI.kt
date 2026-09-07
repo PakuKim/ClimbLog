@@ -7,6 +7,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
+import io.lettuce.core.api.coroutines.RedisCoroutinesCommands
 import io.paku.climblog.data.NotificationRepositoryImpl
 import io.paku.climblog.data.RefreshTokenRepositoryImpl
 import io.paku.climblog.data.UserFollowRepositoryImpl
@@ -93,7 +94,7 @@ private fun appModule(
     single { RedisManager(redisUrl) }.onClose { redisManager ->
         redisManager?.close()
     }
-    single { get<RedisManager>().commands }
+    single<RedisCoroutinesCommands<String, String>> { get<RedisManager>().commands }
     single<RefreshTokenRepository> { RefreshTokenRepositoryImpl(get()) }
     single<BCryptEncodeProvider> { BCryptEncodeProviderImpl() }
     single<JwtTokenProvider> {

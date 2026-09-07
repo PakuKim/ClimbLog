@@ -6,20 +6,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import io.paku.climblog.presentation.navigation.AppNavigation
 import io.paku.climblog.presentation.navigation.MainBottomNavigation
-import io.paku.climblog.presentation.ui.main.home.HomeFeedScreen
-import io.paku.climblog.presentation.ui.main.notification.NotificationScreen
-import io.paku.climblog.presentation.ui.main.notification.NotificationViewModel
-import io.paku.climblog.presentation.ui.main.profile.ProfileScreen
-import io.paku.climblog.presentation.ui.main.profile.ProfileViewModel
-import io.paku.climblog.presentation.ui.main.profile.UserProfileScreen
-import io.paku.climblog.presentation.ui.main.profile.edit.EditProfileScreen
-import io.paku.climblog.presentation.ui.main.profile.edit.EditProfileViewModel
-import io.paku.climblog.presentation.ui.main.search.SearchScreen
-import io.paku.climblog.presentation.ui.main.settings.SettingsScreen
-import io.paku.climblog.presentation.ui.main.settings.SettingsViewModel
-import io.paku.climblog.presentation.ui.main.upload.VideoUploadScreen
-import io.paku.climblog.presentation.ui.main.upload.VideoUploadViewModel
-import org.koin.compose.koinInject
+import io.paku.climblog.presentation.ui.main.home.HomeRoute
+import io.paku.climblog.presentation.ui.main.notification.NotificationRoute
+import io.paku.climblog.presentation.ui.main.profile.ProfileRoute
+import io.paku.climblog.presentation.ui.main.profile.edit.EditProfileRoute
+import io.paku.climblog.presentation.ui.main.search.SearchRoute
+import io.paku.climblog.presentation.ui.main.settings.SettingsRoute
+import io.paku.climblog.presentation.ui.main.upload.VideoUploadRoute
 
 internal fun NavGraphBuilder.mainGraph(
     navController: NavController
@@ -27,26 +20,36 @@ internal fun NavGraphBuilder.mainGraph(
     composable<AppNavigation.Main> {
         MainRoute(
             mainBuilder = {
-                composable<MainBottomNavigation.Home> {
-                    HomeFeedScreen()
-                }
-
-                composable<MainBottomNavigation.Search> {
-                    SearchScreen(
-                        onUserClick = { userId ->
-                            navController.navigate(AppNavigation.UserProfile(userId))
-                        },
-                        onVideoClick = { videoId ->
-//                            navController.navigate(AppNavigation.Video(videoId))
+                composable(
+                    route = MainBottomNavigation.Home.route,
+                ) {
+                    HomeRoute(
+                        navigateToUpload = {
+                            navController.navigate(AppNavigation.Upload)
                         }
                     )
                 }
 
-                composable<MainBottomNavigation.Profile> {
-                    ProfileScreen(
+                composable(
+                    route = MainBottomNavigation.Search.route
+                ) {
+                    SearchRoute(
+                        onUserClick = { userId ->
+                            navController.navigate(AppNavigation.UserProfile(userId))
+                        },
+                        onVideoClick = { videoId ->
+                            // navController.navigate(AppNavigation.VideoDetail(videoId))
+                        }
+                    )
+                }
+
+                composable(
+                    route = MainBottomNavigation.Profile.route
+                ) {
+                    ProfileRoute(
                         onUploadClick = { navController.navigate(AppNavigation.Upload) },
                         onVideoClick = { videoId ->
-//                            navController.navigate(AppNavigation.Video(videoId))
+                            // navController.navigate(AppNavigation.VideoDetail(videoId))
                         },
                         onMenuClick = { navController.navigate(AppNavigation.Settings) },
                         onEditClick = { navController.navigate(AppNavigation.EditProfile) }
@@ -57,55 +60,49 @@ internal fun NavGraphBuilder.mainGraph(
     }
 
     composable<AppNavigation.Notifications> {
-        val notificationViewModel: NotificationViewModel = koinInject()
-        NotificationScreen(
-            viewModel = notificationViewModel,
+        NotificationRoute(
             onNavigateBack = { navController.popBackStack() },
-            onUserClick = { _ ->
+            onUserClick = { userId ->
+                navController.navigate(AppNavigation.UserProfile(userId))
             },
-            onVideoClick = { _ ->
+            onVideoClick = { videoId ->
+                // navController.navigate(AppNavigation.VideoDetail(videoId))
             }
         )
     }
 
     composable<AppNavigation.Upload> {
-        val uploadViewModel: VideoUploadViewModel = koinInject()
-        VideoUploadScreen(
-            viewModel = uploadViewModel,
+        VideoUploadRoute(
             onNavigateBack = { navController.popBackStack() },
             onUploadSuccess = {
-                navController.navigate(AppNavigation.Main) {
-                    popUpTo(AppNavigation.Main) { inclusive = true }
-                }
+                navController.popBackStack()
             }
         )
     }
 
     composable<AppNavigation.UserProfile> { backStackEntry ->
         val args: AppNavigation.UserProfile = backStackEntry.toRoute()
-        val profileViewModel: ProfileViewModel = koinInject()
-        UserProfileScreen(
-            userId = args.userId,
-            viewModel = profileViewModel,
-            onNavigateBack = { navController.popBackStack() },
-            onVideoClick = { }
+        ProfileRoute(
+            onUploadClick = {},
+            onVideoClick = { videoId ->
+                // navController.navigate(AppNavigation.VideoDetail(videoId))
+            },
+            onMenuClick = {},
+            onEditClick = {}
         )
     }
 
     composable<AppNavigation.EditProfile> {
-        val editProfileViewModel: EditProfileViewModel = koinInject()
-        EditProfileScreen(
-            viewModel = editProfileViewModel,
+        EditProfileRoute(
             onNavigateBack = { navController.popBackStack() }
         )
     }
 
     composable<AppNavigation.Settings> {
-        val settingsViewModel: SettingsViewModel = koinInject()
-        SettingsScreen(
-            viewModel = settingsViewModel,
+        SettingsRoute(
             onNavigateBack = { navController.popBackStack() },
             onLogoutSuccess = {
+                // Handle logout navigation if needed, usually AppViewModel handles this via authorized state
             }
         )
     }

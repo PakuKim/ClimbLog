@@ -10,6 +10,13 @@ data class PresignedUrlResponse(
 )
 
 @Serializable
+data class PresignedPostResponse(
+    val url: String,
+    val fields: Map<String, String>,
+    val objectKey: String
+)
+
+@Serializable
 data class VideoResponse(
     val id: Long,
     val userId: Long,

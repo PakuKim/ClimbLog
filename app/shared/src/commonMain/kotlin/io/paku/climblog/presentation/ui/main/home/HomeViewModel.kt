@@ -6,7 +6,11 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import io.paku.climblog.business.data.source.remote.VideoPagingSource
-import io.paku.climblog.business.domain.VideoRepository
+import io.paku.climblog.business.domain.interactors.auth.LogoutUseCase
+import io.paku.climblog.business.domain.interactors.video.GetCommentsUseCase
+import io.paku.climblog.business.domain.interactors.video.GetVideoFeedUseCase
+import io.paku.climblog.business.domain.interactors.video.PostCommentUseCase
+import io.paku.climblog.business.domain.interactors.video.ToggleLikeUseCase
 import io.paku.climblog.business.domain.model.Comment
 import io.paku.climblog.business.domain.model.Video
 import io.paku.climblog.presentation.base.BaseViewModel
@@ -14,39 +18,47 @@ import io.paku.climblog.presentation.base.ViewModelEvent
 import io.paku.climblog.presentation.base.ViewModelState
 import kotlinx.coroutines.flow.Flow
 
-data class HomeFeedViewModelState(
-    val pagingData: Flow<PagingData<Video>>? = null,
+data class HomeViewModelState(
+    val videoPagingData: Flow<PagingData<Video>>? = null,
     val likedVideoIds: Set<Long> = emptySet(),
     val commentList: List<Comment> = emptyList(),
     val isCommentsLoading: Boolean = false
 ) : ViewModelState
 
-sealed class HomeFeedViewModelEvent : ViewModelEvent {
-    object LoadFeed : HomeFeedViewModelEvent()
-    data class ToggleLike(val videoId: Long) : HomeFeedViewModelEvent()
-    data class LoadComments(val videoId: Long) : HomeFeedViewModelEvent()
-    data class PostComment(val videoId: Long, val content: String) : HomeFeedViewModelEvent()
+sealed class HomeViewModelEvent : ViewModelEvent {
+    data class OnLikeClick(val videoId: Long) : HomeViewModelEvent()
+    data class LoadComments(val videoId: Long) : HomeViewModelEvent()
+    data class PostComment(val videoId: Long, val content: String) : HomeViewModelEvent()
+    object Logout : HomeViewModelEvent()
 }
 
-class HomeFeedViewModel(
-    private val videoRepository: VideoRepository
-) : BaseViewModel<HomeFeedViewModelState, HomeFeedViewModelEvent, Nothing>() {
+internal class HomeFeedViewModel(
+    private val getVideoFeedUseCase: GetVideoFeedUseCase,
+    private val toggleLikeUseCase: ToggleLikeUseCase,
+    private val getCommentsUseCase: GetCommentsUseCase,
+    private val postCommentUseCase: PostCommentUseCase,
+    private val logoutUseCase: LogoutUseCase
+) : BaseViewModel<HomeViewModelState, HomeViewModelEvent, Nothing>() {
 
-    override fun createInitialState(): HomeFeedViewModelState = HomeFeedViewModelState()
+    override fun createInitialState(): HomeViewModelState = HomeViewModelState()
 
     override fun createTriggerEvent(event: ViewModelEvent) {
-        if (event is HomeFeedViewModelEvent) {
+        if (event is HomeViewModelEvent) {
             onEvent(event)
         }
     }
 
-    fun onEvent(event: HomeFeedViewModelEvent) {
+    fun onEvent(event: HomeViewModelEvent) {
         when (event) {
-            is HomeFeedViewModelEvent.LoadFeed -> loadFeed()
-            is HomeFeedViewModelEvent.ToggleLike -> toggleLike(event.videoId)
-            is HomeFeedViewModelEvent.LoadComments -> loadComments(event.videoId)
-            is HomeFeedViewModelEvent.PostComment -> postComment(event.videoId, event.content)
+            is HomeViewModelEvent.OnLikeClick -> toggleLike(event.videoId)
+            is HomeViewModelEvent.LoadComments -> loadComments(event.videoId)
+            is HomeViewModelEvent.PostComment -> postComment(event.videoId, event.content)
+            is HomeViewModelEvent.Logout -> logout()
         }
+    }
+
+    private fun logout() = launch {
+        logoutUseCase()
     }
 
     private fun loadFeed() {
@@ -58,10 +70,10 @@ class HomeFeedViewModel(
                 initialLoadSize = 10
             ),
             initialKey = null,
-            pagingSourceFactory = { VideoPagingSource(videoRepository) }
+            pagingSourceFactory = { VideoPagingSource(getVideoFeedUseCase) }
         ).flow.cachedIn(viewModelScope)
         
-        updateState { copy(pagingData = flow) }
+        updateState { copy(videoPagingData = flow) }
     }
 
     private fun toggleLike(videoId: Long) = launch {
@@ -72,7 +84,7 @@ class HomeFeedViewModel(
             )
         }
         
-        videoRepository.toggleLike(videoId).onFailure {
+        toggleLikeUseCase(videoId).onFailure {
             updateState {
                 copy(
                     likedVideoIds = if (isCurrentlyLiked) likedVideoIds + videoId else likedVideoIds - videoId
@@ -83,7 +95,7 @@ class HomeFeedViewModel(
 
     private fun loadComments(videoId: Long) = launch {
         updateState { copy(isCommentsLoading = true, commentList = emptyList()) }
-        videoRepository.getComments(videoId).onSuccess { comments ->
+        getCommentsUseCase(videoId).onSuccess { comments ->
             updateState { copy(commentList = comments, isCommentsLoading = false) }
         }.onFailure {
             updateState { copy(isCommentsLoading = false) }
@@ -91,7 +103,7 @@ class HomeFeedViewModel(
     }
 
     private fun postComment(videoId: Long, content: String) = launch {
-        videoRepository.postComment(videoId, content).onSuccess { newComment ->
+        postCommentUseCase(videoId, content).onSuccess { newComment ->
             updateState { copy(commentList = listOf(newComment) + commentList) }
         }
     }

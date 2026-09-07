@@ -10,7 +10,7 @@ import io.paku.climblog.domain.model.token.GoogleTokenInfo
 import io.paku.climblog.domain.model.token.KakaoTokenInfo
 import io.paku.climblog.domain.model.token.NaverUserInfo
 
-internal class VerifySocialTokenUseCase(
+class VerifySocialTokenUseCase(
     private val httpClient: HttpClient
 ) {
     suspend operator fun  invoke(

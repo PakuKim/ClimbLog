@@ -17,20 +17,23 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.HighQuality
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,22 +41,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.core.VideoPlayerView
+import io.paku.climblog.business.domain.model.VideoQuality
 import io.paku.climblog.core.rememberVideoPicker
-import io.paku.climblog.core.rememberVideoPlayerController
+import io.paku.climblog.presentation.component.SharedTextField
+import io.paku.climblog.presentation.component.SharedTopAppBar
+import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VideoUploadScreen(
-    viewModel: VideoUploadViewModel,
+internal fun VideoUploadRoute(
+    viewModel: VideoUploadViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
     onUploadSuccess: () -> Unit
 ) {
-    val state = viewModel.state.value
-    val scrollState = rememberScrollState()
+    val state by viewModel.state
     
-    val videoPicker = rememberVideoPicker { videoFile ->
-        viewModel.onEvent(VideoUploadViewModelEvent.OnVideoSelected(videoFile))
+    val videoPicker = rememberVideoPicker { video ->
+        viewModel.onEvent(VideoUploadViewModelEvent.OnMediaSelected(video))
     }
 
     LaunchedEffect(state.uploadSuccess) {
@@ -62,15 +65,45 @@ fun VideoUploadScreen(
         }
     }
 
+    VideoUploadScreen(
+        state = state,
+        isLoading = viewModel.isLoading.value,
+        onNavigateBack = onNavigateBack,
+        onPickVideoClick = { videoPicker.pickVideo() },
+        onQualityClick = { viewModel.onEvent(VideoUploadViewModelEvent.SetQualitySheetVisible(true)) },
+        onQualitySelected = { viewModel.onEvent(VideoUploadViewModelEvent.OnQualitySelected(it)) },
+        onDismissQualitySheet = { viewModel.onEvent(VideoUploadViewModelEvent.SetQualitySheetVisible(false)) },
+        onTitleChanged = { viewModel.onEvent(VideoUploadViewModelEvent.OnTitleChanged(it)) },
+        onDescriptionChanged = { viewModel.onEvent(VideoUploadViewModelEvent.OnDescriptionChanged(it)) },
+        onCruxStartChanged = { viewModel.onEvent(VideoUploadViewModelEvent.OnCruxStartChanged(it)) },
+        onCruxEndChanged = { viewModel.onEvent(VideoUploadViewModelEvent.OnCruxEndChanged(it)) },
+        onUploadClick = { viewModel.onEvent(VideoUploadViewModelEvent.OnUploadClick) }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun VideoUploadScreen(
+    state: VideoUploadViewModelState,
+    isLoading: Boolean,
+    onNavigateBack: () -> Unit,
+    onPickVideoClick: () -> Unit,
+    onQualityClick: () -> Unit,
+    onQualitySelected: (VideoQuality) -> Unit,
+    onDismissQualitySheet: () -> Unit,
+    onTitleChanged: (String) -> Unit,
+    onDescriptionChanged: (String) -> Unit,
+    onCruxStartChanged: (String) -> Unit,
+    onCruxEndChanged: (String) -> Unit,
+    onUploadClick: () -> Unit
+) {
+    val scrollState = rememberScrollState()
+
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("새 게시물", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
+            SharedTopAppBar(
+                title = "새 게시물",
+                onNavClick = onNavigateBack
             )
         }
     ) { paddingValues ->
@@ -89,16 +122,14 @@ fun VideoUploadScreen(
                     .height(240.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(Color.Black.copy(alpha = 0.1f))
-                    .clickable { videoPicker.pickVideo() },
+                    .clickable(onClick = onPickVideoClick),
                 contentAlignment = Alignment.Center
             ) {
-                if (state.selectedVideo?.previewUrl != null) {
-                    val controller = rememberVideoPlayerController(state.selectedVideo.previewUrl)
-                    VideoPlayerView(
-                        controller = controller,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                    // Overlay to allow re-selection
+                if (state.selectedMedia != null) {
+                    // In real app, we need a way to get URL for preview
+                    // For now, providing a placeholder if URL is not directly available
+                    Text("영상 선택됨: ${state.selectedMedia.fileName}", color = Color.Gray)
+                    
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
@@ -123,23 +154,42 @@ fun VideoUploadScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Quality Selection
+            OutlinedCard(
+                onClick = onQualityClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Default.HighQuality, contentDescription = null)
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text("업로드 화질", fontSize = 12.sp, color = Color.Gray)
+                        Text(state.selectedQuality.name, fontWeight = FontWeight.Bold)
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text("변경", color = MaterialTheme.colorScheme.primary, fontSize = 14.sp)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             // Metadata Fields
-            OutlinedTextField(
+            SharedTextField(
                 value = state.title,
-                onValueChange = { viewModel.onEvent(VideoUploadViewModelEvent.OnTitleChanged(it)) },
-                label = { Text("제목") },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("오늘의 클라이밍 기록") }
+                onValueChange = onTitleChanged,
+                placeholderText = "제목 (오늘의 클라이밍 기록)"
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            SharedTextField(
                 value = state.description,
-                onValueChange = { viewModel.onEvent(VideoUploadViewModelEvent.OnDescriptionChanged(it)) },
-                label = { Text("설명 (해시태그 포함)") },
-                modifier = Modifier.fillMaxWidth().height(120.dp),
-                placeholder = { Text("#v6 #dyno #climbing") }
+                onValueChange = onDescriptionChanged,
+                placeholderText = "설명 (해시태그 포함)",
+                modifier = Modifier.height(120.dp)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -151,20 +201,18 @@ fun VideoUploadScreen(
                 fontSize = 14.sp
             )
             Row(modifier = Modifier.fillMaxWidth()) {
-                OutlinedTextField(
+                SharedTextField(
                     value = state.cruxStartTime,
-                    onValueChange = { viewModel.onEvent(VideoUploadViewModelEvent.OnCruxStartChanged(it)) },
-                    label = { Text("시작") },
-                    modifier = Modifier.weight(1f),
-                    placeholder = { Text("0.0") }
+                    onValueChange = onCruxStartChanged,
+                    placeholderText = "시작 (0.0)",
+                    modifier = Modifier.weight(1f)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
-                OutlinedTextField(
+                SharedTextField(
                     value = state.cruxEndTime,
-                    onValueChange = { viewModel.onEvent(VideoUploadViewModelEvent.OnCruxEndChanged(it)) },
-                    label = { Text("종료") },
-                    modifier = Modifier.weight(1f),
-                    placeholder = { Text("10.0") }
+                    onValueChange = onCruxEndChanged,
+                    placeholderText = "종료 (10.0)",
+                    modifier = Modifier.weight(1f)
                 )
             }
 
@@ -181,12 +229,12 @@ fun VideoUploadScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = { viewModel.onEvent(VideoUploadViewModelEvent.OnUploadClick) },
+                onClick = onUploadClick,
                 modifier = Modifier.fillMaxWidth().height(56.dp),
-                enabled = state.selectedVideo != null && state.title.isNotBlank() && !viewModel.isLoading.value,
+                enabled = state.selectedMedia != null && state.title.isNotBlank() && !isLoading,
                 shape = RoundedCornerShape(12.dp)
             ) {
-                if (viewModel.isLoading.value) {
+                if (isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
                 } else {
                     Text("업로드 하기", fontWeight = FontWeight.Bold, fontSize = 16.sp)
@@ -195,6 +243,29 @@ fun VideoUploadScreen(
 
             if (state.errorMessage != null) {
                 Text(state.errorMessage, color = Color.Red, fontSize = 14.sp, modifier = Modifier.padding(top = 16.dp))
+            }
+        }
+
+        if (state.isQualitySheetVisible) {
+            ModalBottomSheet(
+                onDismissRequest = onDismissQualitySheet
+            ) {
+                Column(modifier = Modifier.padding(16.dp).padding(bottom = 32.dp)) {
+                    Text("업로드 화질 선택", fontWeight = FontWeight.Bold, fontSize = 18.sp, modifier = Modifier.padding(bottom = 16.dp))
+                    VideoQuality.entries.forEach { quality ->
+                        ListItem(
+                            headlineContent = { Text(quality.name) },
+                            supportingContent = { Text("${quality.width}x${quality.height}, 30fps") },
+                            trailingContent = {
+                                RadioButton(
+                                    selected = state.selectedQuality == quality,
+                                    onClick = { onQualitySelected(quality) }
+                                )
+                            },
+                            modifier = Modifier.clickable { onQualitySelected(quality) }
+                        )
+                    }
+                }
             }
         }
     }

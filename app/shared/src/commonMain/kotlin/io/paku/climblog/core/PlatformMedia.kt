@@ -2,6 +2,8 @@ package io.paku.climblog.core
 
 expect class PlatformMedia {
     suspend fun readBytes(): ByteArray
+    suspend fun readChunk(start: Long, length: Int): ByteArray
+    suspend fun getSize(): Long
 }
 
 sealed interface Media {

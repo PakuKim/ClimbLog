@@ -4,17 +4,23 @@ import io.paku.climblog.business.data.source.remote.VideoRemoteDataSource
 import io.paku.climblog.business.domain.VideoRepository
 import io.paku.climblog.business.domain.model.Comment
 import io.paku.climblog.business.domain.model.Video
+import io.paku.climblog.business.domain.model.video.PresignedPostResponse
 
 internal class VideoRepositoryImpl(
     private val videoRemoteDataSource: VideoRemoteDataSource
 ) : VideoRepository {
 
-    override suspend fun getPresignedUrl(fileName: String, contentType: String): Result<Pair<String, String>> = runCatching {
-        videoRemoteDataSource.getPresignedUrl(fileName, contentType)
+    override suspend fun getPresignedPost(fileName: String, contentType: String): Result<PresignedPostResponse> = runCatching {
+        videoRemoteDataSource.getPresignedPost(fileName, contentType)
     }
 
-    override suspend fun uploadToS3(url: String, bytes: ByteArray, onProgress: (Float) -> Unit): Result<Unit> = runCatching {
-        videoRemoteDataSource.uploadToS3(url, bytes, onProgress)
+    override suspend fun uploadVideoToS3Post(
+        url: String,
+        fields: Map<String, String>,
+        videoBytes: ByteArray,
+        onProgress: (Float) -> Unit
+    ): Result<Unit> = runCatching {
+        videoRemoteDataSource.uploadVideoToS3Post(url, fields, videoBytes, onProgress)
     }
 
     override suspend fun registerVideo(
@@ -55,5 +61,13 @@ internal class VideoRepositoryImpl(
 
     override suspend fun postComment(videoId: Long, content: String): Result<Comment> = runCatching {
         videoRemoteDataSource.postComment(videoId, content)
+    }
+
+    override suspend fun getPresignedUrl(fileName: String, contentType: String): Result<Pair<String, String>> = runCatching {
+        videoRemoteDataSource.getPresignedUrl(fileName, contentType)
+    }
+
+    override suspend fun uploadToS3(url: String, bytes: ByteArray, onProgress: (Float) -> Unit): Result<Unit> = runCatching {
+        videoRemoteDataSource.uploadToS3(url, bytes, onProgress)
     }
 }

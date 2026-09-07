@@ -1,7 +1,7 @@
 package io.paku.climblog.presentation.ui.main.search
 
-import io.paku.climblog.business.domain.UserRepository
-import io.paku.climblog.business.domain.VideoRepository
+import io.paku.climblog.business.domain.interactors.user.SearchUsersUseCase
+import io.paku.climblog.business.domain.interactors.video.GetRandomVideosUseCase
 import io.paku.climblog.business.domain.model.User
 import io.paku.climblog.business.domain.model.Video
 import io.paku.climblog.presentation.base.BaseViewModel
@@ -23,8 +23,8 @@ sealed class SearchViewModelEvent : ViewModelEvent {
 }
 
 internal class SearchViewModel(
-    private val userRepository: UserRepository,
-    private val videoRepository: VideoRepository
+    private val searchUsersUseCase: SearchUsersUseCase,
+    private val getRandomVideosUseCase: GetRandomVideosUseCase
 ) : BaseViewModel<SearchViewModelState, SearchViewModelEvent, Nothing>() {
 
     private var searchJob: Job? = null
@@ -48,7 +48,7 @@ internal class SearchViewModel(
     }
 
     private fun loadRandomVideos() = launch {
-        videoRepository.getRandomVideos(18).onSuccess { videos ->
+        getRandomVideosUseCase(18).onSuccess { videos ->
             updateState { copy(randomVideos = videos) }
         }
     }
@@ -63,7 +63,7 @@ internal class SearchViewModel(
         searchJob = launch {
             delay(300) // Debounce
             updateState { copy(isSearching = true) }
-            val users = userRepository.searchUsers(query)
+            val users = searchUsersUseCase(query)
             updateState { copy(searchResults = users, isSearching = false) }
         }
     }

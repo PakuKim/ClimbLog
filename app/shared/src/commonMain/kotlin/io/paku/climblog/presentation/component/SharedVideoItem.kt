@@ -1,0 +1,219 @@
+package io.paku.climblog.presentation.component
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import io.paku.climblog.business.domain.model.Video
+import io.paku.climblog.core.VideoPlayerView
+import io.paku.climblog.core.rememberVideoPlayerController
+import io.paku.climblog.presentation.ext.noRippleClickable
+
+@Composable
+internal fun SharedVideoItem(
+    video: Video,
+    isCurrent: Boolean,
+    isLiked: Boolean,
+    onLikeClick: () -> Unit,
+    onCommentClick: () -> Unit,
+    onShareClick: () -> Unit
+) {
+    val controller = rememberVideoPlayerController(video.hlsUrl)
+    var isPaused by remember { mutableStateOf(false) }
+    var playbackSpeed by remember { mutableStateOf(1.0f) }
+
+    LaunchedEffect(isCurrent) {
+        if (isCurrent) {
+            controller.play()
+            isPaused = false
+        } else {
+            controller.pause()
+        }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        VideoPlayerView(
+            modifier = Modifier
+                .fillMaxSize()
+                .noRippleClickable {
+                    if (isPaused) controller.play() else controller.pause()
+                    isPaused = !isPaused
+                },
+            controller = controller,
+        )
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+                .padding(bottom = 120.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            InteractionIcon(
+                icon = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                color = if (isLiked) Color.Red else Color.White,
+                onClick = onLikeClick
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            InteractionIcon(
+                icon = Icons.Outlined.ChatBubbleOutline,
+                onClick = onCommentClick
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            InteractionIcon(
+                icon = Icons.Default.Share,
+                onClick = onShareClick
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp)
+                .padding(bottom = 48.dp)
+        ) {
+            Text(
+                text = video.title,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+            video.description?.let {
+                Text(
+                    text = it,
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+
+            if (video.cruxes.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+
+                SuggestionChip(
+                    onClick = {
+                        video.cruxes.firstOrNull()?.startTime?.let {
+                            controller.seekTo((it * 1000).toLong())
+                            controller.play()
+                            isPaused = false
+                        }
+                    },
+                    label = { Text("Crux Section", color = Color.White) },
+                    shape = RoundedCornerShape(16.dp),
+                    colors = SuggestionChipDefaults.suggestionChipColors(
+                        containerColor = Color.White.copy(alpha = 0.2f)
+                    )
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(horizontal = 16.dp, vertical = 48.dp)
+        ) {
+            var showSpeedMenu by remember { mutableStateOf(false) }
+
+            TextButton(
+                onClick = { showSpeedMenu = true },
+                colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
+            ) {
+                Text("${playbackSpeed}x", fontWeight = FontWeight.Bold)
+            }
+
+            DropdownMenu(
+                expanded = showSpeedMenu,
+                onDismissRequest = { showSpeedMenu = false }
+            ) {
+                listOf(0.5f, 0.8f, 1.0f, 1.2f, 1.5f, 2.0f).forEach { speed ->
+                    DropdownMenuItem(
+                        text = { Text("${speed}x") },
+                        onClick = {
+                            playbackSpeed = speed
+                            controller.setPlaybackSpeed(speed)
+                            showSpeedMenu = false
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun InteractionIcon(
+    icon: ImageVector,
+    color: Color = Color.White,
+    onClick: () -> Unit
+) {
+    IconButton(onClick = onClick) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = color,
+            modifier = Modifier.size(32.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SharedVideoItemPreview() {
+    PreviewWrapper {
+        SharedVideoItem(
+            video = Video(
+                id = 1,
+                userId = 1,
+                title = "Sample Video",
+                description = "This is a sample video description.",
+                hlsUrl = "https://example.com/video.m3u8",
+                thumbnailUrl = "https://example.com/thumbnail.jpg",
+                cruxes = emptyList(),
+                createdAt = 0
+            ),
+            isCurrent = true,
+            isLiked = false,
+            onLikeClick = {},
+            onCommentClick = {},
+            onShareClick = {}
+        )
+    }
+}

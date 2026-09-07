@@ -6,7 +6,7 @@ import io.paku.climblog.domain.model.AppException
 import io.paku.climblog.domain.model.token.AuthToken
 import io.paku.climblog.domain.provider.JwtTokenProvider
 
-internal class RefreshTokenUseCase(
+class RefreshTokenUseCase(
     private val refreshTokenRepository: RefreshTokenRepository,
     private val jwtTokenProvider: JwtTokenProvider
 ) {

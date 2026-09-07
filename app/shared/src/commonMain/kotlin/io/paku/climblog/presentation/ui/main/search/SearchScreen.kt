@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,20 +42,35 @@ import io.paku.climblog.business.domain.model.User
 import io.paku.climblog.business.domain.model.Video
 import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SearchScreen(
+internal fun SearchRoute(
     viewModel: SearchViewModel = koinViewModel(),
     onUserClick: (Long) -> Unit,
     onVideoClick: (Long) -> Unit
 ) {
-    val state = viewModel.state.value
+    val state by viewModel.state
 
+    SearchScreen(
+        state = state,
+        onQueryChanged = { viewModel.onEvent(SearchViewModelEvent.OnQueryChanged(it)) },
+        onUserClick = onUserClick,
+        onVideoClick = onVideoClick
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchScreen(
+    state: SearchViewModelState,
+    onQueryChanged: (String) -> Unit,
+    onUserClick: (Long) -> Unit,
+    onVideoClick: (Long) -> Unit
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         // Search Bar
         OutlinedTextField(
             value = state.query,
-            onValueChange = { viewModel.onEvent(SearchViewModelEvent.OnQueryChanged(it)) },
+            onValueChange = onQueryChanged,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),

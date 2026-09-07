@@ -47,7 +47,7 @@ internal class AuthRepositoryImpl(
     }
 
     override suspend fun logout() {
-        authRemoteDataSource.logout()
+//        authRemoteDataSource.logout()
         sessionLocal.clear()
     }
 }

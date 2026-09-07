@@ -1,6 +1,6 @@
 package io.paku.climblog.presentation.ui.main
 
-import io.paku.climblog.business.domain.NotificationRepository
+import io.paku.climblog.business.domain.interactors.notification.CheckUnreadNotificationsUseCase
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
 import io.paku.climblog.presentation.base.ViewModelState
@@ -14,7 +14,7 @@ sealed class MainViewModelEvent : ViewModelEvent {
 }
 
 internal class MainViewModel(
-    private val notificationRepository: NotificationRepository
+    private val checkUnreadNotificationsUseCase: CheckUnreadNotificationsUseCase
 ) : BaseViewModel<MainViewModelState, MainViewModelEvent, Nothing>() {
 
     override fun createInitialState(): MainViewModelState = MainViewModelState()
@@ -26,7 +26,7 @@ internal class MainViewModel(
     }
 
     private fun checkUnread() = launch {
-        notificationRepository.checkUnread().onSuccess { hasUnread ->
+        checkUnreadNotificationsUseCase().onSuccess { hasUnread ->
             updateState { copy(hasUnreadNotifications = hasUnread) }
         }
     }

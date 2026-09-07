@@ -4,12 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.autoreleasepool
-import platform.Foundation.NSData
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import platform.Foundation.NSUUID
-import platform.Foundation.dataWithContentsOfURL
 import platform.Foundation.temporaryDirectory
 import platform.PhotosUI.PHPickerConfiguration
 import platform.PhotosUI.PHPickerFilter
@@ -150,12 +147,7 @@ private fun createMediaFromUrl(sourceUrl: NSURL, isVideo: Boolean): Media? {
     val copySuccess = fileManager.copyItemAtURL(sourceUrl, destinationUrl, null)
     if (!copySuccess) return null
 
-    // NSURL -> NSData 변환 및 PlatformMedia 생성
-    // 메모리관리를 위해 autoreleasePool 사용
-    val platformMedia = autoreleasepool {
-        val nsData = NSData.dataWithContentsOfURL(destinationUrl) ?: return@autoreleasepool null
-        PlatformMedia(nsData)
-    } ?: return null
+    val platformMedia = PlatformMedia(destinationUrl)
 
     // 파일 확장자 기반 MIME 타입 추론
     val extension = destinationUrl.pathExtension?.lowercase() ?: ""

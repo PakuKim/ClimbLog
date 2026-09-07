@@ -9,51 +9,56 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.PersonRemove
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import io.paku.climblog.presentation.component.SharedTopAppBar
+import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SettingsScreen(
-    viewModel: SettingsViewModel,
+internal fun SettingsRoute(
+    viewModel: SettingsViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
     onLogoutSuccess: () -> Unit
 ) {
-    val state = viewModel.state.value
+    val state by viewModel.state
 
-    LaunchedEffect(state.isLogoutSuccess, state.isDeleteAccountSuccess) {
-        if (state.isLogoutSuccess || state.isDeleteAccountSuccess) {
+    LaunchedEffect(state.isLogoutSuccess) {
+        if (state.isLogoutSuccess) {
             onLogoutSuccess()
         }
     }
 
+    SettingsScreen(
+        onNavigateBack = onNavigateBack,
+        onLogoutClick = { viewModel.onEvent(SettingsViewModelEvent.OnLogoutClick) },
+        onDeleteAccountClick = { viewModel.onEvent(SettingsViewModelEvent.OnDeleteAccountClick) }
+    )
+}
+
+@Composable
+private fun SettingsScreen(
+    onNavigateBack: () -> Unit,
+    onLogoutClick: () -> Unit,
+    onDeleteAccountClick: () -> Unit
+) {
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("설정", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
+            SharedTopAppBar(
+                title = "설정",
+                onNavClick = onNavigateBack
             )
         }
     ) { paddingValues ->
@@ -63,29 +68,27 @@ internal fun SettingsScreen(
                 .fillMaxSize()
         ) {
             SettingsItem(
+                icon = Icons.Default.Logout,
                 title = "로그아웃",
-                icon = Icons.Default.ExitToApp,
-                onClick = { viewModel.onEvent(SettingsViewModelEvent.OnLogoutClick) }
+                onClick = onLogoutClick
             )
             
             HorizontalDivider()
-
+            
             SettingsItem(
-                title = "회원 탈퇴",
-                icon = Icons.Default.PersonRemove,
+                icon = Icons.Default.Delete,
+                title = "계정 탈퇴",
                 titleColor = Color.Red,
-                onClick = { viewModel.onEvent(SettingsViewModelEvent.OnDeleteAccountClick) }
+                onClick = onDeleteAccountClick
             )
-            
-            HorizontalDivider()
         }
     }
 }
 
 @Composable
-fun SettingsItem(
-    title: String,
+private fun SettingsItem(
     icon: ImageVector,
+    title: String,
     titleColor: Color = MaterialTheme.colorScheme.onSurface,
     onClick: () -> Unit
 ) {
@@ -98,6 +101,6 @@ fun SettingsItem(
     ) {
         Icon(icon, contentDescription = null, tint = titleColor)
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = title, color = titleColor, fontSize = 16.sp)
+        Text(text = title, color = titleColor)
     }
 }

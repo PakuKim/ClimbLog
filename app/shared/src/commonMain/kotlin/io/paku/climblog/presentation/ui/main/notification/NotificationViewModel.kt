@@ -1,6 +1,6 @@
 package io.paku.climblog.presentation.ui.main.notification
 
-import io.paku.climblog.business.domain.NotificationRepository
+import io.paku.climblog.business.domain.interactors.notification.GetNotificationsUseCase
 import io.paku.climblog.business.domain.model.Notification
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
@@ -15,7 +15,7 @@ sealed class NotificationViewModelEvent : ViewModelEvent {
 }
 
 class NotificationViewModel(
-    private val notificationRepository: NotificationRepository
+    private val getNotificationsUseCase: GetNotificationsUseCase
 ) : BaseViewModel<NotificationViewModelState, NotificationViewModelEvent, Nothing>() {
 
     override fun createInitialState(): NotificationViewModelState = NotificationViewModelState()
@@ -33,7 +33,7 @@ class NotificationViewModel(
     }
 
     private fun loadNotifications() = launchWithLoading {
-        notificationRepository.getNotifications().onSuccess { list ->
+        getNotificationsUseCase().onSuccess { list ->
             updateState { copy(notifications = list) }
         }
     }

@@ -44,7 +44,7 @@ fun App() {
             NavHost(
                 modifier = Modifier.fillMaxSize(),
                 navController = navController,
-                startDestination = AppNavigation.Login,
+                startDestination = startDestination,
                 enterTransition = { EnterTransition.None },
                 exitTransition = { ExitTransition.None }
             ) {

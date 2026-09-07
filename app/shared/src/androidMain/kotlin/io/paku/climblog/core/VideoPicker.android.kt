@@ -7,23 +7,16 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
-actual fun rememberVideoPicker(onVideoPicked: (VideoFile?) -> Unit): VideoPicker {
+actual fun rememberVideoPicker(onVideoPicked: (Media.Video?) -> Unit): VideoPicker {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        scope.launch {
-            val videoFile = uri?.let { readVideoUri(context, it) }
-            onVideoPicked(videoFile)
-        }
+        val videoMedia = uri?.let { readVideoUri(context, it) }
+        onVideoPicked(videoMedia)
     }
 
     return remember {
@@ -35,7 +28,7 @@ actual fun rememberVideoPicker(onVideoPicked: (VideoFile?) -> Unit): VideoPicker
     }
 }
 
-private suspend fun readVideoUri(context: Context, uri: Uri): VideoFile? = withContext(Dispatchers.IO) {
+private fun readVideoUri(context: Context, uri: Uri): Media.Video {
     val contentResolver = context.contentResolver
     val name = contentResolver.query(uri, null, null, null, null)?.use { cursor ->
         val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
@@ -44,7 +37,10 @@ private suspend fun readVideoUri(context: Context, uri: Uri): VideoFile? = withC
     } ?: "video.mp4"
     
     val contentType = contentResolver.getType(uri) ?: "video/mp4"
-    val bytes = contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return@withContext null
     
-    VideoFile(bytes, name, contentType, uri.toString())
+    return Media.Video(
+        mimeType = contentType,
+        fileName = name,
+        source = PlatformMedia(uri, contentResolver)
+    )
 }
