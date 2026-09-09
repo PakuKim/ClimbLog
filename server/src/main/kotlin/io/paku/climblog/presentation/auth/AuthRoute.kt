@@ -2,13 +2,12 @@ package io.paku.climblog.presentation.auth
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
-import io.ktor.server.auth.jwt.JWTPrincipal
-import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+import io.paku.climblog.domain.ext.getUserId
 import io.paku.climblog.domain.interactor.auth.LogoutUseCase
 import io.paku.climblog.domain.interactor.auth.RefreshTokenUseCase
 import io.paku.climblog.domain.interactor.auth.SocialLoginUseCase
@@ -24,8 +23,7 @@ internal fun Route.authRoutes() {
     route("/api/v1/auth") {
         authenticate("auth-jwt") {
             post("/logout") {
-                val userId = call.principal<JWTPrincipal>()?.payload?.subject?.toLongOrNull()
-                    ?: return@post call.respond(HttpStatusCode.Unauthorized)
+                val userId = call.getUserId()
                 logoutUseCase(userId)
                 call.respond(HttpStatusCode.OK)
             }

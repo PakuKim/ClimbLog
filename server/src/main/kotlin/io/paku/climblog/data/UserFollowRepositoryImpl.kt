@@ -40,4 +40,16 @@ internal class UserFollowRepositoryImpl : UserFollowRepository {
             .where { UserFollowTable.followerId eq userId }
             .count()
     }
+
+    override suspend fun getFollowingIds(userId: Long): List<Long> = dbQuery {
+        UserFollowTable.selectAll()
+            .where { UserFollowTable.followerId eq userId }
+            .map { it[UserFollowTable.followingId].value }
+    }
+
+    override suspend fun getFollowerIds(userId: Long): List<Long> = dbQuery {
+        UserFollowTable.selectAll()
+            .where { UserFollowTable.followingId eq userId }
+            .map { it[UserFollowTable.followerId].value }
+    }
 }

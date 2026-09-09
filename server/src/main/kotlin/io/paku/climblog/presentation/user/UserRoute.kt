@@ -12,10 +12,13 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
-import io.paku.climblog.domain.VideoRepository
+import io.paku.climblog.domain.ext.getUserId
 import io.paku.climblog.domain.interactor.user.CheckHandleUseCase
 import io.paku.climblog.domain.interactor.user.DeleteUserUseCase
 import io.paku.climblog.domain.interactor.user.FollowUserUseCase
+import io.paku.climblog.domain.interactor.user.GetFollowStatusUseCase
+import io.paku.climblog.domain.interactor.user.GetFollowersUseCase
+import io.paku.climblog.domain.interactor.user.GetFollowingUseCase
 import io.paku.climblog.domain.interactor.user.GetUserProfileUseCase
 import io.paku.climblog.domain.interactor.user.GetUserUseCase
 import io.paku.climblog.domain.interactor.user.SearchUsersUseCase
@@ -23,8 +26,6 @@ import io.paku.climblog.domain.interactor.user.UnfollowUserUseCase
 import io.paku.climblog.domain.interactor.user.UpdateUserUseCase
 import io.paku.climblog.domain.model.user.User
 import io.paku.climblog.domain.model.user.UserProfile
-import io.paku.climblog.domain.model.video.Video
-import io.paku.climblog.presentation.video.VideoResponse
 import org.koin.ktor.ext.inject
 
 internal fun Route.userRoutes() {
@@ -36,15 +37,15 @@ internal fun Route.userRoutes() {
     val unfollowUserUseCase: UnfollowUserUseCase by inject()
     val updateUserUseCase: UpdateUserUseCase by inject()
     val deleteUserUseCase: DeleteUserUseCase by inject()
-    val videoRepository: VideoRepository by inject()
+    val getFollowersUseCase: GetFollowersUseCase by inject()
+    val getFollowingUseCase: GetFollowingUseCase by inject()
+    val getFollowStatusUseCase: GetFollowStatusUseCase by inject()
 
     route("/api/v1/users") {
         get("/check/handle") {
             val handle = call.request.queryParameters["handle"]
-            if (handle == null) {
-                call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Handle is required"))
-                return@get
-            }
+                ?: return@get call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Handle is required"))
+
             val exists = checkHandleUseCase(handle)
             call.respond(HttpStatusCode.OK, HandleCheckResponse(exists))
         }
@@ -52,13 +53,14 @@ internal fun Route.userRoutes() {
         authenticate("auth-jwt") {
             route("/me") {
                 get {
-                    val userId = call.principal<JWTPrincipal>()?.payload?.subject?.toLongOrNull() ?: return@get call.respond(HttpStatusCode.Unauthorized)
+                    val userId = call.getUserId()
                     val user = getUserUseCase(userId)
 
                     call.respond(HttpStatusCode.OK, user.toResponse())
                 }
+
                 put {
-                    val userId = call.principal<JWTPrincipal>()?.payload?.subject?.toLongOrNull() ?: return@put call.respond(HttpStatusCode.Unauthorized)
+                    val userId = call.getUserId()
                     val request = call.receive<UpdateUserRequest>()
                     val user = updateUserUseCase(
                         userId = userId,
@@ -72,27 +74,41 @@ internal fun Route.userRoutes() {
 
                     call.respond(HttpStatusCode.OK, user.toResponse())
                 }
+
                 delete {
-                    val userId = call.principal<JWTPrincipal>()?.payload?.subject?.toLongOrNull() ?: return@delete call.respond(HttpStatusCode.Unauthorized)
+                    val userId = call.getUserId()
                     deleteUserUseCase(userId)
                     call.respond(HttpStatusCode.NoContent)
                 }
             }
 
             route("/{id}/follow") {
+                get("/status") {
+                    val userId = call.getUserId()
+                    val targetId = call.parameters["id"]?.toLongOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+                    getFollowStatusUseCase(userId, targetId).onSuccess { isFollowing ->
+                        call.respond(HttpStatusCode.OK, FollowStatusResponse(isFollowing))
+                    }.onFailure {
+                        call.respond(HttpStatusCode.InternalServerError)
+                    }
+                }
+
                 post {
-                    val followerId = call.principal<JWTPrincipal>()?.payload?.subject?.toLongOrNull() ?: return@post call.respond(HttpStatusCode.Unauthorized)
-                    val followingId = call.parameters["id"]?.toLongOrNull() ?: return@post call.respond(HttpStatusCode.BadRequest)
+                    val userId = call.getUserId()
+                    val targetId = call.parameters["id"]?.toLongOrNull()
+                        ?: return@post call.respond(HttpStatusCode.BadRequest)
                     
-                    followUserUseCase(followerId, followingId)
+                    followUserUseCase(userId, targetId)
                     call.respond(HttpStatusCode.OK, mapOf("isFollowing" to true))
                 }
 
                 delete {
-                    val followerId = call.principal<JWTPrincipal>()?.payload?.subject?.toLongOrNull() ?: return@delete call.respond(HttpStatusCode.Unauthorized)
-                    val followingId = call.parameters["id"]?.toLongOrNull() ?: return@delete call.respond(HttpStatusCode.BadRequest)
+                    val userId = call.getUserId()
+                    val targetId = call.parameters["id"]?.toLongOrNull()
+                        ?: return@delete call.respond(HttpStatusCode.BadRequest)
                     
-                    unfollowUserUseCase(followerId, followingId)
+                    unfollowUserUseCase(userId, targetId)
                     call.respond(HttpStatusCode.OK, mapOf("isFollowing" to false))
                 }
             }
@@ -110,11 +126,26 @@ internal fun Route.userRoutes() {
                 val profile = getUserProfileUseCase(targetId, currentUserId)
                 call.respond(HttpStatusCode.OK, profile.toResponse())
             }
+            route("/{id}/followers") {
+                get {
+                    val targetId = call.parameters["id"]?.toLongOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
+                    getFollowersUseCase(targetId).onSuccess { followers ->
+                        call.respond(HttpStatusCode.OK, UserListResponse(followers.map { it.toResponse() }))
+                    }.onFailure {
+                        call.respond(HttpStatusCode.InternalServerError)
+                    }
+                }
+            }
 
-            get("/{id}/videos") {
-                val targetId = call.parameters["id"]?.toLongOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
-                val videos = videoRepository.findAllByUserId(targetId)
-                call.respond(HttpStatusCode.OK, videos.map { it.toResponse() })
+            route("/{id}/following") {
+                get {
+                    val targetId = call.parameters["id"]?.toLongOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
+                    getFollowingUseCase(targetId).onSuccess { following ->
+                        call.respond(HttpStatusCode.OK, UserListResponse(following.map { it.toResponse() }))
+                    }.onFailure {
+                        call.respond(HttpStatusCode.InternalServerError)
+                    }
+                }
             }
         }
     }
@@ -137,21 +168,4 @@ private fun UserProfile.toResponse() = UserProfileResponse(
     followingCount = followingCount,
     videoCount = videoCount,
     isFollowing = isFollowing
-)
-
-private fun Video.toResponse() = VideoResponse(
-    id = id,
-    userId = userId,
-    title = title,
-    description = description,
-    hlsUrl = hlsUrl,
-    thumbnailUrl = thumbnailUrl,
-    cruxes = videoCruxes.map {
-        VideoResponse.Crux(
-            id = it.id,
-            cruxStartTime = it.startTime,
-            cruxEndTime = it.endTime
-        )
-    },
-    createdAt = createdAt
 )

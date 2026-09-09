@@ -36,12 +36,16 @@ import io.paku.climblog.domain.interactor.notification.SendNotificationUseCase
 import io.paku.climblog.domain.interactor.user.CheckHandleUseCase
 import io.paku.climblog.domain.interactor.user.DeleteUserUseCase
 import io.paku.climblog.domain.interactor.user.FollowUserUseCase
+import io.paku.climblog.domain.interactor.user.GetFollowStatusUseCase
+import io.paku.climblog.domain.interactor.user.GetFollowersUseCase
+import io.paku.climblog.domain.interactor.user.GetFollowingUseCase
 import io.paku.climblog.domain.interactor.user.GetUserProfileUseCase
 import io.paku.climblog.domain.interactor.user.GetUserUseCase
 import io.paku.climblog.domain.interactor.user.SearchUsersUseCase
 import io.paku.climblog.domain.interactor.user.UnfollowUserUseCase
 import io.paku.climblog.domain.interactor.user.UpdateUserUseCase
 import io.paku.climblog.domain.interactor.video.GetRandomVideosUseCase
+import io.paku.climblog.domain.interactor.video.GetVideoListUseCase
 import io.paku.climblog.domain.interactor.video.PostCommentUseCase
 import io.paku.climblog.domain.interactor.video.ToggleLikeUseCase
 import io.paku.climblog.domain.provider.BCryptEncodeProvider
@@ -136,9 +140,13 @@ private fun appModule(
     factory { GetUserProfileUseCase(get(), get(), get()) }
     factory { FollowUserUseCase(get(), get()) }
     factory { UnfollowUserUseCase(get()) }
+    factory { GetFollowersUseCase(get(), get()) }
+    factory { GetFollowingUseCase(get(), get()) }
+    factory { GetFollowStatusUseCase(get()) }
     factory { UpdateUserUseCase(get()) }
     factory { DeleteUserUseCase(get(), get()) }
     factory { GetRandomVideosUseCase(get()) }
+    factory { GetVideoListUseCase(get()) }
     factory { SendNotificationUseCase(get(), get(), get()) }
     factory { ToggleLikeUseCase(get(), get(), get()) }
     factory { PostCommentUseCase(get(), get(), get()) }

@@ -24,6 +24,16 @@ data class UserProfileResponse(
 )
 
 @Serializable
+data class UserListResponse(
+    val users: List<UserResponse>
+)
+
+@Serializable
+data class FollowStatusResponse(
+    val isFollowing: Boolean
+)
+
+@Serializable
 data class HandleCheckResponse(
     val exists: Boolean
 )

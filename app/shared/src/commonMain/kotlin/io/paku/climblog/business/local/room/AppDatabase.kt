@@ -5,10 +5,11 @@ import androidx.room3.Database
 import androidx.room3.RoomDatabase
 import androidx.room3.RoomDatabaseConstructor
 import androidx.sqlite.SQLiteDriver
+import io.paku.climblog.business.local.room.entity.UserEntity
 import kotlin.coroutines.CoroutineContext
 
 @Database(
-    entities = [],
+    entities = [UserEntity::class],
     version = 1
 )
 @ConstructedBy(AppDatabaseConstructor::class)
