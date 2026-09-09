@@ -1,23 +1,35 @@
 package io.paku.climblog.di
 
-import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.business.domain.provider.Provider
 import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 import io.paku.climblog.business.domain.provider.social.SocialLoginProviderImpl
+import io.paku.climblog.business.local.datastore.DataStoreFactory
+import io.paku.climblog.business.local.room.RoomDatabaseFactory
+import io.paku.climblog.core.AppDispatcher
 import io.paku.climblog.core.IOSVideoCompressor
 import io.paku.climblog.core.VideoCompressor
 import io.paku.climblog.provider.social.GoogleLoginProviderImpl
 import io.paku.climblog.provider.social.KakaoLoginProviderImpl
 import io.paku.climblog.provider.social.NaverLoginProviderImpl
-import io.paku.climblog.util.DataStoreUtil.createDataStore
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.SupervisorJob
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 actual val platformModule: Module = module {
+    // dispatchers
+    single<CoroutineDispatcher>(named(AppDispatcher.IO)) { Dispatchers.Default }
+    single<CoroutineDispatcher>(named(AppDispatcher.MAIN)) { Dispatchers.Main }
+    single<CoroutineDispatcher>(named(AppDispatcher.DEFAULT)) { Dispatchers.Default }
+
+    // database
+    single { RoomDatabaseFactory() }
+
+    // datastore
+    single { DataStoreFactory() }
+
     // social
     single<SocialLoginProvider> {
         val providerMap = mapOf<SocialLoginType, Provider<SocialLoginProvider>>(
@@ -34,7 +46,4 @@ actual val platformModule: Module = module {
 
     // video
     single<VideoCompressor> { IOSVideoCompressor() }
-
-    val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    single { createDataStore(coroutineScope) }
 }

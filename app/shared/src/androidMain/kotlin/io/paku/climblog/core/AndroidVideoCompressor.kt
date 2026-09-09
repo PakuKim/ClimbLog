@@ -14,7 +14,7 @@ import androidx.media3.transformer.Effects
 import androidx.media3.transformer.ExportException
 import androidx.media3.transformer.ExportResult
 import androidx.media3.transformer.Transformer
-import io.paku.climblog.business.domain.model.VideoQuality
+import io.paku.climblog.business.domain.model.video.VideoQuality
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

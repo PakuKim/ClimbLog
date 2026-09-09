@@ -1,6 +1,6 @@
 package io.paku.climblog.presentation.navigation
 
-import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.business.domain.model.social.SocialLoginType
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,8 +1,8 @@
 package io.paku.climblog.business.data.source.remote
 
 import io.paku.climblog.business.domain.model.Comment
-import io.paku.climblog.business.domain.model.Video
 import io.paku.climblog.business.domain.model.video.PresignedPostResponse
+import io.paku.climblog.business.domain.model.video.Video
 
 interface VideoRemoteDataSource {
     // S3 POST Upload (Direction A)

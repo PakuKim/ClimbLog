@@ -23,8 +23,8 @@ import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import io.paku.climblog.business.data.source.local.SessionLocalDataSource
-import io.paku.climblog.business.model.CommonError
-import io.paku.climblog.business.model.CommonException
+import io.paku.climblog.business.domain.model.CommonError
+import io.paku.climblog.business.domain.model.CommonException
 import io.paku.climblog.business.remote.dto.response.auth.AuthResponse
 import io.paku.climblog.core.Platform
 import io.paku.climblog.core.getPlatform

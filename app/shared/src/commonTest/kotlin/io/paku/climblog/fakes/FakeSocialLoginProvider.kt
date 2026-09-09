@@ -1,7 +1,7 @@
 package io.paku.climblog.fakes
 
-import io.paku.climblog.business.domain.model.SocialLoginResult
-import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.business.domain.model.social.SocialLoginResult
+import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 
 class FakeSocialLoginProvider : SocialLoginProvider {

@@ -33,7 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.business.domain.model.UserProfile
+import io.paku.climblog.business.domain.model.user.UserProfile
 import io.paku.climblog.presentation.ui.main.search.VideoThumbnailItem
 
 @OptIn(ExperimentalMaterial3Api::class)

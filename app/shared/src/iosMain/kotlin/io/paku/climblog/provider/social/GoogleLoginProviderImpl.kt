@@ -1,7 +1,7 @@
 package io.paku.climblog.provider.social
 
-import io.paku.climblog.business.domain.model.SocialLoginResult
-import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.business.domain.model.social.SocialLoginResult
+import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 
 internal class GoogleLoginProviderImpl : SocialLoginProvider {

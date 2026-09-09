@@ -1,8 +1,8 @@
 package io.paku.climblog.business.domain
 
 import io.paku.climblog.business.domain.model.Comment
-import io.paku.climblog.business.domain.model.Video
 import io.paku.climblog.business.domain.model.video.PresignedPostResponse
+import io.paku.climblog.business.domain.model.video.Video
 
 interface VideoRepository {
     // S3 POST Upload (Direction A)

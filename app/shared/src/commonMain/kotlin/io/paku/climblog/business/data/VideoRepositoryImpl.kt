@@ -3,8 +3,8 @@ package io.paku.climblog.business.data
 import io.paku.climblog.business.data.source.remote.VideoRemoteDataSource
 import io.paku.climblog.business.domain.VideoRepository
 import io.paku.climblog.business.domain.model.Comment
-import io.paku.climblog.business.domain.model.Video
 import io.paku.climblog.business.domain.model.video.PresignedPostResponse
+import io.paku.climblog.business.domain.model.video.Video
 
 internal class VideoRepositoryImpl(
     private val videoRemoteDataSource: VideoRemoteDataSource

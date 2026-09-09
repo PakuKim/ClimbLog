@@ -37,9 +37,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.business.domain.model.UserProfile
+import io.paku.climblog.business.domain.model.user.UserProfile
+import io.paku.climblog.presentation.component.PreviewWrapper
 import io.paku.climblog.presentation.component.SharedTopAppBar
 import io.paku.climblog.presentation.ui.main.search.VideoThumbnailItem
 import org.koin.compose.viewmodel.koinViewModel
@@ -208,4 +210,19 @@ private fun StatItem(label: String, count: String) {
 
 @Composable
 fun UserStats(profile: UserProfile) {
+}
+
+@Composable
+@Preview
+private fun ProfileScreenPreview() {
+    PreviewWrapper {
+        ProfileScreen(
+            state = ProfileViewModelState(),
+            onUploadClick = {},
+            onVideoClick = {},
+            onMenuClick = {},
+            onEditClick = {},
+            onFollowClick = {}
+        )
+    }
 }

@@ -1,7 +1,7 @@
 package io.paku.climblog.business.domain.interactors.auth
 
 import io.paku.climblog.business.domain.AuthRepository
-import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 
 internal class SocialLoginUseCase(

@@ -1,6 +1,6 @@
 package io.paku.climblog.core
 
-import io.paku.climblog.business.domain.model.VideoQuality
+import io.paku.climblog.business.domain.model.video.VideoQuality
 
 interface VideoCompressor {
     /**

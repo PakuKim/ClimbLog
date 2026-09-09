@@ -7,8 +7,8 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import io.paku.climblog.BuildKonfig
-import io.paku.climblog.business.domain.model.SocialLoginResult
-import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.business.domain.model.social.SocialLoginResult
+import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 import io.paku.climblog.util.ActivityUtil
 

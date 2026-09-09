@@ -41,7 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.business.domain.model.VideoQuality
+import io.paku.climblog.business.domain.model.video.VideoQuality
 import io.paku.climblog.core.rememberVideoPicker
 import io.paku.climblog.presentation.component.SharedTextField
 import io.paku.climblog.presentation.component.SharedTopAppBar

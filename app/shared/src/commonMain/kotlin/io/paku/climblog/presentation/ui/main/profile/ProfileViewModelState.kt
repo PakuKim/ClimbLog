@@ -1,7 +1,7 @@
 package io.paku.climblog.presentation.ui.main.profile
 
-import io.paku.climblog.business.domain.model.UserProfile
-import io.paku.climblog.business.domain.model.Video
+import io.paku.climblog.business.domain.model.user.UserProfile
+import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.presentation.base.ViewModelState
 
 data class ProfileViewModelState(

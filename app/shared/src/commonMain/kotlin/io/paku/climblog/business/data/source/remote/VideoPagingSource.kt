@@ -3,7 +3,7 @@ package io.paku.climblog.business.data.source.remote
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import io.paku.climblog.business.domain.interactors.video.GetVideoFeedUseCase
-import io.paku.climblog.business.domain.model.Video
+import io.paku.climblog.business.domain.model.video.Video
 
 class VideoPagingSource(
     private val getVideoFeedUseCase: GetVideoFeedUseCase

@@ -1,8 +1,8 @@
 package io.paku.climblog.business.domain.interactors.video
 
 import io.paku.climblog.business.domain.VideoRepository
-import io.paku.climblog.business.domain.model.Video
-import io.paku.climblog.business.domain.model.VideoQuality
+import io.paku.climblog.business.domain.model.video.Video
+import io.paku.climblog.business.domain.model.video.VideoQuality
 import io.paku.climblog.core.PlatformMedia
 import io.paku.climblog.core.VideoCompressor
 

@@ -1,4 +1,4 @@
-package io.paku.climblog.business.domain.model
+package io.paku.climblog.business.domain.model.social
 
 import kotlinx.serialization.Serializable
 

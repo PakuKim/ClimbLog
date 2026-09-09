@@ -9,8 +9,8 @@ import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.paku.climblog.business.data.source.remote.UserRemoteDataSource
-import io.paku.climblog.business.domain.model.User
-import io.paku.climblog.business.domain.model.UserProfile
+import io.paku.climblog.business.domain.model.user.User
+import io.paku.climblog.business.domain.model.user.UserProfile
 import io.paku.climblog.business.remote.dto.request.user.RegisterUserInfoRequest
 import io.paku.climblog.business.remote.dto.response.user.GetUserResponse
 import io.paku.climblog.business.remote.dto.response.user.HandleCheckResponse

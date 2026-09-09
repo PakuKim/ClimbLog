@@ -1,4 +1,4 @@
-package io.paku.climblog.business.domain.model
+package io.paku.climblog.business.domain.model.user
 
 data class User(
     val id: Long,

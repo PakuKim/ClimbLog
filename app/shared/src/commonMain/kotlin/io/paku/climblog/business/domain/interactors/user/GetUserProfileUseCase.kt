@@ -1,7 +1,7 @@
 package io.paku.climblog.business.domain.interactors.user
 
 import io.paku.climblog.business.domain.UserRepository
-import io.paku.climblog.business.domain.model.UserProfile
+import io.paku.climblog.business.domain.model.user.UserProfile
 
 class GetUserProfileUseCase(
     private val userRepository: UserRepository

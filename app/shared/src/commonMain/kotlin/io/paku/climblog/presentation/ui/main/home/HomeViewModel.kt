@@ -12,7 +12,7 @@ import io.paku.climblog.business.domain.interactors.video.GetVideoFeedUseCase
 import io.paku.climblog.business.domain.interactors.video.PostCommentUseCase
 import io.paku.climblog.business.domain.interactors.video.ToggleLikeUseCase
 import io.paku.climblog.business.domain.model.Comment
-import io.paku.climblog.business.domain.model.Video
+import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
 import io.paku.climblog.presentation.base.ViewModelState

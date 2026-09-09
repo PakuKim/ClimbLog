@@ -1,7 +1,7 @@
 package io.paku.climblog.presentation.ui.main.upload
 
 import io.paku.climblog.business.domain.interactors.video.UploadVideoUseCase
-import io.paku.climblog.business.domain.model.VideoQuality
+import io.paku.climblog.business.domain.model.video.VideoQuality
 import io.paku.climblog.core.Media
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent

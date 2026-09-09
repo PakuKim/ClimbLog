@@ -1,0 +1,36 @@
+package io.paku.climblog.business.local.room
+
+import androidx.room3.ConstructedBy
+import androidx.room3.Database
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomDatabaseConstructor
+import androidx.sqlite.SQLiteDriver
+import kotlin.coroutines.CoroutineContext
+
+@Database(
+    entities = [],
+    version = 1
+)
+@ConstructedBy(AppDatabaseConstructor::class)
+abstract class AppDatabase: RoomDatabase()
+
+@Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+expect object AppDatabaseConstructor: RoomDatabaseConstructor<AppDatabase> {
+    override fun initialize(): AppDatabase
+}
+
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+expect class RoomDatabaseFactory {
+    fun createBuilder(): RoomDatabase.Builder<AppDatabase>
+    fun createDriver(): SQLiteDriver
+}
+
+fun createDatabase(
+    factory: RoomDatabaseFactory,
+    queryContext: CoroutineContext
+): AppDatabase {
+    return factory.createBuilder()
+        .setDriver(factory.createDriver())
+        .setQueryCoroutineContext(queryContext)
+        .build()
+}

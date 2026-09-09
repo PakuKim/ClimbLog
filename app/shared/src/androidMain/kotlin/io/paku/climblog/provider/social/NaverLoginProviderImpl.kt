@@ -2,8 +2,8 @@ package io.paku.climblog.provider.social
 
 import com.navercorp.nid.NidOAuth
 import com.navercorp.nid.oauth.util.NidOAuthCallback
-import io.paku.climblog.business.domain.model.SocialLoginResult
-import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.business.domain.model.social.SocialLoginResult
+import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 import io.paku.climblog.util.ActivityUtil
 import kotlinx.coroutines.suspendCancellableCoroutine

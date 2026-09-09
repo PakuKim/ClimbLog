@@ -3,8 +3,8 @@ package io.paku.climblog.business.data
 import io.paku.climblog.business.data.source.local.SessionLocalDataSource
 import io.paku.climblog.business.data.source.remote.UserRemoteDataSource
 import io.paku.climblog.business.domain.UserRepository
-import io.paku.climblog.business.domain.model.User
-import io.paku.climblog.business.domain.model.UserProfile
+import io.paku.climblog.business.domain.model.user.User
+import io.paku.climblog.business.domain.model.user.UserProfile
 
 internal class UserRepositoryImpl(
     private val userRemoteDataSource: UserRemoteDataSource,

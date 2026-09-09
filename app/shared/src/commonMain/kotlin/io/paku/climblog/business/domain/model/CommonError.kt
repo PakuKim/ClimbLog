@@ -1,4 +1,4 @@
-package io.paku.climblog.business.model
+package io.paku.climblog.business.domain.model
 
 sealed interface CommonError {
     data object Unknown: CommonError

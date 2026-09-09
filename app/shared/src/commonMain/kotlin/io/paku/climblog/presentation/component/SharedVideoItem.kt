@@ -36,7 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.business.domain.model.Video
+import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.core.VideoPlayerView
 import io.paku.climblog.core.rememberVideoPlayerController
 import io.paku.climblog.presentation.ext.noRippleClickable

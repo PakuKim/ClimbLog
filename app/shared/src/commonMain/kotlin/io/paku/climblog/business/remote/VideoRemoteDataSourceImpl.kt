@@ -18,10 +18,10 @@ import io.ktor.http.contentType
 import io.ktor.utils.io.ByteReadChannel
 import io.paku.climblog.business.data.source.remote.VideoRemoteDataSource
 import io.paku.climblog.business.domain.model.Comment
-import io.paku.climblog.business.domain.model.Crux
-import io.paku.climblog.business.domain.model.Video
+import io.paku.climblog.business.domain.model.video.Crux
 import io.paku.climblog.business.domain.model.video.PresignedPostRequest
 import io.paku.climblog.business.domain.model.video.PresignedPostResponse
+import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.business.remote.dto.response.video.CommentResponse
 import io.paku.climblog.business.remote.dto.response.video.CruxResponse
 import io.paku.climblog.business.remote.dto.response.video.PresignedUrlResponse

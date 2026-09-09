@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import io.paku.climblog.business.domain.interactors.auth.SocialRegisterUseCase
 import io.paku.climblog.business.domain.interactors.user.CheckHandleUseCase
-import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.core.Media
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent

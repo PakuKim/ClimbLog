@@ -2,8 +2,8 @@ package io.paku.climblog.presentation.ui.main.search
 
 import io.paku.climblog.business.domain.interactors.user.SearchUsersUseCase
 import io.paku.climblog.business.domain.interactors.video.GetRandomVideosUseCase
-import io.paku.climblog.business.domain.model.User
-import io.paku.climblog.business.domain.model.Video
+import io.paku.climblog.business.domain.model.user.User
+import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
 import io.paku.climblog.presentation.base.ViewModelState

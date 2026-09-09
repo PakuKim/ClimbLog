@@ -1,16 +1,29 @@
 package io.paku.climblog.presentation.ui.main.profile
 
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
+import io.paku.climblog.business.domain.interactors.user.FetchUserUseCase
 import io.paku.climblog.business.domain.interactors.user.GetUserProfileUseCase
 import io.paku.climblog.business.domain.interactors.user.ToggleFollowUseCase
 import io.paku.climblog.business.domain.interactors.video.GetUserVideosUseCase
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
+import io.paku.climblog.presentation.navigation.AppNavigation
 
 internal class ProfileViewModel(
+    savedStateHandle: SavedStateHandle,
+    private val fetchUserUseCase: FetchUserUseCase,
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val toggleFollowUseCase: ToggleFollowUseCase,
     private val getUserVideosUseCase: GetUserVideosUseCase
 ) : BaseViewModel<ProfileViewModelState, ProfileViewModelEvent, Nothing>() {
+    private val args: AppNavigation.UserProfile = savedStateHandle.toRoute()
+
+    init {
+        launch {
+            fetchUserUseCase.invoke()
+        }
+    }
 
     override fun createInitialState(): ProfileViewModelState = ProfileViewModelState()
 

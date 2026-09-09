@@ -1,7 +1,7 @@
 package io.paku.climblog.business.domain
 
-import io.paku.climblog.business.domain.model.User
-import io.paku.climblog.business.domain.model.UserProfile
+import io.paku.climblog.business.domain.model.user.User
+import io.paku.climblog.business.domain.model.user.UserProfile
 
 interface UserRepository {
     suspend fun getUser(): User

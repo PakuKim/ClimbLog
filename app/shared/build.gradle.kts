@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.kmp.kotlinSerialization)
     alias(libs.plugins.kmp.composeMultiplatform)
     alias(libs.plugins.buildKonfig)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room)
 }
 
 buildkonfig {
@@ -42,6 +44,7 @@ kotlin {
             implementation(libs.firebaseMessaging)
             implementation(libs.spectrum)
             implementation(libs.accompanist.permissions)
+            implementation(libs.androidx.sqlite.bundled)
             api(libs.googleCredentials)
             api(libs.googleCredentialsPlay)
             api(libs.googleId)
@@ -52,6 +55,7 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.ktor.client.ios)
             implementation(libs.ktor.client.darwin)
+            implementation(libs.androidx.sqlite.bundled)
         }
         commonMain.dependencies {
             api(project(":core"))
@@ -78,6 +82,7 @@ kotlin {
             implementation(libs.androidx.paging.common)
             implementation(libs.androidx.paging.compose)
             implementation(libs.gitliveFirebaseMessaging)
+            implementation(libs.androidx.room.runtime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -89,6 +94,15 @@ kotlin {
     }
 }
 
+room3 {
+    schemaDirectory("$projectDir/schemas")
+}
+
+
 dependencies {
     androidRuntimeClasspath(libs.compose.ui.tooling)
+    add("kspCommonMainMetadata", libs.androidx.room.compiler)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 }

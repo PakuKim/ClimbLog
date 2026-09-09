@@ -3,7 +3,7 @@ package io.paku.climblog.business.data
 import io.paku.climblog.business.data.source.local.SessionLocalDataSource
 import io.paku.climblog.business.data.source.remote.AuthRemoteDataSource
 import io.paku.climblog.business.domain.AuthRepository
-import io.paku.climblog.business.domain.model.SocialLoginType
+import io.paku.climblog.business.domain.model.social.SocialLoginType
 
 internal class AuthRepositoryImpl(
     private val authRemoteDataSource: AuthRemoteDataSource,

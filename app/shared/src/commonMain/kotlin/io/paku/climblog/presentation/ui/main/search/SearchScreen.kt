@@ -38,8 +38,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.business.domain.model.User
-import io.paku.climblog.business.domain.model.Video
+import io.paku.climblog.business.domain.model.user.User
+import io.paku.climblog.business.domain.model.video.Video
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

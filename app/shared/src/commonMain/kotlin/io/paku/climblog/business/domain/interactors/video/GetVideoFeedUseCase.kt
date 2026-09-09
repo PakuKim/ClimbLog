@@ -1,7 +1,7 @@
 package io.paku.climblog.business.domain.interactors.video
 
 import io.paku.climblog.business.domain.VideoRepository
-import io.paku.climblog.business.domain.model.Video
+import io.paku.climblog.business.domain.model.video.Video
 
 class GetVideoFeedUseCase(
     private val videoRepository: VideoRepository
