@@ -9,6 +9,7 @@ import io.paku.climblog.business.domain.interactors.video.GetUserVideosUseCase
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
 import io.paku.climblog.presentation.navigation.AppNavigation
+import kotlinx.coroutines.flow.collectLatest
 
 internal class ProfileViewModel(
     savedStateHandle: SavedStateHandle,
@@ -20,8 +21,30 @@ internal class ProfileViewModel(
     private val args: AppNavigation.UserProfile = savedStateHandle.toRoute()
 
     init {
+        updateState {
+            copy(isMyProfile = args.userId == null)
+        }
+
         launch {
-            fetchUserUseCase.invoke()
+            fetchUserUseCase().collectLatest {
+                updateState { copy(user = it) }
+            }
+        }
+
+        launch {
+            val userId = args.userId ?: state.value.user?.id ?: return@launch
+
+            getUserProfileUseCase(userId).also { profile ->
+                updateState { copy(userProfile = profile) }
+            }
+        }
+
+        launch {
+            val userId = args.userId ?: state.value.user?.id ?: return@launch
+
+            getUserVideosUseCase(userId).onSuccess { feed ->
+                updateState { copy(userVideos = feed.items) }
+            }
         }
     }
 
@@ -35,19 +58,7 @@ internal class ProfileViewModel(
 
     fun onEvent(event: ProfileViewModelEvent) {
         when (event) {
-            is ProfileViewModelEvent.LoadProfile -> loadProfile(event.userId, event.isMyProfile)
             is ProfileViewModelEvent.ToggleFollow -> toggleFollow()
-        }
-    }
-
-    private fun loadProfile(userId: Long, isMyProfile: Boolean) = launch {
-        updateState { copy(isMyProfile = isMyProfile) }
-        
-        val profile = getUserProfileUseCase(userId)
-        updateState { copy(userProfile = profile) }
-        
-        getUserVideosUseCase(userId).onSuccess { videos ->
-            updateState { copy(userVideos = videos) }
         }
     }
 

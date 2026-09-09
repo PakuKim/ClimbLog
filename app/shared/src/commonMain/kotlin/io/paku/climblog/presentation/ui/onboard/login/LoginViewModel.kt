@@ -1,7 +1,7 @@
 package io.paku.climblog.presentation.ui.onboard.login
 
+import io.paku.climblog.business.common.CommonException
 import io.paku.climblog.business.domain.interactors.auth.SocialLoginUseCase
-import io.paku.climblog.business.domain.model.CommonException
 import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelAction

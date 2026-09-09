@@ -48,8 +48,8 @@ internal class SearchViewModel(
     }
 
     private fun loadRandomVideos() = launch {
-        getRandomVideosUseCase(18).onSuccess { videos ->
-            updateState { copy(randomVideos = videos) }
+        getRandomVideosUseCase(18).onSuccess { feed ->
+            updateState { copy(randomVideos = feed.items) }
         }
     }
 

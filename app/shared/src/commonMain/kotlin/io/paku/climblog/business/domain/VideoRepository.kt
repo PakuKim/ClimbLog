@@ -3,6 +3,7 @@ package io.paku.climblog.business.domain
 import io.paku.climblog.business.domain.model.Comment
 import io.paku.climblog.business.domain.model.video.PresignedPostResponse
 import io.paku.climblog.business.domain.model.video.Video
+import io.paku.climblog.business.domain.model.video.VideoFeed
 
 interface VideoRepository {
     // S3 POST Upload (Direction A)
@@ -27,14 +28,16 @@ interface VideoRepository {
     ): Result<Video>
 
     // Feed & Interactions
-    suspend fun getFeed(cursor: Long?, limit: Int): Result<List<Video>>
-    suspend fun getRandomVideos(limit: Int): Result<List<Video>>
-    suspend fun getUserVideos(userId: Long): Result<List<Video>>
+    suspend fun getVideos(
+        type: String? = null,
+        userId: Long? = null,
+        sortBy: String = "CREATED_AT",
+        orderBy: String = "DESC",
+        cursor: Long? = null,
+        limit: Int = 10
+    ): Result<VideoFeed>
+
     suspend fun toggleLike(videoId: Long): Result<Boolean>
     suspend fun getComments(videoId: Long): Result<List<Comment>>
     suspend fun postComment(videoId: Long, content: String): Result<Comment>
-
-    // Legacy Single Upload
-    suspend fun getPresignedUrl(fileName: String, contentType: String): Result<Pair<String, String>>
-    suspend fun uploadToS3(url: String, bytes: ByteArray, onProgress: (Float) -> Unit): Result<Unit>
 }

@@ -5,6 +5,7 @@ import androidx.room3.Database
 import androidx.room3.RoomDatabase
 import androidx.room3.RoomDatabaseConstructor
 import androidx.sqlite.SQLiteDriver
+import io.paku.climblog.business.local.room.dao.UserDao
 import io.paku.climblog.business.local.room.entity.UserEntity
 import kotlin.coroutines.CoroutineContext
 
@@ -13,7 +14,9 @@ import kotlin.coroutines.CoroutineContext
     version = 1
 )
 @ConstructedBy(AppDatabaseConstructor::class)
-abstract class AppDatabase: RoomDatabase()
+abstract class AppDatabase: RoomDatabase() {
+    abstract fun userDao(): UserDao
+}
 
 @Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect object AppDatabaseConstructor: RoomDatabaseConstructor<AppDatabase> {
@@ -31,6 +34,7 @@ fun createDatabase(
     queryContext: CoroutineContext
 ): AppDatabase {
     return factory.createBuilder()
+        .fallbackToDestructiveMigration(true)
         .setDriver(factory.createDriver())
         .setQueryCoroutineContext(queryContext)
         .build()

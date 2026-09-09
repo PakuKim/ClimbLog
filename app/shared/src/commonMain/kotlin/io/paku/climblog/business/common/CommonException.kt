@@ -1,4 +1,4 @@
-package io.paku.climblog.business.domain.model
+package io.paku.climblog.business.common
 
 import kotlinx.io.IOException
 import kotlin.jvm.JvmOverloads

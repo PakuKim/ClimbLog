@@ -11,6 +11,10 @@ internal class SessionRepositoryImpl(
         return local.fetchUserId()
     }
 
+    override suspend fun saveUserId(userId: Long) {
+        local.saveUserId(userId)
+    }
+
     override suspend fun saveSession(accessToken: String, refreshToken: String) {
         local.saveAccessToken(accessToken)
         local.saveRefreshToken(refreshToken)

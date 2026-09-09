@@ -12,8 +12,10 @@ import io.paku.climblog.business.data.source.remote.UserRemoteDataSource
 import io.paku.climblog.business.domain.model.user.User
 import io.paku.climblog.business.domain.model.user.UserProfile
 import io.paku.climblog.business.remote.dto.request.user.RegisterUserInfoRequest
+import io.paku.climblog.business.remote.dto.response.user.FollowStatusResponse
 import io.paku.climblog.business.remote.dto.response.user.GetUserResponse
 import io.paku.climblog.business.remote.dto.response.user.HandleCheckResponse
+import io.paku.climblog.business.remote.dto.response.user.UserListResponse
 import io.paku.climblog.business.remote.dto.response.user.UserProfileResponse
 
 internal class UserRemoteDataSourceImpl(
@@ -25,6 +27,9 @@ internal class UserRemoteDataSourceImpl(
         const val SEARCH_URL = "users/search"
         const val PROFILE_URL = "users/{id}/profile"
         const val FOLLOW_URL = "users/{id}/follow"
+        const val FOLLOW_STATUS_URL = "users/{id}/follow/status"
+        const val FOLLOWERS_URL = "users/{id}/followers"
+        const val FOLLOWING_URL = "users/{id}/following"
     }
 
     override suspend fun getUser(): User {
@@ -54,6 +59,21 @@ internal class UserRemoteDataSourceImpl(
 
     override suspend fun unfollow(userId: Long) {
         client.delete(FOLLOW_URL.replace("{id}", userId.toString()))
+    }
+
+    override suspend fun getFollowers(userId: Long): List<User> {
+        return client.get(FOLLOWERS_URL.replace("{id}", userId.toString()))
+            .body<UserListResponse>().users.map { it.toDomain() }
+    }
+
+    override suspend fun getFollowing(userId: Long): List<User> {
+        return client.get(FOLLOWING_URL.replace("{id}", userId.toString()))
+            .body<UserListResponse>().users.map { it.toDomain() }
+    }
+
+    override suspend fun getFollowStatus(userId: Long): Boolean {
+        return client.get(FOLLOW_STATUS_URL.replace("{id}", userId.toString()))
+            .body<FollowStatusResponse>().isFollowing
     }
 
     override suspend fun updateUser(

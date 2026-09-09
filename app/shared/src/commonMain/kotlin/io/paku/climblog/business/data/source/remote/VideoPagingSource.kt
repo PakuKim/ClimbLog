@@ -22,12 +22,11 @@ class VideoPagingSource(
         val result = getVideoFeedUseCase(cursor, limit)
         
         return if (result.isSuccess) {
-            val videos = result.getOrThrow()
-            val nextKey = if (videos.isEmpty() || videos.size < limit) null else videos.lastOrNull()?.id
+            val feed = result.getOrThrow()
             LoadResult.Page(
-                data = videos,
+                data = feed.items,
                 prevKey = null,
-                nextKey = nextKey
+                nextKey = feed.nextCursor
             )
         } else {
             LoadResult.Error(result.exceptionOrNull()!!)

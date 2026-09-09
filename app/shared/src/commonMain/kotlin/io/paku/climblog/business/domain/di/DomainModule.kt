@@ -10,6 +10,9 @@ import io.paku.climblog.business.domain.interactors.session.FetchSessionUseCase
 import io.paku.climblog.business.domain.interactors.user.CheckHandleUseCase
 import io.paku.climblog.business.domain.interactors.user.DeleteUserUseCase
 import io.paku.climblog.business.domain.interactors.user.FetchUserUseCase
+import io.paku.climblog.business.domain.interactors.user.GetFollowStatusUseCase
+import io.paku.climblog.business.domain.interactors.user.GetFollowersUseCase
+import io.paku.climblog.business.domain.interactors.user.GetFollowingUseCase
 import io.paku.climblog.business.domain.interactors.user.GetUserProfileUseCase
 import io.paku.climblog.business.domain.interactors.user.SearchUsersUseCase
 import io.paku.climblog.business.domain.interactors.user.ToggleFollowUseCase
@@ -27,7 +30,7 @@ val DomainModule = module {
     single { FetchSessionUseCase(get()) }
     single { SocialLoginUseCase(get(), get()) }
     single { LogoutUseCase(get(), get()) }
-    single { SocialRegisterUseCase(get(), get(), get()) }
+    single { SocialRegisterUseCase(get(), get()) }
     single { FetchUserUseCase(get()) }
     single { CheckHandleUseCase(get()) }
     single { UpdateProfileUseCase(get()) }
@@ -41,6 +44,9 @@ val DomainModule = module {
     single { SearchUsersUseCase(get()) }
     single { GetUserProfileUseCase(get()) }
     single { ToggleFollowUseCase(get()) }
+    single { GetFollowersUseCase(get()) }
+    single { GetFollowingUseCase(get()) }
+    single { GetFollowStatusUseCase(get()) }
 
     // Video
     single { GetVideoFeedUseCase(get()) }

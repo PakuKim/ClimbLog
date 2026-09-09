@@ -26,7 +26,9 @@ sealed interface AppNavigation {
     data object Upload : AppNavigation
 
     @Serializable
-    data class UserProfile(val userId: Long) : AppNavigation
+    data class UserProfile(
+        val userId: Long? = null
+    ) : AppNavigation
 
     @Serializable
     data object EditProfile : AppNavigation

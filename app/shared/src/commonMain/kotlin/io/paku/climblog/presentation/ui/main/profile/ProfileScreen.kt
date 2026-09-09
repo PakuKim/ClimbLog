@@ -1,28 +1,23 @@
 package io.paku.climblog.presentation.ui.main.profile
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -75,12 +69,12 @@ private fun ProfileScreen(
     onEditClick: () -> Unit,
     onFollowClick: () -> Unit
 ) {
-    val profile = state.userProfile
+    val profile = state.userProfile ?: return
 
     Scaffold(
         topBar = {
             SharedTopAppBar(
-                title = profile?.user?.handle ?: "프로필",
+                title = profile.user.handle,
                 actions = {
                     if (state.isMyProfile) {
                         IconButton(onClick = onUploadClick) {
@@ -94,38 +88,30 @@ private fun ProfileScreen(
             )
         }
     ) { paddingValues ->
-        if (profile == null) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else {
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            ProfileHeader(
+                profile = profile,
+                isMyProfile = state.isMyProfile,
+                isFollowingInProgress = state.isFollowingInProgress,
+                onFollowClick = onFollowClick,
+                onEditClick = onEditClick
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(top = 16.dp))
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(1.dp),
+                horizontalArrangement = Arrangement.spacedBy(1.dp),
+                verticalArrangement = Arrangement.spacedBy(1.dp)
             ) {
-                ProfileHeader(
-                    profile = profile, 
-                    isMyProfile = state.isMyProfile, 
-                    isFollowingInProgress = state.isFollowingInProgress,
-                    onFollowClick = onFollowClick,
-                    onEditClick = onEditClick
-                )
-
-                UserStats(profile)
-
-                HorizontalDivider(modifier = Modifier.padding(top = 16.dp))
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(1.dp),
-                    horizontalArrangement = Arrangement.spacedBy(1.dp),
-                    verticalArrangement = Arrangement.spacedBy(1.dp)
-                ) {
-                    items(state.userVideos) { video ->
-                        VideoThumbnailItem(video) { onVideoClick(video.id) }
-                    }
+                items(state.userVideos) { video ->
+                    VideoThumbnailItem(video) { onVideoClick(video.id) }
                 }
             }
         }
@@ -140,7 +126,10 @@ fun ProfileHeader(
     onFollowClick: () -> Unit,
     onEditClick: () -> Unit
 ) {
-    Row(
+    ClimbingSpecCard(
+        profile = profile
+    )
+   /* Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
@@ -161,7 +150,7 @@ fun ProfileHeader(
             StatItem(label = "Followers", count = profile.followerCount.toString())
             StatItem(label = "Following", count = profile.followingCount.toString())
         }
-    }
+    }*/
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(profile.user.name, fontWeight = FontWeight.Bold)
@@ -200,16 +189,37 @@ fun ProfileHeader(
     }
 }
 
+
 @Composable
-private fun StatItem(label: String, count: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(count, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-        Text(label, fontSize = 12.sp)
+fun ClimbingSpecCard(profile: UserProfile) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            SpecItem(label = "키", value = "${profile.user.height} cm")
+            SpecItem(label = "암리치", value = "${profile.user.armReach} cm")
+            SpecItem(label = "나이", value = "${profile.user.age} 세")
+        }
     }
 }
 
 @Composable
-fun UserStats(profile: UserProfile) {
+fun SpecItem(label: String, value: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = label, fontSize = 12.sp, color = Color.Gray)
+        Text(text = value, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+    }
 }
 
 @Composable

@@ -14,6 +14,9 @@ interface UserRemoteDataSource {
     
     suspend fun follow(userId: Long)
     suspend fun unfollow(userId: Long)
+    suspend fun getFollowers(userId: Long): List<User>
+    suspend fun getFollowing(userId: Long): List<User>
+    suspend fun getFollowStatus(userId: Long): Boolean
     
     suspend fun updateUser(
         name: String?,

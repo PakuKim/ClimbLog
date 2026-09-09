@@ -9,22 +9,18 @@ import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
-import io.ktor.client.request.put
 import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
-import io.ktor.http.contentType
-import io.ktor.utils.io.ByteReadChannel
 import io.paku.climblog.business.data.source.remote.VideoRemoteDataSource
 import io.paku.climblog.business.domain.model.Comment
 import io.paku.climblog.business.domain.model.video.Crux
 import io.paku.climblog.business.domain.model.video.PresignedPostRequest
 import io.paku.climblog.business.domain.model.video.PresignedPostResponse
 import io.paku.climblog.business.domain.model.video.Video
+import io.paku.climblog.business.domain.model.video.VideoFeed
 import io.paku.climblog.business.remote.dto.response.video.CommentResponse
 import io.paku.climblog.business.remote.dto.response.video.CruxResponse
-import io.paku.climblog.business.remote.dto.response.video.PresignedUrlResponse
 import io.paku.climblog.business.remote.dto.response.video.VideoFeedResponse
 import io.paku.climblog.business.remote.dto.response.video.VideoResponse
 import kotlinx.serialization.json.addJsonObject
@@ -36,7 +32,6 @@ internal class VideoRemoteDataSourceImpl(
     private val client: HttpClient
 ) : VideoRemoteDataSource {
     private companion object {
-        const val GET_PRESIGNED_URL = "videos/presigned-url"
         const val PRESIGNED_POST = "videos/uploads/presigned-post"
         const val REGISTER = "videos"
     }
@@ -107,66 +102,41 @@ internal class VideoRemoteDataSourceImpl(
         }.body<VideoResponse>().toDomain()
     }
 
-    override suspend fun getFeed(cursor: Long?, limit: Int): List<Video> {
-        return client.get("api/v1/videos/feed") {
+    override suspend fun getVideos(
+        type: String?,
+        userId: Long?,
+        sortBy: String,
+        orderBy: String,
+        cursor: Long?,
+        limit: Int
+    ): VideoFeed {
+        val response = client.get("videos") {
+            parameter("type", type)
+            parameter("userId", userId)
+            parameter("sortBy", sortBy)
+            parameter("orderBy", orderBy)
             parameter("cursor", cursor)
             parameter("limit", limit)
-        }.body<VideoFeedResponse>().items.map { it.toDomain() }
-    }
-
-    override suspend fun getRandomVideos(limit: Int): List<Video> {
-        return client.get("api/v1/videos/random") {
-            parameter("limit", limit)
-        }.body<List<VideoResponse>>().map { it.toDomain() }
-    }
-
-    override suspend fun getUserVideos(userId: Long): List<Video> {
-        return client.get("api/v1/users/$userId/videos")
-            .body<List<VideoResponse>>().map { it.toDomain() }
+        }.body<VideoFeedResponse>()
+        
+        return VideoFeed(
+            items = response.items.map { it.toDomain() },
+            nextCursor = response.nextCursor
+        )
     }
 
     override suspend fun toggleLike(videoId: Long): Boolean {
-        return client.post("api/v1/videos/$videoId/like").body<Map<String, Boolean>>()["liked"] ?: false
+        return client.post("videos/$videoId/like").body<Map<String, Boolean>>()["liked"] ?: false
     }
 
     override suspend fun getComments(videoId: Long): List<Comment> {
-        return client.get("api/v1/videos/$videoId/comments").body<List<CommentResponse>>().map { it.toDomain() }
+        return client.get("videos/$videoId/comments").body<List<CommentResponse>>().map { it.toDomain() }
     }
 
     override suspend fun postComment(videoId: Long, content: String): Comment {
-        return client.post("api/v1/videos/$videoId/comments") {
+        return client.post("videos/$videoId/comments") {
             setBody(buildJsonObject { put("content", content) })
         }.body<CommentResponse>().toDomain()
-    }
-
-    override suspend fun getPresignedUrl(fileName: String, contentType: String): Pair<String, String> {
-        val response = client.post(GET_PRESIGNED_URL) {
-            setBody(
-                buildJsonObject {
-                    put("fileName", fileName)
-                    put("contentType", contentType)
-                }
-            )
-        }.body<PresignedUrlResponse>()
-        return response.presignedUrl to response.s3Key
-    }
-
-    override suspend fun uploadToS3(url: String, bytes: ByteArray, onProgress: (Float) -> Unit) {
-        val a = ByteReadChannel(bytes)
-        val uploadClient = HttpClient {
-            install(HttpTimeout) {
-                requestTimeoutMillis = 600_000
-            }
-        }
-        uploadClient.put(url) {
-            contentType(ContentType.Video.Any)
-            setBody(a)
-            onUpload { bytesSentTotal, contentLength ->
-                if (contentLength != null && contentLength > 0) {
-                    onProgress(bytesSentTotal.toFloat() / contentLength.toFloat())
-                }
-            }
-        }
     }
 }
 

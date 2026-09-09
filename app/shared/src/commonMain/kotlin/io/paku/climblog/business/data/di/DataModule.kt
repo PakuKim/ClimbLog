@@ -14,8 +14,8 @@ import org.koin.dsl.module
 
 val DataModule = module {
     single<SessionRepository> { SessionRepositoryImpl(get()) }
-    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
-    single<UserRepository> { UserRepositoryImpl(get(), get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get(), get()) }
+    single<UserRepository> { UserRepositoryImpl(get(), get(), get()) }
     single<VideoRepository> { VideoRepositoryImpl(get()) }
     single<NotificationRepository> { NotificationRepositoryImpl(get()) }
 }

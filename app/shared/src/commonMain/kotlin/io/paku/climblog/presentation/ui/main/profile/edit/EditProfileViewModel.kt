@@ -30,19 +30,19 @@ internal class EditProfileViewModel(
         }
     }
 
-    private fun loadCurrentProfile() = launch {
-        val user = fetchUserUseCase()
-        updateState {
-            copy(
-                name = user.name,
-                age = user.age.toString(),
-                height = user.height.toString(),
-                armReach = user.armReach.toString(),
-                gender = user.gender,
-                profilePhotoUrl = user.profilePhotoUrl
-            )
-        }
-    }
+//    private fun loadCurrentProfile() = launch {
+//        val user = fetchUserUseCase()
+//        updateState {
+//            copy(
+//                name = user.name,
+//                age = user.age.toString(),
+//                height = user.height.toString(),
+//                armReach = user.armReach.toString(),
+//                gender = user.gender,
+//                profilePhotoUrl = user.profilePhotoUrl
+//            )
+//        }
+//    }
 
     private fun submitUpdate() = launchWithLoading {
         val state = state.value
@@ -59,6 +59,6 @@ internal class EditProfileViewModel(
     }
 
     init {
-        loadCurrentProfile()
+//        loadCurrentProfile()
     }
 }

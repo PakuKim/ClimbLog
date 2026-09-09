@@ -3,7 +3,6 @@ package io.paku.climblog.presentation.ui.main
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import io.paku.climblog.presentation.navigation.AppNavigation
 import io.paku.climblog.presentation.navigation.MainBottomNavigation
 import io.paku.climblog.presentation.ui.main.home.HomeRoute
@@ -80,8 +79,7 @@ internal fun NavGraphBuilder.mainGraph(
         )
     }
 
-    composable<AppNavigation.UserProfile> { backStackEntry ->
-        val args: AppNavigation.UserProfile = backStackEntry.toRoute()
+    composable<AppNavigation.UserProfile> {
         ProfileRoute(
             onUploadClick = {},
             onVideoClick = { videoId ->

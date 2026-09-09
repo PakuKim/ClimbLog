@@ -5,6 +5,7 @@ import io.paku.climblog.business.domain.VideoRepository
 import io.paku.climblog.business.domain.model.Comment
 import io.paku.climblog.business.domain.model.video.PresignedPostResponse
 import io.paku.climblog.business.domain.model.video.Video
+import io.paku.climblog.business.domain.model.video.VideoFeed
 
 internal class VideoRepositoryImpl(
     private val videoRemoteDataSource: VideoRemoteDataSource
@@ -39,16 +40,22 @@ internal class VideoRepositoryImpl(
         )
     }
 
-    override suspend fun getFeed(cursor: Long?, limit: Int): Result<List<Video>> = runCatching {
-        videoRemoteDataSource.getFeed(cursor, limit)
-    }
-
-    override suspend fun getRandomVideos(limit: Int): Result<List<Video>> = runCatching {
-        videoRemoteDataSource.getRandomVideos(limit)
-    }
-
-    override suspend fun getUserVideos(userId: Long): Result<List<Video>> = runCatching {
-        videoRemoteDataSource.getUserVideos(userId)
+    override suspend fun getVideos(
+        type: String?,
+        userId: Long?,
+        sortBy: String,
+        orderBy: String,
+        cursor: Long?,
+        limit: Int
+    ): Result<VideoFeed> = runCatching {
+        videoRemoteDataSource.getVideos(
+            type = type,
+            userId = userId,
+            sortBy = sortBy,
+            orderBy = orderBy,
+            cursor = cursor,
+            limit = limit
+        )
     }
 
     override suspend fun toggleLike(videoId: Long): Result<Boolean> = runCatching {
@@ -61,13 +68,5 @@ internal class VideoRepositoryImpl(
 
     override suspend fun postComment(videoId: Long, content: String): Result<Comment> = runCatching {
         videoRemoteDataSource.postComment(videoId, content)
-    }
-
-    override suspend fun getPresignedUrl(fileName: String, contentType: String): Result<Pair<String, String>> = runCatching {
-        videoRemoteDataSource.getPresignedUrl(fileName, contentType)
-    }
-
-    override suspend fun uploadToS3(url: String, bytes: ByteArray, onProgress: (Float) -> Unit): Result<Unit> = runCatching {
-        videoRemoteDataSource.uploadToS3(url, bytes, onProgress)
     }
 }

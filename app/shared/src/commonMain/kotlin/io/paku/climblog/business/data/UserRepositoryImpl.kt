@@ -1,18 +1,34 @@
 package io.paku.climblog.business.data
 
 import io.paku.climblog.business.data.source.local.SessionLocalDataSource
+import io.paku.climblog.business.data.source.local.UserLocalDataSource
 import io.paku.climblog.business.data.source.remote.UserRemoteDataSource
 import io.paku.climblog.business.domain.UserRepository
 import io.paku.climblog.business.domain.model.user.User
 import io.paku.climblog.business.domain.model.user.UserProfile
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 
 internal class UserRepositoryImpl(
     private val userRemoteDataSource: UserRemoteDataSource,
+    private val userLocalDataSource: UserLocalDataSource,
     private val sessionLocalDataSource: SessionLocalDataSource,
 ): UserRepository {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun fetchUserData(): Flow<User> {
+        return sessionLocalDataSource.fetchUserId()
+            .filterNotNull()
+            .flatMapLatest {
+                userLocalDataSource.fetchUser(it)
+            }
+    }
+
     override suspend fun getUser(): User {
         return userRemoteDataSource.getUser().also {
             sessionLocalDataSource.saveUserId(it.id)
+            userLocalDataSource.saveUser(it)
         }
     }
 
@@ -34,6 +50,18 @@ internal class UserRepositoryImpl(
         } else {
             userRemoteDataSource.follow(userId)
         }
+    }
+
+    override suspend fun getFollowers(userId: Long): Result<List<User>> = runCatching {
+        userRemoteDataSource.getFollowers(userId)
+    }
+
+    override suspend fun getFollowing(userId: Long): Result<List<User>> = runCatching {
+        userRemoteDataSource.getFollowing(userId)
+    }
+
+    override suspend fun getFollowStatus(userId: Long): Result<Boolean> = runCatching {
+        userRemoteDataSource.getFollowStatus(userId)
     }
 
     override suspend fun updateUser(
