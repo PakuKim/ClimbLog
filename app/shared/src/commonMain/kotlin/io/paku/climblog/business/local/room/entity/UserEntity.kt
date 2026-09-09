@@ -14,7 +14,7 @@ internal data class UserEntity(
     @ColumnInfo(name = "handle")
     val handle: String,
     @ColumnInfo(name = "age")
-    val ageㅂ: Int,
+    val age: Int,
     @ColumnInfo(name = "height")
     val height: Int,
     @ColumnInfo(name = "arm_reach")
