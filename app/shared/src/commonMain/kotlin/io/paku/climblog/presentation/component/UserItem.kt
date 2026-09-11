@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,7 +39,7 @@ fun UserItem(
             modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape)
-                .background(Color.LightGray)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
         )
         // TODO: Use Coil to load user.profilePhotoUrl
         
@@ -54,7 +53,7 @@ fun UserItem(
             )
             Text(
                 text = user.name,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp,
                 style = MaterialTheme.typography.bodyMedium
             )

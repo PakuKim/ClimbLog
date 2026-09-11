@@ -7,28 +7,31 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
 val darkColorPalette = darkColorScheme(
-    primary = AppColors.coral500,
+    primary = AppColors.slate600, // Medium-light grey for buttons
     onPrimary = AppColors.white,
-    primaryContainer = AppColors.coral700,
+    primaryContainer = AppColors.slate700,
     onPrimaryContainer = AppColors.white,
-    secondary = AppColors.magenta500,
+    secondary = AppColors.slate700,
     onSecondary = AppColors.white,
-    background = AppColors.charcoal900,
+    background = AppColors.pureBlack,
     onBackground = AppColors.white,
-    surface = AppColors.charcoal900,
-    onSurface = AppColors.white,
+    surface = AppColors.charcoal900, // Slightly brighter than background
+    onSurface = AppColors.white, // Primary text
+    surfaceVariant = AppColors.charcoal800, // For secondary backgrounds like cards
+    onSurfaceVariant = AppColors.slate400, // Secondary text (light grey)
     error = AppColors.red500,
     onError = AppColors.white,
-    outline = AppColors.slate500,
+    outline = AppColors.darkBorder, // Border color
+    outlineVariant = AppColors.slate700 // Disabled text/elements (dark grey)
 )
 
 val lightColorPalette = lightColorScheme(
-    primary = AppColors.coral500,
+    primary = AppColors.blue300, // Instagram blue for light mode
     onPrimary = AppColors.white,
-    primaryContainer = AppColors.coral700,
+    primaryContainer = AppColors.blue400,
     onPrimaryContainer = AppColors.white,
-    secondary = AppColors.magenta500,
-    onSecondary = AppColors.white,
+    secondary = AppColors.slate200,
+    onSecondary = AppColors.charcoal900,
     background = AppColors.white,
     onBackground = AppColors.charcoal900,
     surface = AppColors.slate50,
@@ -45,7 +48,7 @@ fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) {
+    val colors = if (!darkTheme) {
         darkColorPalette
     } else {
         lightColorPalette

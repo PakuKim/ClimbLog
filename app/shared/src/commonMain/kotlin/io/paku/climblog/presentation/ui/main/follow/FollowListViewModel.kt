@@ -24,9 +24,7 @@ internal class FollowListViewModel(
 ) : BaseViewModel<FollowListViewModelState, ViewModelEvent, Nothing>() {
     private val args: AppNavigation.FollowList = savedStateHandle.toRoute()
 
-    override fun createInitialState(): FollowListViewModelState = FollowListViewModelState(
-        type = args.type
-    )
+    override fun createInitialState() = FollowListViewModelState()
 
     override fun createTriggerEvent(event: ViewModelEvent) {}
 

@@ -42,11 +42,12 @@ fun App() {
             }
 
             NavHost(
-                modifier = Modifier.fillMaxSize(),
                 navController = navController,
                 startDestination = startDestination,
                 enterTransition = { EnterTransition.None },
-                exitTransition = { ExitTransition.None }
+                exitTransition = { ExitTransition.None },
+                popEnterTransition = { EnterTransition.None },
+                popExitTransition = { ExitTransition.None }
             ) {
                 composable<AppNavigation.Splash> {
                     Box(

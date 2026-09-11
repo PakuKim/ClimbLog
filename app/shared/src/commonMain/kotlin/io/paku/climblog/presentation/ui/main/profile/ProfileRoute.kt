@@ -36,7 +36,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -166,7 +165,7 @@ fun ProfileHeader(
                 modifier = Modifier
                     .size(80.dp)
                     .clip(CircleShape)
-                    .background(Color.LightGray)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             )
             // TODO: Use Coil for profile image
             AsyncImage(
@@ -221,8 +220,8 @@ fun ProfileHeader(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (profile.isFollowing) Color.LightGray else MaterialTheme.colorScheme.primary,
-                        contentColor = if (profile.isFollowing) Color.Black else Color.White
+                        containerColor = if (profile.isFollowing) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
+                        contentColor = if (profile.isFollowing) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onPrimary
                     ),
                     enabled = !isFollowingInProgress
                 ) {
@@ -248,7 +247,7 @@ fun ProfileStatItem(label: String, count: String, onClick: () -> Unit = {}) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = count, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-        Text(text = label, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+        Text(text = label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
@@ -286,7 +285,7 @@ fun ClimbingSpecCard(
 @Composable
 fun SpecItem(label: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = label, fontSize = 12.sp, color = Color.Gray)
+        Text(text = label, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(text = value, fontSize = 16.sp, fontWeight = FontWeight.Bold)
     }
 }

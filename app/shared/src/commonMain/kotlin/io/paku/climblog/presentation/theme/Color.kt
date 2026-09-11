@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 object AppColors {
+    val pureBlack = Color(0xFF000000)
     val charcoal900 = Color(0xFF1B1C1E)
     val charcoal800 = Color(0xFF272320)
     val white = Color(0xFFFFFFFF)
@@ -29,9 +30,9 @@ object AppColors {
     val teal200 = Color(0xFFAFE7EF)
     val teal100 = Color(0xFFD7F3F7)
     val teal50 = Color(0xFFEBF9FB)
-    val indigo900 = Color(0xFF032974)
     val blue500 = Color(0xFF32A6EB)
     val blue400 = Color(0xFF5BB8EF)
+    val blue300 = Color(0xFF0095F6) // Instagram blue
     val coral500 = Color(0xFFFF4747)
     val coral700 = Color(0xFFCA3D49)
     val magenta500 = Color(0xFFC62F79)
@@ -39,6 +40,7 @@ object AppColors {
     val red200 = Color(0xFFF9BAB5)
     val orange400 = Color(0xFFffa726)
     val borderColor = Color(0xFFDBDBDC)
+    val darkBorder = Color(0xFF262626)
 }
 
 /**

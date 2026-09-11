@@ -1,17 +1,11 @@
 package io.paku.climblog.presentation.ui.main.home
 
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,8 +23,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun HomeRoute(
-    viewModel: HomeFeedViewModel = koinViewModel(),
-    navigateToUpload: () -> Unit
+    viewModel: HomeFeedViewModel = koinViewModel()
 ) {
     val state by viewModel.state
 
@@ -44,10 +37,6 @@ internal fun HomeRoute(
         },
         onPostComment = { videoId, content ->
             viewModel.onEvent(HomeViewModelEvent.PostComment(videoId, content))
-        },
-        onUploadClick = navigateToUpload,
-        onLogoutClick = {
-            viewModel.onEvent(HomeViewModelEvent.Logout)
         }
     )
 }
@@ -58,9 +47,7 @@ private fun HomeScreen(
     state: HomeViewModelState,
     onVideoLikeClick: (Long, Boolean) -> Unit = { _, _ -> },
     onVideoCommentClick: (Long) -> Unit = {},
-    onPostComment: (Long, String) -> Unit = { _, _ -> },
-    onUploadClick: () -> Unit = {},
-    onLogoutClick: () -> Unit = {}
+    onPostComment: (Long, String) -> Unit = { _, _ -> }
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     val pagingItems = state.videoPagingData?.collectAsLazyPagingItems()
@@ -79,28 +66,7 @@ private fun HomeScreen(
         scaffoldState = scaffoldState,
         topBar = {
             SharedTopAppBar(
-                title = "홈",
-                actions = {
-                    Row {
-                        IconButton(
-                            onClick = onLogoutClick
-                        ) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.Logout,
-                                contentDescription = "Logout"
-                            )
-                        }
-
-                        IconButton(
-                            onClick = onUploadClick,
-                        ) {
-                            Icon(
-                                Icons.Default.CloudUpload,
-                                contentDescription = "Upload Video"
-                            )
-                        }
-                    }
-                }
+                title = "홈"
             )
         },
         sheetContent = {

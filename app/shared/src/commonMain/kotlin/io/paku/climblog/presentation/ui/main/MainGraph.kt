@@ -24,11 +24,7 @@ internal fun NavGraphBuilder.mainGraph(
                 composable(
                     route = MainBottomNavigation.Home.route,
                 ) {
-                    HomeRoute(
-                        navigateToUpload = {
-                            navController.navigate(AppNavigation.Upload)
-                        }
-                    )
+                    HomeRoute()
                 }
 
                 composable(

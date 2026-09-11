@@ -3,7 +3,6 @@ package io.paku.climblog.presentation.ui.main.home
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import io.paku.climblog.business.domain.interactors.auth.LogoutUseCase
 import io.paku.climblog.business.domain.interactors.video.GetCommentsUseCase
 import io.paku.climblog.business.domain.interactors.video.GetVideoFeedUseCase
 import io.paku.climblog.business.domain.interactors.video.PostCommentUseCase
@@ -26,15 +25,13 @@ sealed class HomeViewModelEvent : ViewModelEvent {
     data class OnLikeClick(val videoId: Long) : HomeViewModelEvent()
     data class LoadComments(val videoId: Long) : HomeViewModelEvent()
     data class PostComment(val videoId: Long, val content: String) : HomeViewModelEvent()
-    object Logout : HomeViewModelEvent()
 }
 
 internal class HomeFeedViewModel(
     private val getVideoFeedUseCase: GetVideoFeedUseCase,
     private val toggleLikeUseCase: ToggleLikeUseCase,
     private val getCommentsUseCase: GetCommentsUseCase,
-    private val postCommentUseCase: PostCommentUseCase,
-    private val logoutUseCase: LogoutUseCase
+    private val postCommentUseCase: PostCommentUseCase
 ) : BaseViewModel<HomeViewModelState, HomeViewModelEvent, Nothing>() {
 
     override fun createInitialState(): HomeViewModelState = HomeViewModelState()
@@ -50,12 +47,7 @@ internal class HomeFeedViewModel(
             is HomeViewModelEvent.OnLikeClick -> toggleLike(event.videoId)
             is HomeViewModelEvent.LoadComments -> loadComments(event.videoId)
             is HomeViewModelEvent.PostComment -> postComment(event.videoId, event.content)
-            is HomeViewModelEvent.Logout -> logout()
         }
-    }
-
-    private fun logout() = launch {
-        logoutUseCase()
     }
 
     private fun loadFeed() {
