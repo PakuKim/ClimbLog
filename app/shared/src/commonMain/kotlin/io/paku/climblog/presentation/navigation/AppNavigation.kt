@@ -35,4 +35,15 @@ sealed interface AppNavigation {
 
     @Serializable
     data object Settings : AppNavigation
+
+    @Serializable
+    data class FollowList(
+        val userId: Long,
+        val type: FollowListType
+    ) : AppNavigation
+}
+
+@Serializable
+enum class FollowListType {
+    FOLLOWERS, FOLLOWING
 }

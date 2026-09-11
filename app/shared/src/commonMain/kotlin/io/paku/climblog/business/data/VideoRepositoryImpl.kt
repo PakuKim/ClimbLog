@@ -1,11 +1,16 @@
 package io.paku.climblog.business.data
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import io.paku.climblog.business.data.source.paging.VideoPagingSource
 import io.paku.climblog.business.data.source.remote.VideoRemoteDataSource
 import io.paku.climblog.business.domain.VideoRepository
 import io.paku.climblog.business.domain.model.Comment
 import io.paku.climblog.business.domain.model.video.PresignedPostResponse
 import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.business.domain.model.video.VideoFeed
+import kotlinx.coroutines.flow.Flow
 
 internal class VideoRepositoryImpl(
     private val videoRemoteDataSource: VideoRemoteDataSource
@@ -56,6 +61,33 @@ internal class VideoRepositoryImpl(
             cursor = cursor,
             limit = limit
         )
+    }
+
+    override fun getVideosPaging(
+        type: String?,
+        userId: Long?,
+        sortBy: String,
+        orderBy: String,
+        pageSize: Int
+    ): Flow<PagingData<Video>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = pageSize,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                VideoPagingSource { cursor, limit ->
+                    getVideos(
+                        type = type,
+                        userId = userId,
+                        sortBy = sortBy,
+                        orderBy = orderBy,
+                        cursor = cursor,
+                        limit = limit
+                    )
+                }
+            }
+        ).flow
     }
 
     override suspend fun toggleLike(videoId: Long): Result<Boolean> = runCatching {

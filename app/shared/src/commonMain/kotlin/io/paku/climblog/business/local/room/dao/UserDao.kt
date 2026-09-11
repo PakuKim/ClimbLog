@@ -9,7 +9,7 @@ import io.paku.climblog.business.local.room.entity.UserEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-internal interface UserDao {
+interface UserDao {
     @Transaction
     @Query("SELECT * FROM user WHERE id = :id")
     fun fetchUser(id: Long): Flow<UserEntity?>

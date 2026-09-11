@@ -1,7 +1,9 @@
 package io.paku.climblog.presentation.ui.main.profile
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import androidx.paging.cachedIn
 import io.paku.climblog.business.domain.interactors.user.FetchUserUseCase
 import io.paku.climblog.business.domain.interactors.user.GetUserProfileUseCase
 import io.paku.climblog.business.domain.interactors.user.ToggleFollowUseCase
@@ -16,7 +18,7 @@ internal class ProfileViewModel(
     private val fetchUserUseCase: FetchUserUseCase,
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val toggleFollowUseCase: ToggleFollowUseCase,
-    private val getUserVideosUseCase: GetUserVideosUseCase
+    private val getUserVideosUseCase: GetUserVideosUseCase,
 ) : BaseViewModel<ProfileViewModelState, ProfileViewModelEvent, Nothing>() {
     private val args: AppNavigation.UserProfile = savedStateHandle.toRoute()
 
@@ -26,26 +28,37 @@ internal class ProfileViewModel(
         }
 
         launch {
-            fetchUserUseCase().collectLatest {
-                updateState { copy(user = it) }
+            fetchUserUseCase().collectLatest { user ->
+                updateState { 
+                    copy(
+                        user = user,
+                        isMyProfile = args.userId == null || args.userId == user.id
+                    ) 
+                }
+                if (args.userId == null) {
+                    loadProfile(user.id)
+                    loadVideos(user.id)
+                }
             }
         }
 
-        launch {
-            val userId = args.userId ?: state.value.user?.id ?: return@launch
-
-            getUserProfileUseCase(userId).also { profile ->
-                updateState { copy(userProfile = profile) }
-            }
+        args.userId?.let { userId ->
+            loadProfile(userId)
+            loadVideos(userId)
         }
+    }
 
-        launch {
-            val userId = args.userId ?: state.value.user?.id ?: return@launch
-
-            getUserVideosUseCase(userId).onSuccess { feed ->
-                updateState { copy(userVideos = feed.items) }
-            }
+    private fun loadProfile(userId: Long) = launch {
+        getUserProfileUseCase(userId).also { profile ->
+            updateState { copy(userProfile = profile) }
         }
+    }
+
+    private fun loadVideos(userId: Long) {
+        val flow = getUserVideosUseCase(userId)
+            .cachedIn(viewModelScope)
+
+        updateState { copy(videoPagingData = flow) }
     }
 
     override fun createInitialState(): ProfileViewModelState = ProfileViewModelState()

@@ -1,5 +1,6 @@
 package io.paku.climblog.business.remote.dto.response.video
 
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -28,7 +29,7 @@ data class VideoResponse(
     @SerialName("cruxes")
     val cruxes: List<CruxResponse>,
     @SerialName("createdAt")
-    val createdAt: Long
+    val createdAt: LocalDateTime
 )
 
 @Serializable

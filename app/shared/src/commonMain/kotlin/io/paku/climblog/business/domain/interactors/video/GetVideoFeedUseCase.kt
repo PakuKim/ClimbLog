@@ -1,12 +1,14 @@
 package io.paku.climblog.business.domain.interactors.video
 
+import androidx.paging.PagingData
 import io.paku.climblog.business.domain.VideoRepository
-import io.paku.climblog.business.domain.model.video.VideoFeed
+import io.paku.climblog.business.domain.model.video.Video
+import kotlinx.coroutines.flow.Flow
 
 class GetVideoFeedUseCase(
     private val videoRepository: VideoRepository
 ) {
-    suspend operator fun invoke(cursor: Long?, limit: Int): Result<VideoFeed> {
-        return videoRepository.getVideos(type = "HOME", cursor = cursor, limit = limit)
+    operator fun invoke(pageSize: Int = 10): Flow<PagingData<Video>> {
+        return videoRepository.getVideosPaging(type = "HOME", pageSize = pageSize)
     }
 }

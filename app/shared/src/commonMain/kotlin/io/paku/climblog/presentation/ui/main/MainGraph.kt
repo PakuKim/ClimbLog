@@ -4,7 +4,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import io.paku.climblog.presentation.navigation.AppNavigation
+import io.paku.climblog.presentation.navigation.FollowListType
 import io.paku.climblog.presentation.navigation.MainBottomNavigation
+import io.paku.climblog.presentation.ui.main.follow.FollowListRoute
 import io.paku.climblog.presentation.ui.main.home.HomeRoute
 import io.paku.climblog.presentation.ui.main.notification.NotificationRoute
 import io.paku.climblog.presentation.ui.main.profile.ProfileRoute
@@ -51,7 +53,13 @@ internal fun NavGraphBuilder.mainGraph(
                             // navController.navigate(AppNavigation.VideoDetail(videoId))
                         },
                         onMenuClick = { navController.navigate(AppNavigation.Settings) },
-                        onEditClick = { navController.navigate(AppNavigation.EditProfile) }
+                        onEditClick = { navController.navigate(AppNavigation.EditProfile) },
+                        onFollowersClick = { userId ->
+                            navController.navigate(AppNavigation.FollowList(userId, FollowListType.FOLLOWERS))
+                        },
+                        onFollowingClick = { userId ->
+                            navController.navigate(AppNavigation.FollowList(userId, FollowListType.FOLLOWING))
+                        }
                     )
                 }
             }
@@ -86,7 +94,13 @@ internal fun NavGraphBuilder.mainGraph(
                 // navController.navigate(AppNavigation.VideoDetail(videoId))
             },
             onMenuClick = {},
-            onEditClick = {}
+            onEditClick = {},
+            onFollowersClick = { userId ->
+                navController.navigate(AppNavigation.FollowList(userId, FollowListType.FOLLOWERS))
+            },
+            onFollowingClick = { userId ->
+                navController.navigate(AppNavigation.FollowList(userId, FollowListType.FOLLOWING))
+            }
         )
     }
 
@@ -102,6 +116,15 @@ internal fun NavGraphBuilder.mainGraph(
             onLogoutSuccess = {
                 // Handle logout navigation if needed, usually AppViewModel handles this via authorized state
             }
+        )
+    }
+
+    composable<AppNavigation.FollowList> {
+        FollowListRoute(
+            onUserClick = { userId ->
+                navController.navigate(AppNavigation.UserProfile(userId))
+            },
+            onBackClick = { navController.popBackStack() }
         )
     }
 }

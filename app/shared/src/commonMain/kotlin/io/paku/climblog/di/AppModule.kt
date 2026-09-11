@@ -6,6 +6,7 @@ import io.paku.climblog.business.local.di.LocalModule
 import io.paku.climblog.business.remote.di.RemoteModule
 import io.paku.climblog.presentation.AppViewModel
 import io.paku.climblog.presentation.ui.main.MainViewModel
+import io.paku.climblog.presentation.ui.main.follow.FollowListViewModel
 import io.paku.climblog.presentation.ui.main.home.HomeFeedViewModel
 import io.paku.climblog.presentation.ui.main.notification.NotificationViewModel
 import io.paku.climblog.presentation.ui.main.profile.ProfileViewModel
@@ -42,6 +43,7 @@ val uiModule = module {
     viewModelOf(::NotificationViewModel)
     viewModelOf(::VideoUploadViewModel)
     viewModelOf(::MainViewModel)
+    viewModelOf(::FollowListViewModel)
 }
 
 expect val platformModule: Module

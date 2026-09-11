@@ -40,6 +40,7 @@ import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.core.VideoPlayerView
 import io.paku.climblog.core.rememberVideoPlayerController
 import io.paku.climblog.presentation.ext.noRippleClickable
+import kotlinx.datetime.LocalDateTime
 
 @Composable
 internal fun SharedVideoItem(
@@ -207,7 +208,7 @@ private fun SharedVideoItemPreview() {
                 hlsUrl = "https://example.com/video.m3u8",
                 thumbnailUrl = "https://example.com/thumbnail.jpg",
                 cruxes = emptyList(),
-                createdAt = 0
+                createdAt = LocalDateTime(2023, 1, 1, 0, 0)
             ),
             isCurrent = true,
             isLiked = false,

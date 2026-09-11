@@ -1,11 +1,8 @@
 package io.paku.climblog.presentation.ui.main.home
 
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import io.paku.climblog.business.data.source.remote.VideoPagingSource
 import io.paku.climblog.business.domain.interactors.auth.LogoutUseCase
 import io.paku.climblog.business.domain.interactors.video.GetCommentsUseCase
 import io.paku.climblog.business.domain.interactors.video.GetVideoFeedUseCase
@@ -62,16 +59,8 @@ internal class HomeFeedViewModel(
     }
 
     private fun loadFeed() {
-        val flow = Pager(
-            config = PagingConfig(
-                pageSize = 10,
-                prefetchDistance = 10,
-                enablePlaceholders = false,
-                initialLoadSize = 10
-            ),
-            initialKey = null,
-            pagingSourceFactory = { VideoPagingSource(getVideoFeedUseCase) }
-        ).flow.cachedIn(viewModelScope)
+        val flow = getVideoFeedUseCase()
+            .cachedIn(viewModelScope)
         
         updateState { copy(videoPagingData = flow) }
     }

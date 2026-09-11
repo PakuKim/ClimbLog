@@ -1,12 +1,12 @@
-package io.paku.climblog.business.data.source.remote
+package io.paku.climblog.business.data.source.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import io.paku.climblog.business.domain.interactors.video.GetVideoFeedUseCase
 import io.paku.climblog.business.domain.model.video.Video
+import io.paku.climblog.business.domain.model.video.VideoFeed
 
 class VideoPagingSource(
-    private val getVideoFeedUseCase: GetVideoFeedUseCase
+    private val fetchVideos: suspend (Long?, Int) -> Result<VideoFeed>
 ) : PagingSource<Long, Video>() {
 
     override fun getRefreshKey(state: PagingState<Long, Video>): Long? {
@@ -18,9 +18,9 @@ class VideoPagingSource(
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Video> {
         val cursor = params.key
         val limit = params.loadSize
-        
-        val result = getVideoFeedUseCase(cursor, limit)
-        
+
+        val result = fetchVideos(cursor, limit)
+
         return if (result.isSuccess) {
             val feed = result.getOrThrow()
             LoadResult.Page(
