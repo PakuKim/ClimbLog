@@ -37,6 +37,7 @@ fun SharedTopAppBar(
                 style = titleTextStyle
             )
         },
+//        windowInsets = WindowInsets(),
         navigationIcon = {
             onNavClick?.let {
                 Row {

@@ -122,7 +122,7 @@ object AppComponentColors {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun topAppBarColors() = TopAppBarDefaults.topAppBarColors(
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.background,
         titleContentColor = MaterialTheme.colorScheme.onSurface,
         navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
         actionIconContentColor = MaterialTheme.colorScheme.onSurface

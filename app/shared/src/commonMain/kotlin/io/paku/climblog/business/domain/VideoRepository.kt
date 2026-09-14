@@ -1,10 +1,11 @@
 package io.paku.climblog.business.domain
 
 import androidx.paging.PagingData
-import io.paku.climblog.business.domain.model.Comment
-import io.paku.climblog.business.domain.model.video.PresignedPostResponse
+import io.paku.climblog.business.domain.model.comment.Comment
+import io.paku.climblog.business.domain.model.comment.CommentFeed
 import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.business.domain.model.video.VideoFeed
+import io.paku.climblog.business.remote.dto.response.video.PresignedPostResponse
 import kotlinx.coroutines.flow.Flow
 
 interface VideoRepository {
@@ -48,6 +49,7 @@ interface VideoRepository {
     ): Flow<PagingData<Video>>
 
     suspend fun toggleLike(videoId: Long): Result<Boolean>
-    suspend fun getComments(videoId: Long): Result<List<Comment>>
+    suspend fun getComments(videoId: Long, cursor: Long?, limit: Int): Result<CommentFeed>
+    fun getCommentsPaging(videoId: Long, pageSize: Int = 20): Flow<PagingData<Comment>>
     suspend fun postComment(videoId: Long, content: String): Result<Comment>
 }

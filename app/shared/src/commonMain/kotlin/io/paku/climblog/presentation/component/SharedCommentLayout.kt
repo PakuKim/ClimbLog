@@ -5,14 +5,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,14 +30,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.business.domain.model.Comment
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
+import io.paku.climblog.business.domain.model.comment.Comment
 import io.paku.climblog.presentation.theme.AppComponentColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SharedCommentLayout(
-    comments: List<Comment>,
-    isLoading: Boolean,
+    comments: LazyPagingItems<Comment>?,
+    isPosting: Boolean,
     onDismiss: () -> Unit,
     onPostComment: (String) -> Unit
 ) {
@@ -48,9 +49,9 @@ internal fun SharedCommentLayout(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.7f)
             .padding(horizontal = 16.dp)
     ) {
+        // ... (rest same)
         Text(
             modifier = Modifier
                 .padding(vertical = 16.dp)
@@ -61,15 +62,26 @@ internal fun SharedCommentLayout(
 
         HorizontalDivider()
 
-        Box(
-            modifier = Modifier.weight(1f)
-        ) {
-            if (isLoading) {
+        Box {
+            if (comments == null || comments.loadState.refresh is LoadState.Loading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(comments) { comment ->
-                        CommentItem(comment)
+                LazyColumn {
+                    items(
+                        count = comments.itemCount,
+                        key = comments.itemKey { it.id }
+                    ) { index ->
+                        comments[index]?.let { comment ->
+                            CommentItem(comment)
+                        }
+                    }
+                    
+                    if (comments.loadState.append is LoadState.Loading) {
+                        item {
+                            Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                                CircularProgressIndicator(modifier = Modifier.size(24.dp).align(Alignment.Center))
+                            }
+                        }
                     }
                 }
             }
@@ -80,6 +92,7 @@ internal fun SharedCommentLayout(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
                 .padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -98,10 +111,14 @@ internal fun SharedCommentLayout(
                         commentText = ""
                     }
                 },
-                enabled = commentText.isNotBlank(),
+                enabled = commentText.isNotBlank() && !isPosting,
                 colors = AppComponentColors.textButtonColors()
             ) {
-                Text("게시")
+                if (isPosting) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                } else {
+                    Text("게시")
+                }
             }
         }
     }

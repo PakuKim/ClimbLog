@@ -3,7 +3,6 @@ package io.paku.climblog.presentation.ui.main.search
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -80,7 +79,6 @@ private fun SearchScreen(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(1.dp),
                 horizontalArrangement = Arrangement.spacedBy(1.dp),
                 verticalArrangement = Arrangement.spacedBy(1.dp)
             ) {
@@ -95,7 +93,9 @@ private fun SearchScreen(
                     CircularProgressIndicator()
                 }
             } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
                     items(state.searchResults) { user ->
                         UserItem(user) { onUserClick(user.id) }
                     }

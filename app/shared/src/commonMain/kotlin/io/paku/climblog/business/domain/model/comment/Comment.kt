@@ -1,4 +1,6 @@
-package io.paku.climblog.business.domain.model
+package io.paku.climblog.business.domain.model.comment
+
+import kotlinx.datetime.LocalDateTime
 
 data class Comment(
     val id: Long,
@@ -7,5 +9,5 @@ data class Comment(
     val userName: String,
     val userProfilePhotoUrl: String?,
     val content: String,
-    val createdAt: Long
+    val createdAt: LocalDateTime
 )

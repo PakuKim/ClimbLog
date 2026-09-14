@@ -8,6 +8,7 @@ import io.paku.climblog.domain.model.video.VideoComment
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.less
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 
@@ -41,6 +42,20 @@ internal class VideoCommentRepositoryImpl : VideoCommentRepository {
             .selectAll()
             .where { VideoCommentTable.videoId eq videoId }
             .orderBy(VideoCommentTable.createdAt, SortOrder.DESC)
+            .map { it.toDomainComment() }
+    }
+
+    override suspend fun findAllByVideoIdPaged(videoId: Long, cursor: Long?, limit: Int): List<VideoComment> = dbQuery {
+        val query = (VideoCommentTable innerJoin UserTable)
+            .selectAll()
+            .where { VideoCommentTable.videoId eq videoId }
+        
+        if (cursor != null) {
+            query.where { VideoCommentTable.id less cursor }
+        }
+
+        query.orderBy(VideoCommentTable.id, SortOrder.DESC)
+            .limit(limit)
             .map { it.toDomainComment() }
     }
 }

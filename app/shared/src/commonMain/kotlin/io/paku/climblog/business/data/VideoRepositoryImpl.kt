@@ -3,13 +3,15 @@ package io.paku.climblog.business.data
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import io.paku.climblog.business.data.source.paging.CommentPagingSource
 import io.paku.climblog.business.data.source.paging.VideoPagingSource
 import io.paku.climblog.business.data.source.remote.VideoRemoteDataSource
 import io.paku.climblog.business.domain.VideoRepository
-import io.paku.climblog.business.domain.model.Comment
-import io.paku.climblog.business.domain.model.video.PresignedPostResponse
+import io.paku.climblog.business.domain.model.comment.Comment
+import io.paku.climblog.business.domain.model.comment.CommentFeed
 import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.business.domain.model.video.VideoFeed
+import io.paku.climblog.business.remote.dto.response.video.PresignedPostResponse
 import kotlinx.coroutines.flow.Flow
 
 internal class VideoRepositoryImpl(
@@ -94,8 +96,22 @@ internal class VideoRepositoryImpl(
         videoRemoteDataSource.toggleLike(videoId)
     }
 
-    override suspend fun getComments(videoId: Long): Result<List<Comment>> = runCatching {
-        videoRemoteDataSource.getComments(videoId)
+    override suspend fun getComments(videoId: Long, cursor: Long?, limit: Int): Result<CommentFeed> = runCatching {
+        videoRemoteDataSource.getComments(videoId, cursor, limit)
+    }
+
+    override fun getCommentsPaging(videoId: Long, pageSize: Int): Flow<PagingData<Comment>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = pageSize,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                CommentPagingSource { cursor, limit ->
+                    getComments(videoId, cursor, limit)
+                }
+            }
+        ).flow
     }
 
     override suspend fun postComment(videoId: Long, content: String): Result<Comment> = runCatching {

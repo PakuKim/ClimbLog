@@ -7,13 +7,13 @@ import io.paku.climblog.business.remote.di.RemoteModule
 import io.paku.climblog.presentation.AppViewModel
 import io.paku.climblog.presentation.ui.main.MainViewModel
 import io.paku.climblog.presentation.ui.main.follow.FollowListViewModel
-import io.paku.climblog.presentation.ui.main.home.HomeFeedViewModel
 import io.paku.climblog.presentation.ui.main.notification.NotificationViewModel
 import io.paku.climblog.presentation.ui.main.profile.ProfileViewModel
 import io.paku.climblog.presentation.ui.main.profile.edit.EditProfileViewModel
 import io.paku.climblog.presentation.ui.main.search.SearchViewModel
 import io.paku.climblog.presentation.ui.main.settings.SettingsViewModel
 import io.paku.climblog.presentation.ui.main.upload.VideoUploadViewModel
+import io.paku.climblog.presentation.ui.main.video.SharedVideoViewModel
 import io.paku.climblog.presentation.ui.onboard.login.LoginViewModel
 import io.paku.climblog.presentation.ui.onboard.register.RegisterViewModel
 import org.koin.core.module.Module
@@ -35,7 +35,6 @@ val uiModule = module {
     viewModelOf(::AppViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::RegisterViewModel)
-    viewModelOf(::HomeFeedViewModel)
     viewModelOf(::SearchViewModel)
     viewModelOf(::ProfileViewModel)
     viewModelOf(::EditProfileViewModel)
@@ -44,6 +43,7 @@ val uiModule = module {
     viewModelOf(::VideoUploadViewModel)
     viewModelOf(::MainViewModel)
     viewModelOf(::FollowListViewModel)
+    viewModelOf(::SharedVideoViewModel)
 }
 
 expect val platformModule: Module

@@ -5,14 +5,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PresignedUrlResponse(
-    @SerialName("presignedUrl")
-    val presignedUrl: String,
-    @SerialName("s3Key")
-    val s3Key: String
-)
-
-@Serializable
 data class VideoResponse(
     @SerialName("id")
     val id: Long,
@@ -32,12 +24,3 @@ data class VideoResponse(
     val createdAt: LocalDateTime
 )
 
-@Serializable
-data class CruxResponse(
-    @SerialName("id")
-    val id: Long,
-    @SerialName("cruxStartTime")
-    val cruxStartTime: Double,
-    @SerialName("cruxEndTime")
-    val cruxEndTime: Double
-)

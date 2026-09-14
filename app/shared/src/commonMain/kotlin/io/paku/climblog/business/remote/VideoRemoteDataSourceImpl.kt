@@ -13,14 +13,16 @@ import io.ktor.client.request.setBody
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.paku.climblog.business.data.source.remote.VideoRemoteDataSource
-import io.paku.climblog.business.domain.model.Comment
+import io.paku.climblog.business.domain.model.comment.Comment
+import io.paku.climblog.business.domain.model.comment.CommentFeed
 import io.paku.climblog.business.domain.model.video.Crux
-import io.paku.climblog.business.domain.model.video.PresignedPostRequest
-import io.paku.climblog.business.domain.model.video.PresignedPostResponse
 import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.business.domain.model.video.VideoFeed
-import io.paku.climblog.business.remote.dto.response.video.CommentResponse
+import io.paku.climblog.business.remote.dto.request.video.PresignedPostRequest
+import io.paku.climblog.business.remote.dto.response.comment.CommentFeedResponse
+import io.paku.climblog.business.remote.dto.response.comment.CommentResponse
 import io.paku.climblog.business.remote.dto.response.video.CruxResponse
+import io.paku.climblog.business.remote.dto.response.video.PresignedPostResponse
 import io.paku.climblog.business.remote.dto.response.video.VideoFeedResponse
 import io.paku.climblog.business.remote.dto.response.video.VideoResponse
 import kotlinx.serialization.json.addJsonObject
@@ -129,8 +131,16 @@ internal class VideoRemoteDataSourceImpl(
         return client.post("videos/$videoId/like").body<Map<String, Boolean>>()["liked"] ?: false
     }
 
-    override suspend fun getComments(videoId: Long): List<Comment> {
-        return client.get("videos/$videoId/comments").body<List<CommentResponse>>().map { it.toDomain() }
+    override suspend fun getComments(videoId: Long, cursor: Long?, limit: Int): CommentFeed {
+        val response = client.get("videos/$videoId/comments") {
+            parameter("cursor", cursor)
+            parameter("limit", limit)
+        }.body<CommentFeedResponse>()
+
+        return CommentFeed(
+            items = response.items.map { it.toDomain() },
+            nextCursor = response.nextCursor
+        )
     }
 
     override suspend fun postComment(videoId: Long, content: String): Comment {

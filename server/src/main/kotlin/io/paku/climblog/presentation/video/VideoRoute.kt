@@ -13,6 +13,7 @@ import io.ktor.server.routing.route
 import io.paku.climblog.domain.VideoCommentRepository
 import io.paku.climblog.domain.VideoRepository
 import io.paku.climblog.domain.ext.getUserId
+import io.paku.climblog.domain.interactor.video.GetVideoCommentsUseCase
 import io.paku.climblog.domain.interactor.video.GetVideoListUseCase
 import io.paku.climblog.domain.interactor.video.PostCommentUseCase
 import io.paku.climblog.domain.interactor.video.ToggleLikeUseCase
@@ -31,6 +32,7 @@ fun Route.videoRoutes(
     val videoRepository: VideoRepository by inject()
     val videoCommentRepository: VideoCommentRepository by inject()
     val getVideoListUseCase: GetVideoListUseCase by inject()
+    val getVideoCommentsUseCase: GetVideoCommentsUseCase by inject()
     val toggleLikeUseCase: ToggleLikeUseCase by inject()
     val postCommentUseCase: PostCommentUseCase by inject()
 
@@ -147,8 +149,21 @@ fun Route.videoRoutes(
                 route("/comments") {
                     get {
                         val videoId = call.parameters["id"]?.toLongOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
-                        val comments = videoCommentRepository.findAllByVideoId(videoId)
-                        call.respond(HttpStatusCode.OK, comments.map { it.toResponse() })
+                        val cursor = call.request.queryParameters["cursor"]?.toLongOrNull()
+                        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 20
+
+                        getVideoCommentsUseCase(videoId, cursor, limit).onSuccess { comments ->
+                            val nextCursor = if (comments.size >= limit) comments.last().id else null
+                            call.respond(
+                                HttpStatusCode.OK,
+                                CommentFeedResponse(
+                                    items = comments.map { it.toResponse() },
+                                    nextCursor = nextCursor
+                                )
+                            )
+                        }.onFailure {
+                            call.respond(HttpStatusCode.InternalServerError)
+                        }
                     }
 
                     post {

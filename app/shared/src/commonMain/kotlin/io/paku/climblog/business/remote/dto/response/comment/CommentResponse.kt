@@ -1,5 +1,6 @@
-package io.paku.climblog.business.remote.dto.response.video
+package io.paku.climblog.business.remote.dto.response.comment
 
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -18,5 +19,5 @@ data class CommentResponse(
     @SerialName("content")
     val content: String,
     @SerialName("createdAt")
-    val createdAt: Long
+    val createdAt: LocalDateTime
 )

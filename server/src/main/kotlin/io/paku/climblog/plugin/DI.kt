@@ -45,6 +45,7 @@ import io.paku.climblog.domain.interactor.user.SearchUsersUseCase
 import io.paku.climblog.domain.interactor.user.UnfollowUserUseCase
 import io.paku.climblog.domain.interactor.user.UpdateUserUseCase
 import io.paku.climblog.domain.interactor.video.GetRandomVideosUseCase
+import io.paku.climblog.domain.interactor.video.GetVideoCommentsUseCase
 import io.paku.climblog.domain.interactor.video.GetVideoListUseCase
 import io.paku.climblog.domain.interactor.video.PostCommentUseCase
 import io.paku.climblog.domain.interactor.video.ToggleLikeUseCase
@@ -147,6 +148,7 @@ private fun appModule(
     factory { DeleteUserUseCase(get(), get()) }
     factory { GetRandomVideosUseCase(get()) }
     factory { GetVideoListUseCase(get()) }
+    factory { GetVideoCommentsUseCase(get()) }
     factory { SendNotificationUseCase(get(), get(), get()) }
     factory { ToggleLikeUseCase(get(), get(), get()) }
     factory { PostCommentUseCase(get(), get(), get()) }

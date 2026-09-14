@@ -6,11 +6,13 @@ import io.paku.climblog.presentation.base.ViewModelEvent
 import io.paku.climblog.presentation.base.ViewModelState
 
 data class MainViewModelState(
-    val hasUnreadNotifications: Boolean = false
+    val hasUnreadNotifications: Boolean = false,
+    val isBottomBarVisible: Boolean = true
 ) : ViewModelState
 
 sealed class MainViewModelEvent : ViewModelEvent {
     object CheckUnreadNotifications : MainViewModelEvent()
+    data class SetBottomBarVisibility(val visible: Boolean) : MainViewModelEvent()
 }
 
 internal class MainViewModel(
@@ -20,9 +22,14 @@ internal class MainViewModel(
     override fun createInitialState(): MainViewModelState = MainViewModelState()
 
     override fun createTriggerEvent(event: ViewModelEvent) {
-        if (event is MainViewModelEvent.CheckUnreadNotifications) {
-            checkUnread()
+        when (event) {
+            is MainViewModelEvent.CheckUnreadNotifications -> checkUnread()
+            is MainViewModelEvent.SetBottomBarVisibility -> updateState { copy(isBottomBarVisible = event.visible) }
         }
+    }
+
+    fun onEvent(event: MainViewModelEvent) {
+        createTriggerEvent(event)
     }
 
     private fun checkUnread() = launch {

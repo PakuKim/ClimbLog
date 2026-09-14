@@ -1,12 +1,12 @@
 package io.paku.climblog.business.data.source.remote
 
-import io.paku.climblog.business.domain.model.Comment
-import io.paku.climblog.business.domain.model.video.PresignedPostResponse
+import io.paku.climblog.business.domain.model.comment.Comment
+import io.paku.climblog.business.domain.model.comment.CommentFeed
 import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.business.domain.model.video.VideoFeed
+import io.paku.climblog.business.remote.dto.response.video.PresignedPostResponse
 
 interface VideoRemoteDataSource {
-    // S3 POST Upload (Direction A)
     suspend fun getPresignedPost(
         fileName: String,
         contentType: String
@@ -38,6 +38,6 @@ interface VideoRemoteDataSource {
     ): VideoFeed
 
     suspend fun toggleLike(videoId: Long): Boolean
-    suspend fun getComments(videoId: Long): List<Comment>
+    suspend fun getComments(videoId: Long, cursor: Long?, limit: Int): CommentFeed
     suspend fun postComment(videoId: Long, content: String): Comment
 }

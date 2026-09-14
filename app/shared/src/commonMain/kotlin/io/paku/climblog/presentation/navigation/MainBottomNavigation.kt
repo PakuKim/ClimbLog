@@ -7,22 +7,22 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class MainBottomNavigation(
-    val route: String,
+    val destination: Any,
     val title: String,
     val selectedIcon: ImageVector
 ) {
     data object Home: MainBottomNavigation(
-        route = "Home",
+        destination = AppNavigation.Home(),
         title = "홈",
         selectedIcon = Icons.Default.Home
     )
     data object Search: MainBottomNavigation(
-        route = "Search",
+        destination = AppNavigation.Search,
         title = "검색",
         selectedIcon = Icons.Default.Search
     )
     data object Profile: MainBottomNavigation(
-        route = "Profile",
+        destination = AppNavigation.Profile,
         title = "프로필",
         selectedIcon = Icons.Default.Person
     )

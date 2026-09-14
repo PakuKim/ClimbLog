@@ -13,3 +13,9 @@ data class CommentResponse(
     val content: String,
     val createdAt: LocalDateTime
 )
+
+@Serializable
+data class CommentFeedResponse(
+    val items: List<CommentResponse>,
+    val nextCursor: Long?
+)
