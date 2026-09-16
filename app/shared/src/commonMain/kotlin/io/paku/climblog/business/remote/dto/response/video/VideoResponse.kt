@@ -1,5 +1,6 @@
 package io.paku.climblog.business.remote.dto.response.video
 
+import io.paku.climblog.business.domain.model.video.VideoStatus
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -18,6 +19,8 @@ data class VideoResponse(
     val hlsUrl: String,
     @SerialName("thumbnailUrl")
     val thumbnailUrl: String?,
+    @SerialName("status")
+    val status: VideoStatus,
     @SerialName("cruxes")
     val cruxes: List<CruxResponse>,
     @SerialName("createdAt")

@@ -7,6 +7,7 @@ import io.paku.climblog.data.database.table.video.VideoTable
 import io.paku.climblog.domain.VideoRepository
 import io.paku.climblog.domain.model.video.Video
 import io.paku.climblog.domain.model.video.VideoCrux
+import io.paku.climblog.domain.model.video.VideoStatus
 import org.jetbrains.exposed.v1.core.Random
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.SortOrder
@@ -18,6 +19,7 @@ import org.jetbrains.exposed.v1.core.not
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.update
 
 internal class VideoRepositoryImpl : VideoRepository {
 
@@ -28,6 +30,7 @@ internal class VideoRepositoryImpl : VideoRepository {
         description = this[VideoTable.description],
         hlsUrl = this[VideoTable.hlsUrl],
         thumbnailUrl = this[VideoTable.thumbnailUrl],
+        status = this[VideoTable.status],
         createdAt = this[VideoTable.createdAt],
         videoCruxes = videoCruxes
     )
@@ -58,6 +61,7 @@ internal class VideoRepositoryImpl : VideoRepository {
             it[description] = video.description
             it[hlsUrl] = video.hlsUrl
             it[thumbnailUrl] = video.thumbnailUrl
+            it[status] = video.status
         }[VideoTable.id].value
 
         video.videoCruxes.forEach { crux ->
@@ -69,6 +73,12 @@ internal class VideoRepositoryImpl : VideoRepository {
         }
         
         findById(videoId)!!
+    }
+
+    override suspend fun updateStatus(id: Long, status: VideoStatus): Boolean = dbQuery {
+        VideoTable.update({ VideoTable.id eq id }) {
+            it[VideoTable.status] = status
+        } > 0
     }
 
     override suspend fun findById(id: Long): Video? = dbQuery {

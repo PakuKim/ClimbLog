@@ -10,6 +10,10 @@ application {
     mainClass = "io.paku.climblog.ApplicationKt"
 }
 
+tasks.withType<JavaExec> {
+    environment(System.getenv())
+}
+
 dependencies {
     api(project(":core"))
     implementation(libs.logback)
@@ -37,6 +41,7 @@ dependencies {
     implementation(libs.exposed.jdbc)
     implementation(libs.exposed.kotlin.datetime)
     implementation(libs.awsS3)
+    implementation(libs.awsMediaConvert)
     implementation(libs.firebaseAdmin)
 
     testImplementation(libs.ktor.server.test.host.jvm)

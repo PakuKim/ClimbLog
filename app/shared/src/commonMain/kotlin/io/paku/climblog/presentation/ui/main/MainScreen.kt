@@ -67,7 +67,7 @@ private fun MainScreen(
         NavHost(
             modifier = Modifier.fillMaxSize(),
             navController = mainNavController,
-            startDestination = AppNavigation.Home(),
+            startDestination = AppNavigation.Home,
             builder = mainBuilder,
         )
 

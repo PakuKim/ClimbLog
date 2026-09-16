@@ -1,9 +1,11 @@
 package io.paku.climblog.domain
 
 import io.paku.climblog.domain.model.video.Video
+import io.paku.climblog.domain.model.video.VideoStatus
 
 interface VideoRepository {
     suspend fun save(video: Video): Video
+    suspend fun updateStatus(id: Long, status: VideoStatus): Boolean
     suspend fun findById(id: Long): Video?
     suspend fun findAllByUserId(userId: Long): List<Video>
     suspend fun findAllPaged(

@@ -70,7 +70,9 @@ private fun SharedVideoContent(
     onUserClick: ((Long) -> Unit)? = null,
     isNavigationVisible: Boolean = true
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize()
+    ) {
         val fullHeight = constraints.maxHeight.toFloat()
         val videoHeightRatio = 3f / 7f
         val sheetHeightRatio = 4f / 7f
@@ -140,7 +142,9 @@ private fun SharedVideoContent(
             sheetPeekHeight = 0.dp,
             sheetSwipeEnabled = isVisible,
             sheetContent = {
-                Box(modifier = Modifier.fillMaxHeight(sheetHeightRatio)) {
+                Box(
+                    modifier = Modifier.fillMaxHeight(sheetHeightRatio)
+                ) {
                     SharedCommentLayout(
                         comments = commentPagingItems,
                         isPosting = state.isPosting,

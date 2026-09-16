@@ -167,6 +167,7 @@ private fun VideoResponse.toDomain() = Video(
     description = description,
     hlsUrl = hlsUrl,
     thumbnailUrl = thumbnailUrl,
+    status = status,
     cruxes = cruxes.map { it.toDomain(id) },
     createdAt = createdAt
 )

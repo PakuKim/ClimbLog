@@ -1,5 +1,6 @@
 package io.paku.climblog.presentation.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -41,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.paku.climblog.business.domain.model.video.Video
+import io.paku.climblog.business.domain.model.video.VideoStatus
 import io.paku.climblog.core.VideoPlayerView
 import io.paku.climblog.core.rememberVideoPlayerController
 import io.paku.climblog.presentation.ext.noRippleClickable
@@ -61,8 +64,8 @@ internal fun SharedVideoItem(
     var isPausedInternal by remember { mutableStateOf(false) }
     var playbackSpeed by remember { mutableStateOf(1.0f) }
 
-    LaunchedEffect(isCurrent, isExpanded) {
-        if (isCurrent && !isExpanded) {
+    LaunchedEffect(isCurrent, isExpanded, video.status) {
+        if (isCurrent && !isExpanded && video.status == VideoStatus.READY) {
             controller.play()
             isPausedInternal = false
         } else {
@@ -78,11 +81,36 @@ internal fun SharedVideoItem(
             modifier = Modifier
                 .fillMaxSize()
                 .noRippleClickable {
-                    if (isPausedInternal) controller.play() else controller.pause()
-                    isPausedInternal = !isPausedInternal
+                    if (video.status == VideoStatus.READY) {
+                        if (isPausedInternal) controller.play() else controller.pause()
+                        isPausedInternal = !isPausedInternal
+                    }
                 },
             controller = controller,
         )
+
+        if (video.status != VideoStatus.READY) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator(color = Color.White)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = when(video.status) {
+                            VideoStatus.UPLOADING -> "업로드 중..."
+                            VideoStatus.PROCESSING -> "영상 처리 중..."
+                            VideoStatus.FAILED -> "처리 실패"
+                            VideoStatus.READY -> ""
+                        },
+                        color = Color.White
+                    )
+                }
+            }
+        }
 
         if (!isExpanded) {
             Column(

@@ -17,6 +17,7 @@ import io.paku.climblog.data.VideoLikeRepositoryImpl
 import io.paku.climblog.data.VideoRepositoryImpl
 import io.paku.climblog.data.provider.BCryptEncodeProviderImpl
 import io.paku.climblog.data.provider.JwtTokenProviderImpl
+import io.paku.climblog.data.provider.MediaConvertProviderImpl
 import io.paku.climblog.data.provider.PushProviderImpl
 import io.paku.climblog.data.provider.S3ProviderImpl
 import io.paku.climblog.data.redis.RedisManager
@@ -32,6 +33,10 @@ import io.paku.climblog.domain.interactor.auth.RefreshTokenUseCase
 import io.paku.climblog.domain.interactor.auth.SocialLoginUseCase
 import io.paku.climblog.domain.interactor.auth.SocialRegisterUseCase
 import io.paku.climblog.domain.interactor.auth.VerifySocialTokenUseCase
+import io.paku.climblog.domain.interactor.notification.CheckUnreadNotificationsUseCase
+import io.paku.climblog.domain.interactor.notification.GetNotificationsUseCase
+import io.paku.climblog.domain.interactor.notification.MarkNotificationsAsReadUseCase
+import io.paku.climblog.domain.interactor.notification.SaveDeviceTokenUseCase
 import io.paku.climblog.domain.interactor.notification.SendNotificationUseCase
 import io.paku.climblog.domain.interactor.user.CheckHandleUseCase
 import io.paku.climblog.domain.interactor.user.DeleteUserUseCase
@@ -48,12 +53,16 @@ import io.paku.climblog.domain.interactor.video.GetRandomVideosUseCase
 import io.paku.climblog.domain.interactor.video.GetVideoCommentsUseCase
 import io.paku.climblog.domain.interactor.video.GetVideoListUseCase
 import io.paku.climblog.domain.interactor.video.PostCommentUseCase
+import io.paku.climblog.domain.interactor.video.RegisterVideoUseCase
 import io.paku.climblog.domain.interactor.video.ToggleLikeUseCase
+import io.paku.climblog.domain.interactor.video.UpdateVideoStatusUseCase
 import io.paku.climblog.domain.provider.BCryptEncodeProvider
 import io.paku.climblog.domain.provider.JwtTokenProvider
+import io.paku.climblog.domain.provider.MediaConvertProvider
 import io.paku.climblog.domain.provider.PushProvider
 import io.paku.climblog.domain.provider.S3Provider
 import kotlinx.serialization.json.Json
+import org.jetbrains.exposed.v1.core.exposedLogger
 import org.koin.dsl.module
 import org.koin.dsl.onClose
 import org.koin.ktor.plugin.Koin
@@ -67,8 +76,12 @@ fun Application.configureDI() {
     val jwtAudience = environment.config.property("jwt.audience").getString()
 
     val awsAccessKey = environment.config.property("aws.accessKey").getString()
+
+    exposedLogger.info(awsAccessKey)
     val awsSecretKey = environment.config.property("aws.secretKey").getString()
     val awsRegion = environment.config.property("aws.region").getString()
+    val awsMediaConvertRoleArn = environment.config.property("aws.mediaConvertRoleArn").getString()
+    val awsMediaConvertQueueArn = environment.config.property("aws.mediaConvertQueueArn").getString()
 
     install(Koin) {
         modules(
@@ -79,7 +92,9 @@ fun Application.configureDI() {
                 jwtAudience = jwtAudience,
                 awsAccessKey = awsAccessKey,
                 awsSecretKey = awsSecretKey,
-                awsRegion = awsRegion
+                awsRegion = awsRegion,
+                awsMediaConvertRoleArn = awsMediaConvertRoleArn,
+                awsMediaConvertQueueArn = awsMediaConvertQueueArn
             )
         )
     }
@@ -93,7 +108,9 @@ private fun appModule(
     jwtAudience: String,
     awsAccessKey: String,
     awsSecretKey: String,
-    awsRegion: String
+    awsRegion: String,
+    awsMediaConvertRoleArn: String,
+    awsMediaConvertQueueArn: String
 ) = module {
     // Data
     single { RedisManager(redisUrl) }.onClose { redisManager ->
@@ -116,6 +133,15 @@ private fun appModule(
     single<UserFollowRepository> { UserFollowRepositoryImpl() }
     single<NotificationRepository> { NotificationRepositoryImpl() }
     single<S3Provider> { S3ProviderImpl(awsAccessKey, awsSecretKey, awsRegion) }
+    single<MediaConvertProvider> {
+        MediaConvertProviderImpl(
+            accessKey = awsAccessKey,
+            secretKey = awsSecretKey,
+            region = awsRegion,
+            roleArn = awsMediaConvertRoleArn,
+            queueArn = awsMediaConvertQueueArn
+        )
+    }
     single<PushProvider> { PushProviderImpl() }
 
     single {
@@ -149,7 +175,13 @@ private fun appModule(
     factory { GetRandomVideosUseCase(get()) }
     factory { GetVideoListUseCase(get()) }
     factory { GetVideoCommentsUseCase(get()) }
+    factory { RegisterVideoUseCase(get(), get()) }
+    factory { UpdateVideoStatusUseCase(get()) }
     factory { SendNotificationUseCase(get(), get(), get()) }
+    factory { GetNotificationsUseCase(get()) }
+    factory { CheckUnreadNotificationsUseCase(get()) }
+    factory { SaveDeviceTokenUseCase(get()) }
+    factory { MarkNotificationsAsReadUseCase(get()) }
     factory { ToggleLikeUseCase(get(), get(), get()) }
     factory { PostCommentUseCase(get(), get(), get()) }
 }

@@ -3,12 +3,6 @@ package io.paku.climblog.presentation.video
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PresignedUrlRequest(
-    val fileName: String,
-    val contentType: String
-)
-
-@Serializable
 data class PresignedPostRequest(
     val fileName: String,
     val contentType: String

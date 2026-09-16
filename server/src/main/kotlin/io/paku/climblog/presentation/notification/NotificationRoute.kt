@@ -10,7 +10,10 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import io.paku.climblog.domain.NotificationRepository
+import io.paku.climblog.domain.interactor.notification.CheckUnreadNotificationsUseCase
+import io.paku.climblog.domain.interactor.notification.GetNotificationsUseCase
+import io.paku.climblog.domain.interactor.notification.MarkNotificationsAsReadUseCase
+import io.paku.climblog.domain.interactor.notification.SaveDeviceTokenUseCase
 import io.paku.climblog.domain.model.Notification
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
@@ -19,28 +22,40 @@ import org.koin.ktor.ext.inject
 data class DeviceTokenRequest(val fcmToken: String)
 
 fun Route.notificationRoutes() {
-    val notificationRepository: NotificationRepository by inject()
+    val getNotificationsUseCase: GetNotificationsUseCase by inject()
+    val checkUnreadNotificationsUseCase: CheckUnreadNotificationsUseCase by inject()
+    val saveDeviceTokenUseCase: SaveDeviceTokenUseCase by inject()
+    val markNotificationsAsReadUseCase: MarkNotificationsAsReadUseCase by inject()
 
     authenticate("auth-jwt") {
         route("/api/v1/notifications") {
             get {
                 val userId = call.principal<JWTPrincipal>()?.payload?.subject?.toLongOrNull() ?: return@get call.respond(HttpStatusCode.Unauthorized)
-                val notifications = notificationRepository.findAllByUserId(userId)
-                call.respond(HttpStatusCode.OK, notifications.map { it.toResponse() })
-                notificationRepository.markAsRead(userId)
+                getNotificationsUseCase(userId).onSuccess { notifications ->
+                    call.respond(HttpStatusCode.OK, notifications.map { it.toResponse() })
+                    markNotificationsAsReadUseCase(userId)
+                }.onFailure {
+                    call.respond(HttpStatusCode.InternalServerError)
+                }
             }
 
             get("/unread-check") {
                 val userId = call.principal<JWTPrincipal>()?.payload?.subject?.toLongOrNull() ?: return@get call.respond(HttpStatusCode.Unauthorized)
-                val hasUnread = notificationRepository.hasUnread(userId)
-                call.respond(HttpStatusCode.OK, UnreadCheckResponse(hasUnread))
+                checkUnreadNotificationsUseCase(userId).onSuccess { hasUnread ->
+                    call.respond(HttpStatusCode.OK, UnreadCheckResponse(hasUnread))
+                }.onFailure {
+                    call.respond(HttpStatusCode.InternalServerError)
+                }
             }
 
             post("/device-token") {
                 val userId = call.principal<JWTPrincipal>()?.payload?.subject?.toLongOrNull() ?: return@post call.respond(HttpStatusCode.Unauthorized)
                 val request = call.receive<DeviceTokenRequest>()
-                notificationRepository.saveDeviceToken(userId, request.fcmToken)
-                call.respond(HttpStatusCode.OK)
+                saveDeviceTokenUseCase(userId, request.fcmToken).onSuccess {
+                    call.respond(HttpStatusCode.OK)
+                }.onFailure {
+                    call.respond(HttpStatusCode.InternalServerError)
+                }
             }
         }
     }

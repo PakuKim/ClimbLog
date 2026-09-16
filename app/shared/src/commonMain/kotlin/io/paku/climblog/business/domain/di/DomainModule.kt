@@ -19,9 +19,11 @@ import io.paku.climblog.business.domain.interactors.user.ToggleFollowUseCase
 import io.paku.climblog.business.domain.interactors.user.UpdateProfileUseCase
 import io.paku.climblog.business.domain.interactors.video.GetCommentsUseCase
 import io.paku.climblog.business.domain.interactors.video.GetRandomVideosUseCase
+import io.paku.climblog.business.domain.interactors.video.GetSingleVideoUseCase
 import io.paku.climblog.business.domain.interactors.video.GetUserVideosUseCase
 import io.paku.climblog.business.domain.interactors.video.GetVideoFeedUseCase
 import io.paku.climblog.business.domain.interactors.video.PostCommentUseCase
+import io.paku.climblog.business.domain.interactors.video.SearchVideosUseCase
 import io.paku.climblog.business.domain.interactors.video.ToggleLikeUseCase
 import io.paku.climblog.business.domain.interactors.video.UploadVideoUseCase
 import org.koin.dsl.module
@@ -55,4 +57,6 @@ val DomainModule = module {
     single { PostCommentUseCase(get()) }
     single { GetRandomVideosUseCase(get()) }
     single { GetUserVideosUseCase(get()) }
+    single { SearchVideosUseCase(get()) }
+    single { GetSingleVideoUseCase(get()) }
 }

@@ -10,16 +10,17 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import io.paku.climblog.domain.VideoCommentRepository
-import io.paku.climblog.domain.VideoRepository
 import io.paku.climblog.domain.ext.getUserId
 import io.paku.climblog.domain.interactor.video.GetVideoCommentsUseCase
 import io.paku.climblog.domain.interactor.video.GetVideoListUseCase
 import io.paku.climblog.domain.interactor.video.PostCommentUseCase
+import io.paku.climblog.domain.interactor.video.RegisterVideoUseCase
 import io.paku.climblog.domain.interactor.video.ToggleLikeUseCase
+import io.paku.climblog.domain.interactor.video.UpdateVideoStatusUseCase
 import io.paku.climblog.domain.model.video.Video
 import io.paku.climblog.domain.model.video.VideoComment
 import io.paku.climblog.domain.model.video.VideoCrux
+import io.paku.climblog.domain.model.video.VideoStatus
 import io.paku.climblog.domain.provider.S3Provider
 import org.koin.ktor.ext.inject
 import java.util.UUID
@@ -29,12 +30,12 @@ fun Route.videoRoutes(
     cloudFrontDomain: String
 ) {
     val s3Provider: S3Provider by inject()
-    val videoRepository: VideoRepository by inject()
-    val videoCommentRepository: VideoCommentRepository by inject()
     val getVideoListUseCase: GetVideoListUseCase by inject()
     val getVideoCommentsUseCase: GetVideoCommentsUseCase by inject()
     val toggleLikeUseCase: ToggleLikeUseCase by inject()
     val postCommentUseCase: PostCommentUseCase by inject()
+    val registerVideoUseCase: RegisterVideoUseCase by inject()
+    val updateVideoStatusUseCase: UpdateVideoStatusUseCase by inject()
 
     authenticate("auth-jwt") {
         route("/api/v1/videos") {
@@ -114,7 +115,7 @@ fun Route.videoRoutes(
                 
                 val fileNameWithoutExt = request.s3Key.substringAfterLast("/").substringBeforeLast(".")
                 val hlsUrl = "https://$cloudFrontDomain/processed/$fileNameWithoutExt/master.m3u8"
-                val thumbnailUrl = "https://$cloudFrontDomain/processed/$fileNameWithoutExt/thumbnail.jpg"
+                val thumbnailUrl = "https://$cloudFrontDomain/processed/$fileNameWithoutExt/_thumb.0000000.jpg"
 
                 val video = Video(
                     userId = userId,
@@ -122,6 +123,7 @@ fun Route.videoRoutes(
                     description = request.description,
                     hlsUrl = hlsUrl,
                     thumbnailUrl = thumbnailUrl,
+                    status = VideoStatus.PROCESSING,
                     videoCruxes = request.cruxes.map {
                         VideoCrux(
                             startTime = it.startTime,
@@ -130,8 +132,37 @@ fun Route.videoRoutes(
                     }
                 )
 
-                val savedVideo = videoRepository.save(video)
-                call.respond(HttpStatusCode.Created, savedVideo.toResponse())
+                registerVideoUseCase(
+                    video = video,
+                    s3Bucket = s3Bucket,
+                    s3Key = request.s3Key,
+                    fileNameWithoutExt = fileNameWithoutExt
+                ).onSuccess { savedVideo ->
+                    call.respond(HttpStatusCode.Created, savedVideo.toResponse())
+                }.onFailure {
+                    call.respond(HttpStatusCode.InternalServerError)
+                }
+            }
+
+            // MediaConvert Webhook Callback
+            route("/callback/mediaconvert") {
+                post {
+                    val body = call.receive<Map<String, String>>()
+                    val videoId = body["videoId"]?.toLongOrNull() ?: return@post call.respond(HttpStatusCode.BadRequest)
+                    val status = body["status"] // COMPLETE, ERROR
+                    
+                    val videoStatus = when (status) {
+                        "COMPLETE" -> VideoStatus.READY
+                        "ERROR" -> VideoStatus.FAILED
+                        else -> VideoStatus.PROCESSING
+                    }
+                    
+                    updateVideoStatusUseCase(videoId, videoStatus).onSuccess {
+                        call.respond(HttpStatusCode.OK)
+                    }.onFailure {
+                        call.respond(HttpStatusCode.InternalServerError)
+                    }
+                }
             }
 
             route("/{id}") {
@@ -200,6 +231,7 @@ private fun Video.toResponse() = VideoResponse(
     description = description,
     hlsUrl = hlsUrl,
     thumbnailUrl = thumbnailUrl,
+    status = status,
     cruxes = videoCruxes.map {
         VideoResponse.Crux(
             id = it.id,

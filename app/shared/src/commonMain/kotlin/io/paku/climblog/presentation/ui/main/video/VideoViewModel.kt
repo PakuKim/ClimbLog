@@ -3,10 +3,13 @@ package io.paku.climblog.presentation.ui.main.video
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import io.paku.climblog.business.domain.VideoRepository
 import io.paku.climblog.business.domain.interactors.user.FetchUserUseCase
 import io.paku.climblog.business.domain.interactors.video.GetCommentsUseCase
+import io.paku.climblog.business.domain.interactors.video.GetSingleVideoUseCase
+import io.paku.climblog.business.domain.interactors.video.GetUserVideosUseCase
+import io.paku.climblog.business.domain.interactors.video.GetVideoFeedUseCase
 import io.paku.climblog.business.domain.interactors.video.PostCommentUseCase
+import io.paku.climblog.business.domain.interactors.video.SearchVideosUseCase
 import io.paku.climblog.business.domain.interactors.video.ToggleLikeUseCase
 import io.paku.climblog.business.domain.model.comment.Comment
 import io.paku.climblog.business.domain.model.video.Video
@@ -38,11 +41,14 @@ sealed class SharedVideoViewModelEvent : ViewModelEvent {
 }
 
 internal class SharedVideoViewModel(
-    private val videoRepository: VideoRepository,
     private val toggleLikeUseCase: ToggleLikeUseCase,
     private val fetchUserUseCase: FetchUserUseCase,
     private val getCommentsUseCase: GetCommentsUseCase,
-    private val postCommentUseCase: PostCommentUseCase
+    private val postCommentUseCase: PostCommentUseCase,
+    private val getVideoFeedUseCase: GetVideoFeedUseCase,
+    private val getUserVideosUseCase: GetUserVideosUseCase,
+    private val searchVideosUseCase: SearchVideosUseCase,
+    private val getSingleVideoUseCase: GetSingleVideoUseCase
 ) : BaseViewModel<SharedVideoViewModelState, SharedVideoViewModelEvent, Nothing>() {
 
     init {
@@ -77,23 +83,18 @@ internal class SharedVideoViewModel(
         if (state.value.videoListType == type) return
 
         val flow = when (type) {
-            is VideoListType.Home -> videoRepository.getVideosPaging(type = "HOME")
+            is VideoListType.Home -> getVideoFeedUseCase()
             is VideoListType.My -> {
                 val userId = state.value.currentUserId
                 if (userId != null) {
-                    videoRepository.getVideosPaging(userId = userId)
+                    getUserVideosUseCase(userId)
                 } else {
-                    // Temporarily return empty or home feed if user not loaded
-                    videoRepository.getVideosPaging(type = "HOME")
+                    getVideoFeedUseCase() // Fallback
                 }
             }
-            is VideoListType.User -> videoRepository.getVideosPaging(userId = type.userId)
-            is VideoListType.Search -> {
-                videoRepository.getVideosPaging(type = "HOME") // TODO: Search
-            }
-            is VideoListType.Single -> {
-                videoRepository.getVideosPaging(type = "HOME")
-            }
+            is VideoListType.User -> getUserVideosUseCase(type.userId)
+            is VideoListType.Search -> searchVideosUseCase(type.query)
+            is VideoListType.Single -> getSingleVideoUseCase(type.videoId)
         }.cachedIn(viewModelScope)
 
         updateState {

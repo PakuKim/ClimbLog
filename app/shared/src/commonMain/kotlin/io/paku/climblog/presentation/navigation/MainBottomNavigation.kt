@@ -12,7 +12,7 @@ sealed class MainBottomNavigation(
     val selectedIcon: ImageVector
 ) {
     data object Home: MainBottomNavigation(
-        destination = AppNavigation.Home(),
+        destination = AppNavigation.Home,
         title = "홈",
         selectedIcon = Icons.Default.Home
     )

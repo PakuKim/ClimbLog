@@ -27,11 +27,9 @@ internal fun NavGraphBuilder.mainGraph(
         MainRoute(
             viewModel = mainViewModel,
             mainBuilder = {
-                composable<AppNavigation.Home> { backStackEntry ->
-                    val homeArgs = backStackEntry.toRoute<AppNavigation.Home>()
+                composable<AppNavigation.Home> {
                     VideoRoute(
                         videoListType = VideoListType.Home,
-                        initialVideoId = homeArgs.initialVideoId,
                         isNavigationVisible = false,
                         onToggleBottomNavClick = {
                             mainViewModel.onEvent(MainViewModelEvent.SetBottomBarVisibility(it))

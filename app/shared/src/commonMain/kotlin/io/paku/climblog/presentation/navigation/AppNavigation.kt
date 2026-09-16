@@ -26,7 +26,7 @@ sealed interface AppNavigation {
     data object Main : AppNavigation
 
     @Serializable
-    data class Home(val initialVideoId: Long? = null) : AppNavigation
+    data object Home : AppNavigation
 
     @Serializable
     data object Search : AppNavigation
