@@ -59,7 +59,16 @@ kotlin {
             implementation(libs.androidx.sqlite.bundled)
         }
         commonMain.dependencies {
-            api(project(":core"))
+            api(project(":shared:domain"))
+            api(project(":shared:data"))
+            api(project(":shared:local"))
+            api(project(":shared:remote"))
+            api(project(":shared:navigation"))
+            api(project(":shared:ui-common"))
+            api(project(":shared:platform"))
+            api(project(":feature:main"))
+            api(project(":feature:onboard"))
+
             implementation(libs.logger)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
