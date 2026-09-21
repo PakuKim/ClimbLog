@@ -7,6 +7,10 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+import io.paku.climblog.contract.auth.AuthResponse
+import io.paku.climblog.contract.auth.RefreshTokenRequest
+import io.paku.climblog.contract.auth.SocialLoginRequest
+import io.paku.climblog.contract.auth.SocialRegisterRequest
 import io.paku.climblog.domain.ext.getUserId
 import io.paku.climblog.domain.interactor.auth.LogoutUseCase
 import io.paku.climblog.domain.interactor.auth.RefreshTokenUseCase

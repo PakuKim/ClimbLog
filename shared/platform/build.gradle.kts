@@ -1,6 +1,19 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
+import io.paku.climblog.ext.Configs
+
 plugins {
     alias(libs.plugins.kmp.kotlinMultiplatform)
     alias(libs.plugins.kmp.composeMultiplatform)
+    alias(libs.plugins.buildKonfig)
+}
+
+buildkonfig {
+    packageName = "io.paku.climblog"
+    defaultConfigs {
+        Configs.DEV.toBuildKonfig(project).forEach { (key, value) ->
+            buildConfigField(FieldSpec.Type.STRING, key, value)
+        }
+    }
 }
 
 kotlin {
@@ -8,6 +21,7 @@ kotlin {
         commonMain.dependencies {
             api(project(":core"))
             api(project(":shared:domain"))
+            api(project(":shared:local"))
             implementation(libs.koin.core)
             
             implementation(libs.compose.runtime)
@@ -16,6 +30,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
         }
         androidMain.dependencies {
+            implementation(libs.koin.android)
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.media3.exoplayer)
             implementation(libs.androidx.media3.exoplayer.hls)

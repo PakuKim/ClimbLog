@@ -1,7 +1,7 @@
 package io.paku.climblog.business.remote.mapper.comment
 
 import io.paku.climblog.business.data.model.comment.CommentData
-import io.paku.climblog.business.remote.model.comment.CommentResponse
+import io.paku.climblog.contract.comment.CommentResponse
 import io.paku.climblog.core.BiMapper
 
 internal object CommentResponseMapper : BiMapper<CommentResponse, CommentData> {

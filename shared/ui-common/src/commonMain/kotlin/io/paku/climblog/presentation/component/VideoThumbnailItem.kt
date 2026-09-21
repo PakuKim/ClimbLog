@@ -9,8 +9,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import io.paku.climblog.business.domain.model.video.Video
+import io.paku.climblog.business.domain.model.video.VideoStatus
+import kotlinx.datetime.LocalDateTime
 
 @Composable
 fun VideoThumbnailItem(
@@ -29,6 +32,27 @@ fun VideoThumbnailItem(
             color = MaterialTheme.colorScheme.onSurface,
             fontSize = 10.sp,
             modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun VideoThumbnailItemPreview() {
+    PreviewWrapper {
+        VideoThumbnailItem(
+            video = Video(
+                id = 1,
+                userId = 1,
+                title = "Sample Video",
+                description = "This is a sample video description.",
+                hlsUrl = "https://example.com/video.m3u8",
+                thumbnailUrl = "https://example.com/thumbnail.jpg",
+                status = VideoStatus.READY,
+                cruxes = emptyList(),
+                createdAt = LocalDateTime(2023, 1, 1, 0, 0)
+            ),
+            onClick = {}
         )
     }
 }

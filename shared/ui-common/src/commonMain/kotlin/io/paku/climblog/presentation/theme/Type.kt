@@ -13,7 +13,7 @@ import io.paku.climblog.shared.ui_common.pretendard_regular
 import org.jetbrains.compose.resources.Font
 
 @Composable
-fun appTypography(): Typography {
+internal fun appTypography(): Typography {
     val pretendard = FontFamily(
         Font(
             resource = Res.font.pretendard_regular,

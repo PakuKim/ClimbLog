@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
+import io.paku.climblog.business.domain.model.user.User
 import io.paku.climblog.business.domain.model.user.UserProfile
 import io.paku.climblog.presentation.component.PreviewWrapper
 import io.paku.climblog.presentation.component.SharedTopAppBar
@@ -49,7 +50,7 @@ import io.paku.climblog.presentation.component.VideoThumbnailItem
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun ProfileRoute(
+internal fun ProfileRoute(
     viewModel: ProfileViewModel = koinViewModel(),
     onUploadClick: () -> Unit,
     onVideoClick: (Long) -> Unit,
@@ -186,6 +187,7 @@ fun ProfileHeader(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
+        @Suppress("DEPRECATION")
         Text(
             text = profile.user.name,
             fontWeight = FontWeight.Bold,
@@ -299,6 +301,34 @@ private fun ClimbingSpecPreview() {
             armReach = 180,
             age = 20,
             gender = "MALE"
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ProfileScreenPreview() {
+    PreviewWrapper {
+        ProfileScreen(
+            state = ProfileViewModelState(
+                userProfile = UserProfile(
+                    user = User(
+                        id = 1,
+                        name = "홍길동",
+                        handle = "gildong",
+                        age = 20,
+                        height = 180,
+                        armReach = 190,
+                        gender = "MALE",
+                        profilePhotoUrl = null
+                    ),
+                    followerCount = 100,
+                    followingCount = 200,
+                    videoCount = 50,
+                    isFollowing = false
+                ),
+                isMyProfile = true
+            )
         )
     }
 }

@@ -29,7 +29,7 @@ import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 
-class EncodeFileProviderImpl(
+internal class EncodeFileProviderImpl(
     private val applicationContext: Context
 ) : EncodeFileProvider {
     companion object {

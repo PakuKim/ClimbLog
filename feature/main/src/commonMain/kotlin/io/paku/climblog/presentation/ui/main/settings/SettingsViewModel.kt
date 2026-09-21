@@ -16,7 +16,7 @@ sealed class SettingsViewModelEvent : ViewModelEvent {
     object OnDeleteAccountClick : SettingsViewModelEvent()
 }
 
-class SettingsViewModel(
+internal class SettingsViewModel(
     private val logoutUseCase: LogoutUseCase,
     private val deleteUserUseCase: DeleteUserUseCase
 ) : BaseViewModel<SettingsViewModelState, SettingsViewModelEvent, Nothing>() {

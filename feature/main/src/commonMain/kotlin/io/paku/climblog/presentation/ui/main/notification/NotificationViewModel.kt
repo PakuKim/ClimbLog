@@ -14,7 +14,7 @@ sealed class NotificationViewModelEvent : ViewModelEvent {
     object LoadNotifications : NotificationViewModelEvent()
 }
 
-class NotificationViewModel(
+internal class NotificationViewModel(
     private val getNotificationsUseCase: GetNotificationsUseCase
 ) : BaseViewModel<NotificationViewModelState, NotificationViewModelEvent, Nothing>() {
 

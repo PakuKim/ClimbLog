@@ -11,7 +11,7 @@ import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 import io.paku.climblog.util.ActivityUtil
 
-class GoogleLoginProviderImpl(
+internal class GoogleLoginProviderImpl(
     private val serverClientId: String
 ) : SocialLoginProvider {
     private val activity: ComponentActivity by lazy {

@@ -31,7 +31,7 @@ sealed class VideoUploadViewModelEvent : ViewModelEvent {
     object OnUploadClick : VideoUploadViewModelEvent()
 }
 
-class VideoUploadViewModel(
+internal class VideoUploadViewModel(
     private val uploadVideoUseCase: UploadVideoUseCase
 ) : BaseViewModel<VideoUploadViewModelState, VideoUploadViewModelEvent, Nothing>() {
 

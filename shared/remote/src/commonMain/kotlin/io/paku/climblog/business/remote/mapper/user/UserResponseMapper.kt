@@ -1,7 +1,7 @@
 package io.paku.climblog.business.remote.mapper.user
 
 import io.paku.climblog.business.data.model.user.UserData
-import io.paku.climblog.business.remote.model.user.UserResponse
+import io.paku.climblog.contract.user.UserResponse
 import io.paku.climblog.core.BiMapper
 
 internal object UserResponseMapper : BiMapper<UserResponse, UserData> {

@@ -12,7 +12,7 @@ import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resumeWithException
 
-class KakaoLoginProviderImpl(
+internal class KakaoLoginProviderImpl(
     private val applicationContext: Context
 ) : SocialLoginProvider {
     companion object {

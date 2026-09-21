@@ -7,7 +7,9 @@ import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-actual class RoomDatabaseFactory(private val context: Context) {
+actual class RoomDatabaseFactory(
+    private val context: Context
+) {
     actual fun createBuilder(): RoomDatabase.Builder<AppDatabase> {
         val appContext = context.applicationContext
         val dbFile = appContext.getDatabasePath("climblog.db")

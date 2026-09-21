@@ -8,8 +8,8 @@ import io.ktor.client.request.setBody
 import io.paku.climblog.business.data.model.notification.NotificationData
 import io.paku.climblog.business.data.source.remote.NotificationRemoteDataSource
 import io.paku.climblog.business.remote.mapper.notification.NotificationResponseMapper
-import io.paku.climblog.business.remote.model.notification.NotificationResponse
-import io.paku.climblog.business.remote.model.notification.UnreadCheckResponse
+import io.paku.climblog.contract.notification.NotificationResponse
+import io.paku.climblog.contract.notification.UnreadCheckResponse
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 

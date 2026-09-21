@@ -1,7 +1,7 @@
 package io.paku.climblog.business.remote.mapper.notification
 
 import io.paku.climblog.business.data.model.notification.NotificationData
-import io.paku.climblog.business.remote.model.notification.NotificationResponse
+import io.paku.climblog.contract.notification.NotificationResponse
 import io.paku.climblog.core.BiMapper
 
 internal object NotificationResponseMapper : BiMapper<NotificationResponse, NotificationData> {

@@ -17,7 +17,7 @@ data class FollowListViewModelState(
     val type: FollowListType = FollowListType.FOLLOWERS
 ) : ViewModelState
 
-class FollowListViewModel(
+internal class FollowListViewModel(
     savedStateHandle: SavedStateHandle,
     private val getFollowersUseCase: GetFollowersUseCase,
     private val getFollowingUseCase: GetFollowingUseCase

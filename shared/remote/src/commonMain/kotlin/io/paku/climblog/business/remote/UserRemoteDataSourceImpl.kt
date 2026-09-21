@@ -11,13 +11,13 @@ import io.ktor.client.request.setBody
 import io.paku.climblog.business.data.model.user.UserData
 import io.paku.climblog.business.data.model.user.UserProfileData
 import io.paku.climblog.business.data.source.remote.UserRemoteDataSource
-import io.paku.climblog.business.remote.dto.request.user.RegisterUserInfoRequest
 import io.paku.climblog.business.remote.mapper.user.UserResponseMapper
-import io.paku.climblog.business.remote.model.user.FollowStatusResponse
-import io.paku.climblog.business.remote.model.user.HandleCheckResponse
-import io.paku.climblog.business.remote.model.user.UserListResponse
-import io.paku.climblog.business.remote.model.user.UserProfileResponse
-import io.paku.climblog.business.remote.model.user.UserResponse
+import io.paku.climblog.contract.user.FollowStatusResponse
+import io.paku.climblog.contract.user.HandleCheckResponse
+import io.paku.climblog.contract.user.UserListResponse
+import io.paku.climblog.contract.user.UserProfileResponse
+import io.paku.climblog.contract.user.UserRequest
+import io.paku.climblog.contract.user.UserResponse
 
 internal class UserRemoteDataSourceImpl(
     private val client: HttpClient
@@ -93,7 +93,7 @@ internal class UserRemoteDataSourceImpl(
         gender: String?,
         profilePhotoUrl: String?
     ): UserData {
-        val request = RegisterUserInfoRequest(
+        val request = UserRequest(
             name = name,
             age = age,
             height = height,

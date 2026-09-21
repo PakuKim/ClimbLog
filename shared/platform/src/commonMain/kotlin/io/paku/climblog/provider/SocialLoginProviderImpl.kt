@@ -1,10 +1,11 @@
-package io.paku.climblog.business.domain.provider.social
+package io.paku.climblog.provider
 
 import io.paku.climblog.business.domain.model.social.SocialLoginResult
 import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.business.domain.provider.Provider
+import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 
-class SocialLoginProviderImpl(
+internal class SocialLoginProviderImpl(
     private val providers: Map<SocialLoginType, Provider<SocialLoginProvider>>
 ): SocialLoginProvider {
     override suspend fun latestLoginResult(type: SocialLoginType): SocialLoginResult {

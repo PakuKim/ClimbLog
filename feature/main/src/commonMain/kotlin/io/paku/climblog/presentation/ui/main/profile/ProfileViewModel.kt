@@ -13,7 +13,7 @@ import io.paku.climblog.presentation.base.ViewModelEvent
 import io.paku.climblog.presentation.navigation.AppNavigation
 import kotlinx.coroutines.flow.collectLatest
 
-class ProfileViewModel(
+internal class ProfileViewModel(
     savedStateHandle: SavedStateHandle,
     private val fetchUserUseCase: FetchUserUseCase,
     private val getUserProfileUseCase: GetUserProfileUseCase,

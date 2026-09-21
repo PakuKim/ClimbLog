@@ -40,7 +40,7 @@ sealed class SharedVideoViewModelEvent : ViewModelEvent {
     data class PostComment(val content: String) : SharedVideoViewModelEvent()
 }
 
-class SharedVideoViewModel(
+internal class SharedVideoViewModel(
     private val toggleLikeUseCase: ToggleLikeUseCase,
     private val fetchUserUseCase: FetchUserUseCase,
     private val getCommentsUseCase: GetCommentsUseCase,

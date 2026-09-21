@@ -46,6 +46,7 @@ include(":shared:remote")
 include(":shared:navigation")
 include(":shared:ui-common")
 include(":shared:platform")
+include(":shared:contract")
 
 include(":feature:main")
 include(":feature:onboard")

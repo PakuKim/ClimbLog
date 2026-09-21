@@ -7,7 +7,6 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class DataStoreFactory {
     @OptIn(ExperimentalForeignApi::class)
     actual fun producePath(): Path {

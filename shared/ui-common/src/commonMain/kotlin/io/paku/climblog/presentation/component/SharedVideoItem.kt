@@ -258,6 +258,7 @@ private fun SharedVideoItemPreview() {
                 description = "This is a sample video description.",
                 hlsUrl = "https://example.com/video.m3u8",
                 thumbnailUrl = "https://example.com/thumbnail.jpg",
+                status = VideoStatus.READY,
                 cruxes = emptyList(),
                 createdAt = LocalDateTime(2023, 1, 1, 0, 0)
             ),

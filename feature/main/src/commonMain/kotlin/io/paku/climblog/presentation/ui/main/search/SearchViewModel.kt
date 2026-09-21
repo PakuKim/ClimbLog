@@ -22,7 +22,7 @@ sealed class SearchViewModelEvent : ViewModelEvent {
     object LoadRandomVideos : SearchViewModelEvent()
 }
 
-class SearchViewModel(
+internal class SearchViewModel(
     private val searchUsersUseCase: SearchUsersUseCase,
     private val getRandomVideosUseCase: GetRandomVideosUseCase
 ) : BaseViewModel<SearchViewModelState, SearchViewModelEvent, Nothing>() {

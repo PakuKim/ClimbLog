@@ -1,4 +1,4 @@
-package io.paku.climblog.presentation.video
+package io.paku.climblog.contract.video
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
@@ -10,6 +10,9 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+import io.paku.climblog.contract.comment.CommentFeedResponse
+import io.paku.climblog.contract.comment.CommentRequest
+import io.paku.climblog.contract.comment.CommentResponse
 import io.paku.climblog.domain.ext.getUserId
 import io.paku.climblog.domain.interactor.video.GetVideoCommentsUseCase
 import io.paku.climblog.domain.interactor.video.GetVideoListUseCase

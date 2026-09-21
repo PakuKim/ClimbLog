@@ -59,7 +59,7 @@ sealed class RegisterViewModelEvent : ViewModelEvent {
     object OnRegisterClick : RegisterViewModelEvent()
 }
 
-class RegisterViewModel(
+internal class RegisterViewModel(
     savedStateHandle: SavedStateHandle,
     private val checkHandleUseCase: CheckHandleUseCase,
     private val socialRegisterUseCase: SocialRegisterUseCase

@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.paku.climblog.business.domain.model.user.User
@@ -58,5 +59,25 @@ fun UserItem(
                 style = MaterialTheme.typography.bodyMedium
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun UserItemPreview() {
+    PreviewWrapper {
+        UserItem(
+            user = User(
+                id = 1,
+                name = "홍길동",
+                handle = "gildong",
+                age = 20,
+                height = 180,
+                armReach = 190,
+                gender = "M",
+                profilePhotoUrl = null
+            ),
+            onClick = {}
+        )
     }
 }

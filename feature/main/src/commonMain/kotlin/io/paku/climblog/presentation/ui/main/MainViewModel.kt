@@ -15,7 +15,7 @@ sealed class MainViewModelEvent : ViewModelEvent {
     data class SetBottomBarVisibility(val visible: Boolean) : MainViewModelEvent()
 }
 
-class MainViewModel(
+internal class MainViewModel(
     private val checkUnreadNotificationsUseCase: CheckUnreadNotificationsUseCase
 ) : BaseViewModel<MainViewModelState, MainViewModelEvent, Nothing>() {
 

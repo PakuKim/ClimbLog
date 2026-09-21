@@ -6,9 +6,9 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.paku.climblog.business.data.model.auth.AuthData
 import io.paku.climblog.business.data.source.remote.AuthRemoteDataSource
-import io.paku.climblog.business.remote.dto.request.auth.SocialLoginRequest
-import io.paku.climblog.business.remote.dto.request.auth.SocialRegisterRequest
-import io.paku.climblog.business.remote.model.auth.AuthResponse
+import io.paku.climblog.contract.auth.AuthResponse
+import io.paku.climblog.contract.auth.SocialLoginRequest
+import io.paku.climblog.contract.auth.SocialRegisterRequest
 
 internal class AuthRemoteDataSourceImpl(
     private val client: HttpClient

@@ -5,7 +5,7 @@ import io.paku.climblog.business.domain.interactors.user.UpdateProfileUseCase
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
 
-class EditProfileViewModel(
+internal class EditProfileViewModel(
     private val fetchUserUseCase: FetchUserUseCase,
     private val updateProfileUseCase: UpdateProfileUseCase
 ) : BaseViewModel<EditProfileViewModelState, EditProfileViewModelEvent, Nothing>() {

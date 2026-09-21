@@ -1,4 +1,4 @@
-package io.paku.climblog.presentation.notification
+package io.paku.climblog.contract.notification
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate

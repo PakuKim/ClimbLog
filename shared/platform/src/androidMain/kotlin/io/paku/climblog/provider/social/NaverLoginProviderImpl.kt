@@ -10,7 +10,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class NaverLoginProviderImpl : SocialLoginProvider {
+internal class NaverLoginProviderImpl : SocialLoginProvider {
     override suspend fun latestLoginResult(type: SocialLoginType): SocialLoginResult {
         val accessToken = NidOAuth.getAccessToken() ?: return login(type)
 

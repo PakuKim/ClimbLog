@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
@@ -35,6 +36,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import io.paku.climblog.business.domain.model.comment.Comment
 import io.paku.climblog.presentation.theme.AppComponentColors
+import kotlinx.datetime.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -144,5 +146,23 @@ private fun CommentItem(comment: Comment) {
             Text(comment.content, fontSize = 14.sp)
             Text("방금 전", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f), fontSize = 10.sp, modifier = Modifier.padding(top = 4.dp))
         }
+    }
+}
+
+@Preview
+@Composable
+private fun CommentItemPreview() {
+    PreviewWrapper {
+        CommentItem(
+            comment = Comment(
+                id = 1,
+                videoId = 1,
+                userId = 1,
+                userName = "User Name",
+                userProfilePhotoUrl = null,
+                content = "This is a sample comment content.",
+                createdAt = LocalDateTime(2023, 1, 1, 0, 0)
+            )
+        )
     }
 }

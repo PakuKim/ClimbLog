@@ -23,7 +23,7 @@ sealed class LoginViewModelAction: ViewModelAction {
     ): LoginViewModelAction()
 }
 
-class LoginViewModel(
+internal class LoginViewModel(
     private val socialLoginUseCase: SocialLoginUseCase
 ) : BaseViewModel<LoginViewModelState, LoginViewModelEvent, LoginViewModelAction>() {
     override fun createInitialState(): LoginViewModelState = LoginViewModelState()

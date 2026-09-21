@@ -12,6 +12,12 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
+import io.paku.climblog.contract.user.FollowStatusResponse
+import io.paku.climblog.contract.user.HandleCheckResponse
+import io.paku.climblog.contract.user.UserListResponse
+import io.paku.climblog.contract.user.UserProfileResponse
+import io.paku.climblog.contract.user.UserRequest
+import io.paku.climblog.contract.user.UserResponse
 import io.paku.climblog.domain.ext.getUserId
 import io.paku.climblog.domain.interactor.user.CheckHandleUseCase
 import io.paku.climblog.domain.interactor.user.DeleteUserUseCase
@@ -61,7 +67,7 @@ internal fun Route.userRoutes() {
 
                 put {
                     val userId = call.getUserId()
-                    val request = call.receive<UpdateUserRequest>()
+                    val request = call.receive<UserRequest>()
                     val user = updateUserUseCase(
                         userId = userId,
                         name = request.name,

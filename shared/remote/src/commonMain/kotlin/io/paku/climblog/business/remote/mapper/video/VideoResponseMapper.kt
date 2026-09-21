@@ -2,8 +2,8 @@ package io.paku.climblog.business.remote.mapper.video
 
 import io.paku.climblog.business.data.model.video.CruxData
 import io.paku.climblog.business.data.model.video.VideoData
-import io.paku.climblog.business.remote.model.video.CruxResponse
-import io.paku.climblog.business.remote.model.video.VideoResponse
+import io.paku.climblog.contract.video.CruxResponse
+import io.paku.climblog.contract.video.VideoResponse
 import io.paku.climblog.core.BiMapper
 
 internal object VideoResponseMapper : BiMapper<VideoResponse, VideoData> {

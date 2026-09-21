@@ -4,7 +4,7 @@ import io.paku.climblog.business.domain.model.social.SocialLoginResult
 import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 
-class NaverLoginProviderImpl : SocialLoginProvider {
+internal class NaverLoginProviderImpl : SocialLoginProvider {
     override suspend fun latestLoginResult(type: SocialLoginType): SocialLoginResult {
         // TODO: Implement iOS Naver Login
         throw UnsupportedOperationException("Naver Login not implemented on iOS yet")

@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun LoginRoute(
+internal fun LoginRoute(
     viewModel: LoginViewModel = koinViewModel(),
     navigateToRegister: (SocialLoginType) -> Unit
 ) {

@@ -9,14 +9,11 @@ data object HomeState: ViewModelState
 
 sealed class HomeEvent: ViewModelEvent
 
-class HomeViewModel(
+internal class HomeViewModel(
     savedStateHandle: SavedStateHandle
 ): BaseViewModel<HomeState, HomeEvent, Nothing>() {
-    override fun createInitialState(): HomeState {
-        TODO("Not yet implemented")
-    }
+    override fun createInitialState(): HomeState = HomeState
 
     override fun createTriggerEvent(event: ViewModelEvent) {
-        TODO("Not yet implemented")
     }
 }
