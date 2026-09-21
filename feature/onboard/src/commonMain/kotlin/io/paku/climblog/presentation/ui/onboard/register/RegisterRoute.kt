@@ -46,7 +46,7 @@ import io.paku.climblog.presentation.theme.AppComponentColors
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun RegisterRoute(
+internal fun RegisterRoute(
     viewModel: RegisterViewModel = koinViewModel()
 ) {
     val state by viewModel.state

@@ -48,7 +48,7 @@ import io.paku.climblog.presentation.component.SharedTopAppBar
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun VideoUploadRoute(
+internal fun VideoUploadRoute(
     viewModel: VideoUploadViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
     onUploadSuccess: () -> Unit

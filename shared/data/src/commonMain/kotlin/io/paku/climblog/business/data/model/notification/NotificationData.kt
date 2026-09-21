@@ -1,5 +1,7 @@
 package io.paku.climblog.business.data.model.notification
 
+import kotlinx.datetime.LocalDateTime
+
 data class NotificationData(
     val id: Long,
     val type: String,
@@ -8,5 +10,5 @@ data class NotificationData(
     val fromUserProfilePhotoUrl: String?,
     val videoId: Long?,
     val isRead: Boolean,
-    val createdAt: Long
+    val createdAt: LocalDateTime
 )

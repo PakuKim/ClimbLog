@@ -39,7 +39,7 @@ import io.paku.climblog.business.domain.model.Notification
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun NotificationRoute(
+internal fun NotificationRoute(
     viewModel: NotificationViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
     onUserClick: (Long) -> Unit,

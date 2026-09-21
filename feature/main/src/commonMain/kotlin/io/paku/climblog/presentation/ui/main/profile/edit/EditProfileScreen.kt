@@ -38,7 +38,7 @@ import io.paku.climblog.presentation.theme.AppComponentColors
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun EditProfileRoute(
+internal fun EditProfileRoute(
     viewModel: EditProfileViewModel = koinViewModel(),
     onNavigateBack: () -> Unit
 ) {

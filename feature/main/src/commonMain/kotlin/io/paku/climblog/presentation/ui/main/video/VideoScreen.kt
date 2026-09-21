@@ -29,7 +29,7 @@ import io.paku.climblog.presentation.navigation.VideoListType
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun VideoRoute(
+internal fun VideoRoute(
     videoListType: VideoListType,
     initialVideoId: Long? = null,
     isNavigationVisible: Boolean = true,

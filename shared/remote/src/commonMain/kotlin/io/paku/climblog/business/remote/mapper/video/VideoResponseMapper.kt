@@ -15,7 +15,7 @@ internal object VideoResponseMapper : BiMapper<VideoResponse, VideoData> {
             description = from.description,
             hlsUrl = from.hlsUrl,
             thumbnailUrl = from.thumbnailUrl,
-            status = from.status,
+            status = enumValueOf(from.status.name),
             createdAt = from.createdAt,
             cruxes = from.cruxes.map { it.toData() }
         )
@@ -29,7 +29,7 @@ internal object VideoResponseMapper : BiMapper<VideoResponse, VideoData> {
             description = from.description,
             hlsUrl = from.hlsUrl,
             thumbnailUrl = from.thumbnailUrl,
-            status = from.status,
+            status = enumValueOf(from.status.name),
             createdAt = from.createdAt,
             cruxes = from.cruxes.map { it.toResponse() }
         )

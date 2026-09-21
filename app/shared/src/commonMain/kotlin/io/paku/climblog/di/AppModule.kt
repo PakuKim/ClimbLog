@@ -12,7 +12,6 @@ import org.koin.dsl.module
 
 fun appModule() = module {
     includes(
-        uiModule,
         DomainModule,
         DataModule,
         LocalModule,
@@ -21,8 +20,6 @@ fun appModule() = module {
         OnboardModule,
         sharedPlatformModule,
     )
-}
 
-val uiModule = module {
     viewModelOf(::AppViewModel)
 }

@@ -27,7 +27,7 @@ val LocalModule = module {
 
     single<DataStore<Preferences>> {
         createDataStore(
-            producePath = get(),
+            factory = get(),
             scope = CoroutineScope(get<CoroutineDispatcher>(named(AppDispatcher.IO)) + SupervisorJob())
         )
     }

@@ -38,7 +38,7 @@ import io.paku.climblog.presentation.navigation.MainBottomNavigation
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun MainRoute(
+internal fun MainRoute(
     viewModel: MainViewModel = koinViewModel(),
     mainBuilder: NavGraphBuilder.() -> Unit,
 ) {

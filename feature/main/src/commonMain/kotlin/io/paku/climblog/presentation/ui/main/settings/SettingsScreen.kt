@@ -28,7 +28,7 @@ import io.paku.climblog.presentation.component.SharedTopAppBar
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SettingsRoute(
+internal fun SettingsRoute(
     viewModel: SettingsViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
     onLogoutSuccess: () -> Unit

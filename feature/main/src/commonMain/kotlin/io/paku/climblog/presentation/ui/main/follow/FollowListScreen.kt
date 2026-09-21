@@ -17,7 +17,7 @@ import io.paku.climblog.presentation.navigation.FollowListType
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun FollowListRoute(
+internal fun FollowListRoute(
     viewModel: FollowListViewModel = koinViewModel(),
     onUserClick: (Long) -> Unit,
     onBackClick: () -> Unit

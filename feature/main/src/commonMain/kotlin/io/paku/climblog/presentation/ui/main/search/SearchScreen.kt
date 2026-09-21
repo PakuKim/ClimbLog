@@ -32,7 +32,7 @@ import io.paku.climblog.presentation.component.VideoThumbnailItem
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SearchRoute(
+internal fun SearchRoute(
     viewModel: SearchViewModel = koinViewModel(),
     onUserClick: (Long) -> Unit,
     onVideoClick: (Long) -> Unit

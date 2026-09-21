@@ -11,6 +11,11 @@ compose {
 
 kotlin {
     sourceSets {
+        androidMain.dependencies {
+            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.compose.ui.tooling)
+        }
+
         commonMain.dependencies {
             api(project(":core"))
             api(project(":shared:domain"))
