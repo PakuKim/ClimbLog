@@ -1,13 +1,15 @@
 package io.paku.climblog.domain.provider.encode
 
+import io.paku.climblog.domain.model.EncodeResult
+
 interface EncodeFileProvider {
     suspend fun encodeImageFromUri(
         uri: String,
-    ): io.paku.climblog.domain.model.EncodeResult
+    ): EncodeResult
 
     suspend fun encodeFileFromUri(
         uri: String,
-    ): io.paku.climblog.domain.model.EncodeResult
+    ): EncodeResult
 
     suspend fun getFileSizeFromUri(
         uri: String,

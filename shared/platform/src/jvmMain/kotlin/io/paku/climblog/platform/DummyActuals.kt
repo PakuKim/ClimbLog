@@ -2,8 +2,8 @@ package io.paku.climblog.platform
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.paku.climblog.business.domain.model.MediaSource
-import io.paku.climblog.business.domain.model.permission.PermissionType
+import io.paku.climblog.domain.model.MediaSource
+import io.paku.climblog.domain.model.permission.PermissionType
 
 actual class VideoPlayerController {
     actual fun play() {}

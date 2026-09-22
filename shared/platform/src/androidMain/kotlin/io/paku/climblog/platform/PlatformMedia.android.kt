@@ -2,13 +2,14 @@ package io.paku.climblog.platform
 
 import android.content.ContentResolver
 import android.net.Uri
+import io.paku.climblog.domain.model.MediaSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 actual class PlatformMedia(
     val uri: Uri,
     val contentResolver: ContentResolver
-) : io.paku.climblog.domain.model.MediaSource {
+) : MediaSource {
     actual override suspend fun readBytes(): ByteArray = withContext(Dispatchers.IO) {
         contentResolver.openInputStream(uri)?.use {
             it.readBytes()

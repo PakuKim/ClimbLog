@@ -2,10 +2,11 @@ package io.paku.climblog.remote.mapper.comment
 
 import io.paku.climblog.contract.comment.CommentResponse
 import io.paku.climblog.core.BiMapper
+import io.paku.climblog.data.model.comment.CommentData
 
-internal object CommentResponseMapper : BiMapper<CommentResponse, io.paku.climblog.data.model.comment.CommentData> {
-    override fun mapToRight(from: CommentResponse): io.paku.climblog.data.model.comment.CommentData {
-        return _root_ide_package_.io.paku.climblog.data.model.comment.CommentData(
+internal object CommentResponseMapper : BiMapper<CommentResponse, CommentData> {
+    override fun mapToRight(from: CommentResponse): CommentData {
+        return CommentData(
             id = from.id,
             videoId = from.videoId,
             userId = from.userId,
@@ -16,7 +17,7 @@ internal object CommentResponseMapper : BiMapper<CommentResponse, io.paku.climbl
         )
     }
 
-    override fun mapToLeft(from: io.paku.climblog.data.model.comment.CommentData): CommentResponse {
+    override fun mapToLeft(from: CommentData): CommentResponse {
         return CommentResponse(
             id = from.id,
             videoId = from.videoId,

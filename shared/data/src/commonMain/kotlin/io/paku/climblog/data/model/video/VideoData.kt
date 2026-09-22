@@ -9,10 +9,17 @@ data class VideoData(
     val description: String?,
     val hlsUrl: String,
     val thumbnailUrl: String?,
-    val status: io.paku.climblog.domain.model.video.VideoStatus,
+    val status: VideoStatusData,
     val createdAt: LocalDateTime,
     val cruxes: List<CruxData> = emptyList()
 )
+
+enum class VideoStatusData {
+    UPLOADING,
+    PROCESSING,
+    READY,
+    FAILED;
+}
 
 data class CruxData(
     val id: Long,

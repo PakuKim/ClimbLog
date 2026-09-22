@@ -3,7 +3,6 @@ package io.paku.climblog.core
 import kotlin.jvm.JvmOverloads
 
 class CommonException @JvmOverloads constructor(
-    error: CommonError = CommonError.Unknown,
     message: String? = null,
     cause: Throwable? = null,
     val code: Int? = null,

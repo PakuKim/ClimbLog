@@ -1,14 +1,16 @@
 package io.paku.climblog.domain
 
+import io.paku.climblog.domain.model.social.SocialLoginType
+
 interface AuthRepository {
     suspend fun socialLogin(
-        socialLoginType: io.paku.climblog.domain.model.social.SocialLoginType,
+        socialLoginType: SocialLoginType,
         socialToken: String,
     )
 
     suspend fun socialRegister(
         socialToken: String,
-        socialLoginType: io.paku.climblog.domain.model.social.SocialLoginType,
+        socialLoginType: SocialLoginType,
         handle: String,
         name: String,
         age: Int,

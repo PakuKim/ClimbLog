@@ -1,8 +1,8 @@
 package io.paku.climblog.platform
 
-import io.paku.climblog.business.domain.model.MediaSource
-import io.paku.climblog.business.domain.model.video.VideoQuality
-import io.paku.climblog.business.domain.provider.VideoCompressor
+import io.paku.climblog.domain.model.MediaSource
+import io.paku.climblog.domain.model.video.VideoQuality
+import io.paku.climblog.domain.provider.VideoCompressor
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import kotlinx.coroutines.CompletableDeferred

@@ -3,10 +3,12 @@ package io.paku.climblog.remote.mapper.video
 import io.paku.climblog.contract.video.CruxResponse
 import io.paku.climblog.contract.video.VideoResponse
 import io.paku.climblog.core.BiMapper
+import io.paku.climblog.data.model.video.CruxData
+import io.paku.climblog.data.model.video.VideoData
 
-internal object VideoResponseMapper : BiMapper<VideoResponse, io.paku.climblog.data.model.video.VideoData> {
-    override fun mapToRight(from: VideoResponse): io.paku.climblog.data.model.video.VideoData {
-        return _root_ide_package_.io.paku.climblog.data.model.video.VideoData(
+internal object VideoResponseMapper : BiMapper<VideoResponse, VideoData> {
+    override fun mapToRight(from: VideoResponse): VideoData {
+        return VideoData(
             id = from.id,
             userId = from.userId,
             title = from.title,
@@ -19,7 +21,7 @@ internal object VideoResponseMapper : BiMapper<VideoResponse, io.paku.climblog.d
         )
     }
 
-    override fun mapToLeft(from: io.paku.climblog.data.model.video.VideoData): VideoResponse {
+    override fun mapToLeft(from: VideoData): VideoResponse {
         return VideoResponse(
             id = from.id,
             userId = from.userId,
@@ -34,14 +36,14 @@ internal object VideoResponseMapper : BiMapper<VideoResponse, io.paku.climblog.d
     }
 
     private fun CruxResponse.toData() =
-        _root_ide_package_.io.paku.climblog.data.model.video.CruxData(
+        CruxData(
             id = id,
             videoId = 0L,
             startTime = cruxStartTime,
             endTime = cruxEndTime
         )
 
-    private fun io.paku.climblog.data.model.video.CruxData.toResponse() = CruxResponse(
+    private fun CruxData.toResponse() = CruxResponse(
         id = id,
         cruxStartTime = startTime,
         cruxEndTime = endTime

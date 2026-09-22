@@ -14,6 +14,9 @@ import androidx.media3.transformer.Effects
 import androidx.media3.transformer.ExportException
 import androidx.media3.transformer.ExportResult
 import androidx.media3.transformer.Transformer
+import io.paku.climblog.domain.model.MediaSource
+import io.paku.climblog.domain.model.video.VideoQuality
+import io.paku.climblog.domain.provider.VideoCompressor
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -23,11 +26,11 @@ import java.util.UUID
 @OptIn(UnstableApi::class)
 class AndroidVideoCompressor(
     private val context: Context
-) : io.paku.climblog.domain.provider.VideoCompressor {
+) : VideoCompressor {
     override suspend fun compress(
-        source: io.paku.climblog.domain.model.MediaSource,
-        quality: io.paku.climblog.domain.model.video.VideoQuality
-    ): io.paku.climblog.domain.model.MediaSource = withContext(Dispatchers.IO) {
+        source: MediaSource,
+        quality: VideoQuality
+    ): MediaSource = withContext(Dispatchers.IO) {
         val platformSource = source as? PlatformMedia ?: throw IllegalArgumentException("Unsupported media source")
         val outputDir = File(context.cacheDir, "compressed_videos").apply { mkdirs() }
         val outputFile = File(outputDir, "compressed_${UUID.randomUUID()}.mp4")

@@ -6,11 +6,14 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import io.paku.climblog.domain.model.social.SocialLoginResult
+import io.paku.climblog.domain.model.social.SocialLoginType
+import io.paku.climblog.domain.provider.social.SocialLoginProvider
 import io.paku.climblog.platform.util.ActivityUtil
 
 internal class GoogleLoginProviderImpl(
     private val serverClientId: String
-) : io.paku.climblog.domain.provider.social.SocialLoginProvider {
+) : SocialLoginProvider {
     private val activity: ComponentActivity by lazy {
         ActivityUtil.getActivity() ?: throw IllegalStateException("Activity not found")
     }
@@ -33,27 +36,27 @@ internal class GoogleLoginProviderImpl(
             .build()
     }
 
-    override suspend fun latestLoginResult(type: io.paku.climblog.domain.model.social.SocialLoginType): io.paku.climblog.domain.model.social.SocialLoginResult {
+    override suspend fun latestLoginResult(type: SocialLoginType): SocialLoginResult {
         return loginInternal()
     }
 
-    override suspend fun login(type: io.paku.climblog.domain.model.social.SocialLoginType): io.paku.climblog.domain.model.social.SocialLoginResult {
+    override suspend fun login(type: SocialLoginType): SocialLoginResult {
         logout(type)
         return loginInternal()
     }
 
-    private suspend fun loginInternal(): io.paku.climblog.domain.model.social.SocialLoginResult {
+    private suspend fun loginInternal(): SocialLoginResult {
         val result = credentialManager.getCredential(activity, credentialRequest)
         val credential = result.credential
         val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
 
-        return _root_ide_package_.io.paku.climblog.domain.model.social.SocialLoginResult(
-            type = io.paku.climblog.domain.model.social.SocialLoginType.GOOGLE,
+        return SocialLoginResult(
+            type = SocialLoginType.GOOGLE,
             token = googleIdTokenCredential.idToken
         )
     }
 
-    override suspend fun logout(type: io.paku.climblog.domain.model.social.SocialLoginType) {
+    override suspend fun logout(type: SocialLoginType) {
         return credentialManager.clearCredentialState(ClearCredentialStateRequest())
     }
 }

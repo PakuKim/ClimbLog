@@ -1,10 +1,12 @@
 package io.paku.climblog.data
 
+import io.paku.climblog.data.source.local.SessionLocalDataSource
+import io.paku.climblog.domain.SessionRepository
 import kotlinx.coroutines.flow.Flow
 
 internal class SessionRepositoryImpl(
-    private val local: io.paku.climblog.data.source.local.SessionLocalDataSource
-): io.paku.climblog.domain.SessionRepository {
+    private val local: SessionLocalDataSource
+): SessionRepository {
     override fun fetch(): Flow<Long?> {
         return local.fetchUserId()
     }

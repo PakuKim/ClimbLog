@@ -23,8 +23,8 @@ import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import io.paku.climblog.contract.auth.AuthResponse
-import io.paku.climblog.core.CommonError
 import io.paku.climblog.core.CommonException
+import io.paku.climblog.data.source.local.SessionLocalDataSource
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
@@ -37,7 +37,7 @@ internal object KtorHttpClientFactory {
 
     fun create(
         baseUrl: String,
-        session: io.paku.climblog.data.source.local.SessionLocalDataSource
+        session: SessionLocalDataSource
     ) = HttpClient {
         install(ContentNegotiation) {
             json(
@@ -109,7 +109,7 @@ internal object KtorHttpClientFactory {
                     if (response.status == HttpStatusCode.Unauthorized) {
                         session.clear()
                         throw CommonException(
-                            error = CommonError.UnAuthorized,
+                            message = "Unauthorized",
                             code = HttpStatusCode.Unauthorized.value
                         )
                     } else {
@@ -118,7 +118,7 @@ internal object KtorHttpClientFactory {
                                 .jsonObject["message"]
                                 ?.jsonPrimitive
                                 ?.content
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             null
                         }
 
@@ -129,7 +129,10 @@ internal object KtorHttpClientFactory {
 
             handleResponseExceptionWithRequest { cause, _ ->
                 when (cause) {
-                    is HttpRequestTimeoutException -> throw CommonException(CommonError.PoorNetwork)
+                    is HttpRequestTimeoutException -> throw CommonException(
+                        message = "Request Timeout",
+                        code = HttpStatusCode.RequestTimeout.value
+                    )
                 }
             }
 

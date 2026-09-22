@@ -1,9 +1,12 @@
 package io.paku.climblog.domain.interactors.video
 
+import io.paku.climblog.domain.VideoRepository
+import io.paku.climblog.domain.model.video.VideoFeed
+
 class GetRandomVideosUseCase(
-    private val videoRepository: io.paku.climblog.domain.VideoRepository
+    private val videoRepository: VideoRepository
 ) {
-    suspend operator fun invoke(limit: Int): Result<io.paku.climblog.domain.model.video.VideoFeed> {
+    suspend operator fun invoke(limit: Int): Result<VideoFeed> {
         return videoRepository.getVideos(type = "RANDOM", limit = limit)
     }
 }

@@ -7,7 +7,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core"))
-            api(project(":shared:domain"))
+            implementation(project(":shared:domain"))
             implementation(libs.koin.core)
             implementation(libs.androidx.paging.common)
         }

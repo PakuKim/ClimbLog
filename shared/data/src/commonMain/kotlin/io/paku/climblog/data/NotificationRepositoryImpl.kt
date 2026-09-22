@@ -1,11 +1,16 @@
 package io.paku.climblog.data
 
-internal class NotificationRepositoryImpl(
-    private val remote: io.paku.climblog.data.source.remote.NotificationRemoteDataSource
-) : io.paku.climblog.domain.NotificationRepository {
+import io.paku.climblog.data.mapper.notification.NotificationDataMapper
+import io.paku.climblog.data.source.remote.NotificationRemoteDataSource
+import io.paku.climblog.domain.NotificationRepository
+import io.paku.climblog.domain.model.Notification
 
-    override suspend fun getNotifications(): Result<List<io.paku.climblog.domain.model.Notification>> = runCatching {
-        remote.getNotifications().map(io.paku.climblog.data.mapper.notification.NotificationDataMapper::mapToRight)
+internal class NotificationRepositoryImpl(
+    private val remote: NotificationRemoteDataSource
+) : NotificationRepository {
+
+    override suspend fun getNotifications(): Result<List<Notification>> = runCatching {
+        remote.getNotifications().map(NotificationDataMapper::mapToRight)
     }
 
     override suspend fun checkUnread(): Result<Boolean> = runCatching {

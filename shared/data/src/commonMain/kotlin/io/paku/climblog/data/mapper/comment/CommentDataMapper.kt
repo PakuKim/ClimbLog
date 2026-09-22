@@ -1,10 +1,12 @@
 package io.paku.climblog.data.mapper.comment
 
 import io.paku.climblog.core.BiMapper
+import io.paku.climblog.data.model.comment.CommentData
+import io.paku.climblog.domain.model.comment.Comment
 
-internal object CommentDataMapper : BiMapper<io.paku.climblog.data.model.comment.CommentData, io.paku.climblog.domain.model.comment.Comment> {
-    override fun mapToRight(from: io.paku.climblog.data.model.comment.CommentData): io.paku.climblog.domain.model.comment.Comment {
-        return _root_ide_package_.io.paku.climblog.domain.model.comment.Comment(
+internal object CommentDataMapper : BiMapper<CommentData, Comment> {
+    override fun mapToRight(from: CommentData): Comment {
+        return Comment(
             id = from.id,
             videoId = from.videoId,
             userId = from.userId,
@@ -15,8 +17,8 @@ internal object CommentDataMapper : BiMapper<io.paku.climblog.data.model.comment
         )
     }
 
-    override fun mapToLeft(from: io.paku.climblog.domain.model.comment.Comment): io.paku.climblog.data.model.comment.CommentData {
-        return _root_ide_package_.io.paku.climblog.data.model.comment.CommentData(
+    override fun mapToLeft(from: Comment): CommentData {
+        return CommentData(
             id = from.id,
             videoId = from.videoId,
             userId = from.userId,

@@ -1,23 +1,25 @@
 package io.paku.climblog.domain
 
+import io.paku.climblog.domain.model.user.User
+import io.paku.climblog.domain.model.user.UserProfile
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    fun fetchUserData(): Flow<io.paku.climblog.domain.model.user.User>
+    fun fetchUserData(): Flow<User>
 
-    suspend fun getUser(): io.paku.climblog.domain.model.user.User
+    suspend fun getUser(): User
     
     suspend fun checkHandle(handle: String): Boolean
     
-    suspend fun searchUsers(query: String): List<io.paku.climblog.domain.model.user.User>
+    suspend fun searchUsers(query: String): List<User>
     
-    suspend fun getUserProfile(userId: Long): io.paku.climblog.domain.model.user.UserProfile
+    suspend fun getUserProfile(userId: Long): UserProfile
 
     suspend fun toggleFollow(userId: Long, isFollowing: Boolean)
     
-    suspend fun getFollowers(userId: Long): Result<List<io.paku.climblog.domain.model.user.User>>
+    suspend fun getFollowers(userId: Long): Result<List<User>>
     
-    suspend fun getFollowing(userId: Long): Result<List<io.paku.climblog.domain.model.user.User>>
+    suspend fun getFollowing(userId: Long): Result<List<User>>
     
     suspend fun getFollowStatus(userId: Long): Result<Boolean>
 
@@ -28,7 +30,7 @@ interface UserRepository {
         armReach: Int?,
         gender: String?,
         profilePhotoUrl: String?
-    ): io.paku.climblog.domain.model.user.User
+    ): User
 
     suspend fun deleteUser()
 }

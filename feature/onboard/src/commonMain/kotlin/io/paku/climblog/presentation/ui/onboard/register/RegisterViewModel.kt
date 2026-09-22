@@ -2,6 +2,9 @@ package io.paku.climblog.presentation.ui.onboard.register
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
+import io.paku.climblog.domain.interactors.auth.SocialRegisterUseCase
+import io.paku.climblog.domain.interactors.user.CheckHandleUseCase
+import io.paku.climblog.domain.model.social.SocialLoginType
 import io.paku.climblog.navigation.AppNavigation
 import io.paku.climblog.platform.Media
 import io.paku.climblog.presentation.base.BaseViewModel
@@ -16,8 +19,7 @@ data class RegisterViewModelState(
     val height: String = "",
     val armReach: String = "",
     val gender: String = "M",
-    val profileImage: Media.Image? = null,
-    val socialLoginType: io.paku.climblog.domain.model.social.SocialLoginType = io.paku.climblog.domain.model.social.SocialLoginType.GOOGLE
+    val profileImage: Media.Image? = null
 ): ViewModelState {
     val registrationAvailable: Boolean =
         name.isNotBlank() && handleChecked == true && age.isNotBlank() && height.isNotBlank() && armReach.isNotBlank()
@@ -58,21 +60,11 @@ sealed class RegisterViewModelEvent : ViewModelEvent {
 
 internal class RegisterViewModel(
     savedStateHandle: SavedStateHandle,
-    private val checkHandleUseCase: io.paku.climblog.domain.interactors.user.CheckHandleUseCase,
-    private val socialRegisterUseCase: io.paku.climblog.domain.interactors.auth.SocialRegisterUseCase
+    private val checkHandleUseCase: CheckHandleUseCase,
+    private val socialRegisterUseCase: SocialRegisterUseCase
 ) : BaseViewModel<RegisterViewModelState, RegisterViewModelEvent, Nothing>() {
     private val registerArgs: AppNavigation.Register = savedStateHandle.toRoute()
-    val socialLoginType: io.paku.climblog.domain.model.social.SocialLoginType = registerArgs.socialLoginType
-
-    fun init(
-        socialLoginType: io.paku.climblog.domain.model.social.SocialLoginType
-    ) {
-        updateState {
-            copy(
-                socialLoginType = socialLoginType,
-            )
-        }
-    }
+    val socialLoginType: SocialLoginType = registerArgs.socialLoginType
 
     override fun createInitialState(): RegisterViewModelState = RegisterViewModelState()
 

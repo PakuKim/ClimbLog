@@ -1,18 +1,21 @@
 package io.paku.climblog.data.source.remote
 
+import io.paku.climblog.data.model.user.UserData
+import io.paku.climblog.data.model.user.UserProfileData
+
 interface UserRemoteDataSource {
-    suspend fun getUser(): io.paku.climblog.data.model.user.UserData
+    suspend fun getUser(): UserData
     
     suspend fun checkHandle(handle: String): Boolean
     
-    suspend fun searchUsers(query: String): List<io.paku.climblog.data.model.user.UserData>
+    suspend fun searchUsers(query: String): List<UserData>
     
-    suspend fun getUserProfile(userId: Long): io.paku.climblog.data.model.user.UserProfileData
+    suspend fun getUserProfile(userId: Long): UserProfileData
     
     suspend fun follow(userId: Long)
     suspend fun unfollow(userId: Long)
-    suspend fun getFollowers(userId: Long): List<io.paku.climblog.data.model.user.UserData>
-    suspend fun getFollowing(userId: Long): List<io.paku.climblog.data.model.user.UserData>
+    suspend fun getFollowers(userId: Long): List<UserData>
+    suspend fun getFollowing(userId: Long): List<UserData>
     suspend fun getFollowStatus(userId: Long): Boolean
     
     suspend fun updateUser(
@@ -22,7 +25,7 @@ interface UserRemoteDataSource {
         armReach: Int?,
         gender: String?,
         profilePhotoUrl: String?
-    ): io.paku.climblog.data.model.user.UserData
+    ): UserData
 
     suspend fun deleteUser()
 }

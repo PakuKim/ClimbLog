@@ -14,6 +14,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import io.paku.climblog.domain.model.permission.PermissionStatus
+import io.paku.climblog.domain.model.permission.PermissionType
 import kotlinx.coroutines.launch
 
 actual class PermissionsManager actual constructor(
@@ -21,18 +23,18 @@ actual class PermissionsManager actual constructor(
 ): PermissionHandler {
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    actual override fun AskPermission(permission: io.paku.climblog.domain.model.permission.PermissionType) {
+    actual override fun AskPermission(permission: PermissionType) {
         val lifecycleOwner = LocalLifecycleOwner.current
 
         when (permission) {
-            io.paku.climblog.domain.model.permission.PermissionType.CAMERA -> {
+            PermissionType.CAMERA -> {
                 val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
                 LaunchedEffect(cameraPermissionState) {
                     val permissionResult = cameraPermissionState.status
                     if (!permissionResult.isGranted) {
                         if (permissionResult.shouldShowRationale) {
                             callback.onPermissionStatus(
-                                permission, io.paku.climblog.domain.model.permission.PermissionStatus.SHOW_RATIONAL
+                                permission, PermissionStatus.SHOW_RATIONAL
                             )
                         } else {
                             lifecycleOwner.lifecycleScope.launch {
@@ -41,15 +43,15 @@ actual class PermissionsManager actual constructor(
                         }
                     } else {
                         callback.onPermissionStatus(
-                            permission, io.paku.climblog.domain.model.permission.PermissionStatus.GRANTED
+                            permission, PermissionStatus.GRANTED
                         )
                     }
                 }
             }
 
-            io.paku.climblog.domain.model.permission.PermissionType.GALLERY -> {
+            PermissionType.GALLERY -> {
                 callback.onPermissionStatus(
-                    permission, io.paku.climblog.domain.model.permission.PermissionStatus.GRANTED
+                    permission, PermissionStatus.GRANTED
                 )
             }
         }
@@ -57,14 +59,14 @@ actual class PermissionsManager actual constructor(
 
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    actual override fun isPermissionGranted(permission: io.paku.climblog.domain.model.permission.PermissionType): Boolean {
+    actual override fun isPermissionGranted(permission: PermissionType): Boolean {
         return when (permission) {
-            io.paku.climblog.domain.model.permission.PermissionType.CAMERA -> {
+            PermissionType.CAMERA -> {
                 val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
                 cameraPermissionState.status.isGranted
             }
 
-            io.paku.climblog.domain.model.permission.PermissionType.GALLERY -> {
+            PermissionType.GALLERY -> {
                 true
             }
         }

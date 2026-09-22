@@ -1,10 +1,12 @@
 package io.paku.climblog.data.source.remote
 
+import io.paku.climblog.data.model.auth.AuthData
+
 interface AuthRemoteDataSource {
     suspend fun socialLogin(
         provider: String,
         socialToken: String
-    ): io.paku.climblog.data.model.auth.AuthData
+    ): AuthData
 
     suspend fun socialRegister(
         socialToken: String,

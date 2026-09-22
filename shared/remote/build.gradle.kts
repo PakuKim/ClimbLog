@@ -7,8 +7,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core"))
+            implementation(project(":shared:data"))
             implementation(project(":shared:contract"))
-            api(project(":shared:data"))
             implementation(libs.koin.core)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.auth)

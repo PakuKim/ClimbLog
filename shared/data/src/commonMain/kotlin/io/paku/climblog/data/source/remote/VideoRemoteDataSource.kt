@@ -1,10 +1,16 @@
 package io.paku.climblog.data.source.remote
 
+import io.paku.climblog.data.model.comment.CommentData
+import io.paku.climblog.data.model.comment.CommentFeedData
+import io.paku.climblog.data.model.video.PresignedPostData
+import io.paku.climblog.data.model.video.VideoData
+import io.paku.climblog.data.model.video.VideoFeedData
+
 interface VideoRemoteDataSource {
     suspend fun getPresignedPost(
         fileName: String,
         contentType: String
-    ): io.paku.climblog.data.model.video.PresignedPostData
+    ): PresignedPostData
 
     suspend fun uploadVideoToS3Post(
         url: String,
@@ -19,7 +25,7 @@ interface VideoRemoteDataSource {
         s3Key: String,
         cruxStartTime: Double?,
         cruxEndTime: Double?
-    ): io.paku.climblog.data.model.video.VideoData
+    ): VideoData
 
     // Feed & Interactions
     suspend fun getVideos(
@@ -29,9 +35,9 @@ interface VideoRemoteDataSource {
         orderBy: String = "DESC",
         cursor: Long? = null,
         limit: Int = 10
-    ): io.paku.climblog.data.model.video.VideoFeedData
+    ): VideoFeedData
 
     suspend fun toggleLike(videoId: Long): Boolean
-    suspend fun getComments(videoId: Long, cursor: Long?, limit: Int): io.paku.climblog.data.model.comment.CommentFeedData
-    suspend fun postComment(videoId: Long, content: String): io.paku.climblog.data.model.comment.CommentData
+    suspend fun getComments(videoId: Long, cursor: Long?, limit: Int): CommentFeedData
+    suspend fun postComment(videoId: Long, content: String): CommentData
 }

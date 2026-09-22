@@ -10,7 +10,7 @@ import org.jetbrains.exposed.v1.datetime.datetime
 internal object VideoTable : LongIdTable("videos") {
     val userId = reference("user_id", UserTable, ReferenceOption.CASCADE)
     val title = varchar("title", 255)
-    val description = text("description")
+    val description = text("description").nullable()
     val hlsUrl = varchar("hls_url", 512)
     val thumbnailUrl = varchar("thumbnail_url", 512).nullable()
     val status = enumerationByName("status", 20, VideoStatus::class).default(VideoStatus.UPLOADING)

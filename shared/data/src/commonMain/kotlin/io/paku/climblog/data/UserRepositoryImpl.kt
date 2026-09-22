@@ -1,5 +1,12 @@
 package io.paku.climblog.data
 
+import io.paku.climblog.data.mapper.user.UserDataMapper
+import io.paku.climblog.data.source.local.SessionLocalDataSource
+import io.paku.climblog.data.source.local.UserLocalDataSource
+import io.paku.climblog.data.source.remote.UserRemoteDataSource
+import io.paku.climblog.domain.UserRepository
+import io.paku.climblog.domain.model.user.User
+import io.paku.climblog.domain.model.user.UserProfile
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
@@ -7,25 +14,25 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
 internal class UserRepositoryImpl(
-    private val userRemoteDataSource: io.paku.climblog.data.source.remote.UserRemoteDataSource,
-    private val userLocalDataSource: io.paku.climblog.data.source.local.UserLocalDataSource,
-    private val sessionLocalDataSource: io.paku.climblog.data.source.local.SessionLocalDataSource,
-): io.paku.climblog.domain.UserRepository {
+    private val userRemoteDataSource: UserRemoteDataSource,
+    private val userLocalDataSource: UserLocalDataSource,
+    private val sessionLocalDataSource: SessionLocalDataSource,
+): UserRepository {
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun fetchUserData(): Flow<io.paku.climblog.domain.model.user.User> {
+    override fun fetchUserData(): Flow<User> {
         return sessionLocalDataSource.fetchUserId()
             .filterNotNull()
             .flatMapLatest {
                 userLocalDataSource.fetchUser(it)
             }
-            .map { io.paku.climblog.data.mapper.user.UserDataMapper.mapToRight(it) }
+            .map { UserDataMapper.mapToRight(it) }
     }
 
-    override suspend fun getUser(): io.paku.climblog.domain.model.user.User {
+    override suspend fun getUser(): User {
         return userRemoteDataSource.getUser().let {
             sessionLocalDataSource.saveUserId(it.id)
             userLocalDataSource.saveUser(it)
-            io.paku.climblog.data.mapper.user.UserDataMapper.mapToRight(it)
+            UserDataMapper.mapToRight(it)
         }
     }
 
@@ -33,14 +40,14 @@ internal class UserRepositoryImpl(
         return userRemoteDataSource.checkHandle(handle)
     }
 
-    override suspend fun searchUsers(query: String): List<io.paku.climblog.domain.model.user.User> {
-        return userRemoteDataSource.searchUsers(query).map { io.paku.climblog.data.mapper.user.UserDataMapper.mapToRight(it) }
+    override suspend fun searchUsers(query: String): List<User> {
+        return userRemoteDataSource.searchUsers(query).map { UserDataMapper.mapToRight(it) }
     }
 
-    override suspend fun getUserProfile(userId: Long): io.paku.climblog.domain.model.user.UserProfile {
+    override suspend fun getUserProfile(userId: Long): UserProfile {
         return userRemoteDataSource.getUserProfile(userId).let { profileData ->
-            _root_ide_package_.io.paku.climblog.domain.model.user.UserProfile(
-                user = io.paku.climblog.data.mapper.user.UserDataMapper.mapToRight(
+            UserProfile(
+                user = UserDataMapper.mapToRight(
                     profileData.user
                 ),
                 followerCount = profileData.followerCount,
@@ -59,12 +66,12 @@ internal class UserRepositoryImpl(
         }
     }
 
-    override suspend fun getFollowers(userId: Long): Result<List<io.paku.climblog.domain.model.user.User>> = runCatching {
-        userRemoteDataSource.getFollowers(userId).map { io.paku.climblog.data.mapper.user.UserDataMapper.mapToRight(it) }
+    override suspend fun getFollowers(userId: Long): Result<List<User>> = runCatching {
+        userRemoteDataSource.getFollowers(userId).map { UserDataMapper.mapToRight(it) }
     }
 
-    override suspend fun getFollowing(userId: Long): Result<List<io.paku.climblog.domain.model.user.User>> = runCatching {
-        userRemoteDataSource.getFollowing(userId).map { io.paku.climblog.data.mapper.user.UserDataMapper.mapToRight(it) }
+    override suspend fun getFollowing(userId: Long): Result<List<User>> = runCatching {
+        userRemoteDataSource.getFollowing(userId).map { UserDataMapper.mapToRight(it) }
     }
 
     override suspend fun getFollowStatus(userId: Long): Result<Boolean> = runCatching {
@@ -78,7 +85,7 @@ internal class UserRepositoryImpl(
         armReach: Int?,
         gender: String?,
         profilePhotoUrl: String?
-    ): io.paku.climblog.domain.model.user.User {
+    ): User {
         return userRemoteDataSource.updateUser(
             name = name,
             age = age,
@@ -86,7 +93,7 @@ internal class UserRepositoryImpl(
             armReach = armReach,
             gender = gender,
             profilePhotoUrl = profilePhotoUrl
-        ).let { io.paku.climblog.data.mapper.user.UserDataMapper.mapToRight(it) }
+        ).let { UserDataMapper.mapToRight(it) }
     }
 
     override suspend fun deleteUser() {

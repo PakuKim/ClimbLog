@@ -1,11 +1,11 @@
 package io.paku.climblog.platform.di
 
-import io.paku.climblog.business.domain.model.social.SocialLoginType
-import io.paku.climblog.business.domain.provider.Provider
-import io.paku.climblog.business.domain.provider.VideoCompressor
-import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
 import io.paku.climblog.core.AppDispatcher
 import io.paku.climblog.core.NetworkConfig
+import io.paku.climblog.domain.model.social.SocialLoginType
+import io.paku.climblog.domain.provider.Provider
+import io.paku.climblog.domain.provider.VideoCompressor
+import io.paku.climblog.domain.provider.social.SocialLoginProvider
 import io.paku.climblog.local.datastore.DataStoreFactory
 import io.paku.climblog.local.room.RoomDatabaseFactory
 import io.paku.climblog.platform.IOSVideoCompressor

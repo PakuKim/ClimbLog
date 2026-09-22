@@ -6,23 +6,25 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import io.paku.climblog.domain.model.social.SocialLoginResult
 import io.paku.climblog.domain.model.social.SocialLoginType
+import io.paku.climblog.domain.provider.social.SocialLoginProvider
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resumeWithException
 
 internal class KakaoLoginProviderImpl(
     private val applicationContext: Context
-) : io.paku.climblog.domain.provider.social.SocialLoginProvider {
+) : SocialLoginProvider {
     companion object {
         private const val USER_CANCELLED = "user cancelled."
     }
 
-    override suspend fun latestLoginResult(type: SocialLoginType): io.paku.climblog.domain.model.social.SocialLoginResult {
+    override suspend fun latestLoginResult(type: SocialLoginType): SocialLoginResult {
         val authToken = TokenManagerProvider.instance.manager.getToken() ?: return login(type)
         return accessTokenToResult(authToken.accessToken)
     }
 
-    override suspend fun login(type: SocialLoginType): io.paku.climblog.domain.model.social.SocialLoginResult {
+    override suspend fun login(type: SocialLoginType): SocialLoginResult {
         logout(type)
         val authToken = loginWithKakao(applicationContext)
         return accessTokenToResult(authToken.accessToken)
@@ -71,7 +73,7 @@ internal class KakaoLoginProviderImpl(
                 }
                 continuation.resumeWith(
                     Result.success(
-                        _root_ide_package_.io.paku.climblog.domain.model.social.SocialLoginResult(
+                        SocialLoginResult(
                             type = SocialLoginType.KAKAO,
                             token = accessToken,
                         )

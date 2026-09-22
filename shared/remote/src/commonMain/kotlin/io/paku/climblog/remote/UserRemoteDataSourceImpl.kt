@@ -14,10 +14,14 @@ import io.paku.climblog.contract.user.UserListResponse
 import io.paku.climblog.contract.user.UserProfileResponse
 import io.paku.climblog.contract.user.UserRequest
 import io.paku.climblog.contract.user.UserResponse
+import io.paku.climblog.data.model.user.UserData
+import io.paku.climblog.data.model.user.UserProfileData
+import io.paku.climblog.data.source.remote.UserRemoteDataSource
+import io.paku.climblog.remote.mapper.user.UserResponseMapper
 
 internal class UserRemoteDataSourceImpl(
     private val client: HttpClient
-): io.paku.climblog.data.source.remote.UserRemoteDataSource {
+): UserRemoteDataSource {
     private companion object {
         const val GET_USER_URL = "users/me"
         const val CHECK_HANDLE_URL = "users/check/handle"
@@ -29,8 +33,8 @@ internal class UserRemoteDataSourceImpl(
         const val FOLLOWING_URL = "users/{id}/following"
     }
 
-    override suspend fun getUser(): io.paku.climblog.data.model.user.UserData {
-        return client.get(GET_USER_URL).body<UserResponse>().let { io.paku.climblog.remote.mapper.user.UserResponseMapper.mapToRight(it) }
+    override suspend fun getUser(): UserData {
+        return client.get(GET_USER_URL).body<UserResponse>().let { UserResponseMapper.mapToRight(it) }
     }
 
     override suspend fun checkHandle(handle: String): Boolean {
@@ -39,18 +43,18 @@ internal class UserRemoteDataSourceImpl(
         }.body<HandleCheckResponse>().exists
     }
 
-    override suspend fun searchUsers(query: String): List<io.paku.climblog.data.model.user.UserData> {
+    override suspend fun searchUsers(query: String): List<UserData> {
         return client.get(SEARCH_URL) {
             parameter("query", query)
-        }.body<List<UserResponse>>().map { io.paku.climblog.remote.mapper.user.UserResponseMapper.mapToRight(it) }
+        }.body<List<UserResponse>>().map { UserResponseMapper.mapToRight(it) }
     }
 
-    override suspend fun getUserProfile(userId: Long): io.paku.climblog.data.model.user.UserProfileData {
+    override suspend fun getUserProfile(userId: Long): UserProfileData {
         val response = client.get(PROFILE_URL.replace("{id}", userId.toString()))
             .body<UserProfileResponse>()
         
-        return _root_ide_package_.io.paku.climblog.data.model.user.UserProfileData(
-            user = io.paku.climblog.remote.mapper.user.UserResponseMapper.mapToRight(response.user),
+        return UserProfileData(
+            user = UserResponseMapper.mapToRight(response.user),
             followerCount = response.followerCount,
             followingCount = response.followingCount,
             videoCount = response.videoCount,
@@ -66,14 +70,14 @@ internal class UserRemoteDataSourceImpl(
         client.delete(FOLLOW_URL.replace("{id}", userId.toString()))
     }
 
-    override suspend fun getFollowers(userId: Long): List<io.paku.climblog.data.model.user.UserData> {
+    override suspend fun getFollowers(userId: Long): List<UserData> {
         return client.get(FOLLOWERS_URL.replace("{id}", userId.toString()))
-            .body<UserListResponse>().users.map { io.paku.climblog.remote.mapper.user.UserResponseMapper.mapToRight(it) }
+            .body<UserListResponse>().users.map { UserResponseMapper.mapToRight(it) }
     }
 
-    override suspend fun getFollowing(userId: Long): List<io.paku.climblog.data.model.user.UserData> {
+    override suspend fun getFollowing(userId: Long): List<UserData> {
         return client.get(FOLLOWING_URL.replace("{id}", userId.toString()))
-            .body<UserListResponse>().users.map { io.paku.climblog.remote.mapper.user.UserResponseMapper.mapToRight(it) }
+            .body<UserListResponse>().users.map { UserResponseMapper.mapToRight(it) }
     }
 
     override suspend fun getFollowStatus(userId: Long): Boolean {
@@ -88,7 +92,7 @@ internal class UserRemoteDataSourceImpl(
         armReach: Int?,
         gender: String?,
         profilePhotoUrl: String?
-    ): io.paku.climblog.data.model.user.UserData {
+    ): UserData {
         val request = UserRequest(
             name = name,
             age = age,
@@ -99,7 +103,7 @@ internal class UserRemoteDataSourceImpl(
         )
         return client.put(GET_USER_URL) {
             setBody(request)
-        }.body<UserResponse>().let { io.paku.climblog.remote.mapper.user.UserResponseMapper.mapToRight(it) }
+        }.body<UserResponse>().let { UserResponseMapper.mapToRight(it) }
     }
 
     override suspend fun deleteUser() {

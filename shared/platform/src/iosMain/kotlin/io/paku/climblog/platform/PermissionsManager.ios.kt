@@ -2,8 +2,8 @@ package io.paku.climblog.platform
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import io.paku.climblog.business.domain.model.permission.PermissionStatus
-import io.paku.climblog.business.domain.model.permission.PermissionType
+import io.paku.climblog.domain.model.permission.PermissionStatus
+import io.paku.climblog.domain.model.permission.PermissionType
 import platform.AVFoundation.AVAuthorizationStatus
 import platform.AVFoundation.AVAuthorizationStatusAuthorized
 import platform.AVFoundation.AVAuthorizationStatusDenied

@@ -1,9 +1,12 @@
 package io.paku.climblog.domain.interactors.user
 
+import io.paku.climblog.domain.UserRepository
+import io.paku.climblog.domain.model.user.UserProfile
+
 class GetUserProfileUseCase(
-    private val userRepository: io.paku.climblog.domain.UserRepository
+    private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(userId: Long): io.paku.climblog.domain.model.user.UserProfile {
+    suspend operator fun invoke(userId: Long): UserProfile {
         return userRepository.getUserProfile(userId)
     }
 }

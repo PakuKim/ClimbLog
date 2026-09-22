@@ -19,6 +19,8 @@ import com.facebook.spectrum.plugins.SpectrumPluginWebp
 import com.facebook.spectrum.requirements.EncodeRequirement
 import com.facebook.spectrum.requirements.ResizeRequirement
 import com.facebook.spectrum.requirements.RotateRequirement
+import io.paku.climblog.domain.model.EncodeResult
+import io.paku.climblog.domain.provider.encode.EncodeFileProvider
 import io.paku.climblog.platform.util.BitmapUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,7 +31,7 @@ import java.io.InputStream
 
 internal class EncodeFileProviderImpl(
     private val applicationContext: Context
-) : io.paku.climblog.domain.provider.encode.EncodeFileProvider {
+) : EncodeFileProvider {
     companion object {
         private const val SPECTRUM_CONTEXT = "io.paku.climblog.transcode"
     }
@@ -88,7 +90,7 @@ internal class EncodeFileProviderImpl(
                     }
                 } ?: throw FileNotFoundException()
 
-            _root_ide_package_.io.paku.climblog.domain.model.EncodeResult(
+            EncodeResult(
                 byteArray = byteArray,
                 mimeType = "image/jpeg",
                 width = width,
@@ -99,7 +101,7 @@ internal class EncodeFileProviderImpl(
         throw FileNotFoundException()
     }
 
-    override suspend fun encodeFileFromUri(uri: String): io.paku.climblog.domain.model.EncodeResult {
+    override suspend fun encodeFileFromUri(uri: String): EncodeResult {
         val uriFromPath = Uri.parse(uri)
         val mimeType = if (uriFromPath.scheme.equals(ContentResolver.SCHEME_CONTENT)) {
             applicationContext.contentResolver.getType(uriFromPath) ?: ""
@@ -119,7 +121,7 @@ internal class EncodeFileProviderImpl(
                 }.toByteArray()
             } ?: throw FileNotFoundException("Encoding file Failure")
 
-        return _root_ide_package_.io.paku.climblog.domain.model.EncodeResult(
+        return EncodeResult(
             byteArray = byteArray,
             mimeType = mimeType,
             width = 0,

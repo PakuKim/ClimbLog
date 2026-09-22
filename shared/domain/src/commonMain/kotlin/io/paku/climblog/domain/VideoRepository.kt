@@ -1,6 +1,11 @@
 package io.paku.climblog.domain
 
 import androidx.paging.PagingData
+import io.paku.climblog.domain.model.comment.Comment
+import io.paku.climblog.domain.model.comment.CommentFeed
+import io.paku.climblog.domain.model.video.PresignedPost
+import io.paku.climblog.domain.model.video.Video
+import io.paku.climblog.domain.model.video.VideoFeed
 import kotlinx.coroutines.flow.Flow
 
 interface VideoRepository {
@@ -8,7 +13,7 @@ interface VideoRepository {
     suspend fun getPresignedPost(
         fileName: String,
         contentType: String
-    ): Result<io.paku.climblog.domain.model.video.PresignedPost>
+    ): Result<PresignedPost>
 
     suspend fun uploadVideoToS3Post(
         url: String,
@@ -23,7 +28,7 @@ interface VideoRepository {
         s3Key: String,
         cruxStartTime: Double?,
         cruxEndTime: Double?
-    ): Result<io.paku.climblog.domain.model.video.Video>
+    ): Result<Video>
 
     // Feed & Interactions
     suspend fun getVideos(
@@ -33,7 +38,7 @@ interface VideoRepository {
         orderBy: String = "DESC",
         cursor: Long? = null,
         limit: Int = 10
-    ): Result<io.paku.climblog.domain.model.video.VideoFeed>
+    ): Result<VideoFeed>
 
     fun getVideosPaging(
         type: String? = null,
@@ -41,10 +46,10 @@ interface VideoRepository {
         sortBy: String = "CREATED_AT",
         orderBy: String = "DESC",
         pageSize: Int = 10
-    ): Flow<PagingData<io.paku.climblog.domain.model.video.Video>>
+    ): Flow<PagingData<Video>>
 
     suspend fun toggleLike(videoId: Long): Result<Boolean>
-    suspend fun getComments(videoId: Long, cursor: Long?, limit: Int): Result<io.paku.climblog.domain.model.comment.CommentFeed>
-    fun getCommentsPaging(videoId: Long, pageSize: Int = 20): Flow<PagingData<io.paku.climblog.domain.model.comment.Comment>>
-    suspend fun postComment(videoId: Long, content: String): Result<io.paku.climblog.domain.model.comment.Comment>
+    suspend fun getComments(videoId: Long, cursor: Long?, limit: Int): Result<CommentFeed>
+    fun getCommentsPaging(videoId: Long, pageSize: Int = 20): Flow<PagingData<Comment>>
+    suspend fun postComment(videoId: Long, content: String): Result<Comment>
 }

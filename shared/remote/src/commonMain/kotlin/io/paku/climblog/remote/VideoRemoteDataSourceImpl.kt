@@ -18,6 +18,14 @@ import io.paku.climblog.contract.video.PresignedPostRequest
 import io.paku.climblog.contract.video.PresignedPostResponse
 import io.paku.climblog.contract.video.VideoFeedResponse
 import io.paku.climblog.contract.video.VideoResponse
+import io.paku.climblog.data.model.comment.CommentData
+import io.paku.climblog.data.model.comment.CommentFeedData
+import io.paku.climblog.data.model.video.PresignedPostData
+import io.paku.climblog.data.model.video.VideoData
+import io.paku.climblog.data.model.video.VideoFeedData
+import io.paku.climblog.data.source.remote.VideoRemoteDataSource
+import io.paku.climblog.remote.mapper.comment.CommentResponseMapper
+import io.paku.climblog.remote.mapper.video.VideoResponseMapper
 import kotlinx.serialization.json.addJsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -25,18 +33,18 @@ import kotlinx.serialization.json.putJsonArray
 
 internal class VideoRemoteDataSourceImpl(
     private val client: HttpClient
-) : io.paku.climblog.data.source.remote.VideoRemoteDataSource {
+) : VideoRemoteDataSource {
     private companion object {
         const val PRESIGNED_POST = "videos/uploads/presigned-post"
         const val REGISTER = "videos"
     }
 
-    override suspend fun getPresignedPost(fileName: String, contentType: String): io.paku.climblog.data.model.video.PresignedPostData {
+    override suspend fun getPresignedPost(fileName: String, contentType: String): PresignedPostData {
         val response = client.post(PRESIGNED_POST) {
             setBody(PresignedPostRequest(fileName, contentType))
         }.body<PresignedPostResponse>()
         
-        return _root_ide_package_.io.paku.climblog.data.model.video.PresignedPostData(
+        return PresignedPostData(
             url = response.url,
             fields = response.fields,
             objectKey = response.objectKey
@@ -81,7 +89,7 @@ internal class VideoRemoteDataSourceImpl(
         s3Key: String,
         cruxStartTime: Double?,
         cruxEndTime: Double?
-    ): io.paku.climblog.data.model.video.VideoData {
+    ): VideoData {
         return client.post(REGISTER) {
             setBody(
                 buildJsonObject {
@@ -98,7 +106,7 @@ internal class VideoRemoteDataSourceImpl(
                     }
                 }
             )
-        }.body<VideoResponse>().let { io.paku.climblog.remote.mapper.video.VideoResponseMapper.mapToRight(it) }
+        }.body<VideoResponse>().let { VideoResponseMapper.mapToRight(it) }
     }
 
     override suspend fun getVideos(
@@ -108,7 +116,7 @@ internal class VideoRemoteDataSourceImpl(
         orderBy: String,
         cursor: Long?,
         limit: Int
-    ): io.paku.climblog.data.model.video.VideoFeedData {
+    ): VideoFeedData {
         val response = client.get("videos") {
             parameter("type", type)
             parameter("userId", userId)
@@ -118,8 +126,8 @@ internal class VideoRemoteDataSourceImpl(
             parameter("limit", limit)
         }.body<VideoFeedResponse>()
         
-        return _root_ide_package_.io.paku.climblog.data.model.video.VideoFeedData(
-            items = response.items.map { io.paku.climblog.remote.mapper.video.VideoResponseMapper.mapToRight(it) },
+        return VideoFeedData(
+            items = response.items.map { VideoResponseMapper.mapToRight(it) },
             nextCursor = response.nextCursor
         )
     }
@@ -128,21 +136,21 @@ internal class VideoRemoteDataSourceImpl(
         return client.post("videos/$videoId/like").body<Map<String, Boolean>>()["liked"] ?: false
     }
 
-    override suspend fun getComments(videoId: Long, cursor: Long?, limit: Int): io.paku.climblog.data.model.comment.CommentFeedData {
+    override suspend fun getComments(videoId: Long, cursor: Long?, limit: Int): CommentFeedData {
         val response = client.get("videos/$videoId/comments") {
             parameter("cursor", cursor)
             parameter("limit", limit)
         }.body<CommentFeedResponse>()
 
-        return _root_ide_package_.io.paku.climblog.data.model.comment.CommentFeedData(
-            items = response.items.map { io.paku.climblog.remote.mapper.comment.CommentResponseMapper.mapToRight(it) },
+        return CommentFeedData(
+            items = response.items.map { CommentResponseMapper.mapToRight(it) },
             nextCursor = response.nextCursor
         )
     }
 
-    override suspend fun postComment(videoId: Long, content: String): io.paku.climblog.data.model.comment.CommentData {
+    override suspend fun postComment(videoId: Long, content: String): CommentData {
         return client.post("videos/$videoId/comments") {
             setBody(buildJsonObject { put("content", content) })
-        }.body<CommentResponse>().let { io.paku.climblog.remote.mapper.comment.CommentResponseMapper.mapToRight(it) }
+        }.body<CommentResponse>().let { CommentResponseMapper.mapToRight(it) }
     }
 }

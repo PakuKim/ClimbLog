@@ -11,8 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.business.domain.model.video.Video
-import io.paku.climblog.business.domain.model.video.VideoStatus
+import io.paku.climblog.domain.model.video.Video
+import io.paku.climblog.domain.model.video.VideoStatus
 import kotlinx.datetime.LocalDateTime
 
 @Composable

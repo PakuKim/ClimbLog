@@ -1,8 +1,8 @@
 package io.paku.climblog.platform
 
 import androidx.compose.runtime.Composable
-import io.paku.climblog.business.domain.model.permission.PermissionStatus
-import io.paku.climblog.business.domain.model.permission.PermissionType
+import io.paku.climblog.domain.model.permission.PermissionStatus
+import io.paku.climblog.domain.model.permission.PermissionType
 
 expect class PermissionsManager(callback: PermissionCallback) : PermissionHandler {
     @Composable

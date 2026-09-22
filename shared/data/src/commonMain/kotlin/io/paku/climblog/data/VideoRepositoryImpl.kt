@@ -4,16 +4,27 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import io.paku.climblog.data.mapper.comment.CommentDataMapper
+import io.paku.climblog.data.mapper.video.VideoDataMapper
+import io.paku.climblog.data.source.paging.CommentPagingSource
+import io.paku.climblog.data.source.paging.VideoPagingSource
+import io.paku.climblog.data.source.remote.VideoRemoteDataSource
+import io.paku.climblog.domain.VideoRepository
+import io.paku.climblog.domain.model.comment.Comment
+import io.paku.climblog.domain.model.comment.CommentFeed
+import io.paku.climblog.domain.model.video.PresignedPost
+import io.paku.climblog.domain.model.video.Video
+import io.paku.climblog.domain.model.video.VideoFeed
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 internal class VideoRepositoryImpl(
-    private val videoRemoteDataSource: io.paku.climblog.data.source.remote.VideoRemoteDataSource
-) : io.paku.climblog.domain.VideoRepository {
+    private val videoRemoteDataSource: VideoRemoteDataSource
+) : VideoRepository {
 
-    override suspend fun getPresignedPost(fileName: String, contentType: String): Result<io.paku.climblog.domain.model.video.PresignedPost> = runCatching {
+    override suspend fun getPresignedPost(fileName: String, contentType: String): Result<PresignedPost> = runCatching {
         val data = videoRemoteDataSource.getPresignedPost(fileName, contentType)
-        _root_ide_package_.io.paku.climblog.domain.model.video.PresignedPost(
+        PresignedPost(
             url = data.url,
             fields = data.fields,
             objectKey = data.objectKey
@@ -35,7 +46,7 @@ internal class VideoRepositoryImpl(
         s3Key: String,
         cruxStartTime: Double?,
         cruxEndTime: Double?
-    ): Result<io.paku.climblog.domain.model.video.Video> = runCatching {
+    ): Result<Video> = runCatching {
         val data = videoRemoteDataSource.registerVideo(
             title = title,
             description = description,
@@ -43,7 +54,7 @@ internal class VideoRepositoryImpl(
             cruxStartTime = cruxStartTime,
             cruxEndTime = cruxEndTime
         )
-        io.paku.climblog.data.mapper.video.VideoDataMapper.mapToRight(data)
+        VideoDataMapper.mapToRight(data)
     }
 
     override suspend fun getVideos(
@@ -53,7 +64,7 @@ internal class VideoRepositoryImpl(
         orderBy: String,
         cursor: Long?,
         limit: Int
-    ): Result<io.paku.climblog.domain.model.video.VideoFeed> = runCatching {
+    ): Result<VideoFeed> = runCatching {
         val feedData = videoRemoteDataSource.getVideos(
             type = type,
             userId = userId,
@@ -62,9 +73,9 @@ internal class VideoRepositoryImpl(
             cursor = cursor,
             limit = limit
         )
-        _root_ide_package_.io.paku.climblog.domain.model.video.VideoFeed(
+        VideoFeed(
             items = feedData.items.map {
-                io.paku.climblog.data.mapper.video.VideoDataMapper.mapToRight(
+                VideoDataMapper.mapToRight(
                     it
                 )
             },
@@ -78,14 +89,14 @@ internal class VideoRepositoryImpl(
         sortBy: String,
         orderBy: String,
         pageSize: Int
-    ): Flow<PagingData<io.paku.climblog.domain.model.video.Video>> {
+    ): Flow<PagingData<Video>> {
         return Pager(
             config = PagingConfig(
                 pageSize = pageSize,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                _root_ide_package_.io.paku.climblog.data.source.paging.VideoPagingSource { cursor, limit ->
+                VideoPagingSource { cursor, limit ->
                     runCatching {
                         videoRemoteDataSource.getVideos(
                             type = type,
@@ -99,7 +110,7 @@ internal class VideoRepositoryImpl(
                 }
             }
         ).flow.map { pagingData ->
-            pagingData.map { io.paku.climblog.data.mapper.video.VideoDataMapper.mapToRight(it) }
+            pagingData.map { VideoDataMapper.mapToRight(it) }
         }
     }
 
@@ -107,11 +118,11 @@ internal class VideoRepositoryImpl(
         videoRemoteDataSource.toggleLike(videoId)
     }
 
-    override suspend fun getComments(videoId: Long, cursor: Long?, limit: Int): Result<io.paku.climblog.domain.model.comment.CommentFeed> = runCatching {
+    override suspend fun getComments(videoId: Long, cursor: Long?, limit: Int): Result<CommentFeed> = runCatching {
         val feedData = videoRemoteDataSource.getComments(videoId, cursor, limit)
-        _root_ide_package_.io.paku.climblog.domain.model.comment.CommentFeed(
+        CommentFeed(
             items = feedData.items.map {
-                io.paku.climblog.data.mapper.comment.CommentDataMapper.mapToRight(
+                CommentDataMapper.mapToRight(
                     it
                 )
             },
@@ -119,26 +130,26 @@ internal class VideoRepositoryImpl(
         )
     }
 
-    override fun getCommentsPaging(videoId: Long, pageSize: Int): Flow<PagingData<io.paku.climblog.domain.model.comment.Comment>> {
+    override fun getCommentsPaging(videoId: Long, pageSize: Int): Flow<PagingData<Comment>> {
         return Pager(
             config = PagingConfig(
                 pageSize = pageSize,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                _root_ide_package_.io.paku.climblog.data.source.paging.CommentPagingSource { cursor, limit ->
+                CommentPagingSource { cursor, limit ->
                     runCatching {
                         videoRemoteDataSource.getComments(videoId, cursor, limit)
                     }
                 }
             }
         ).flow.map { pagingData ->
-            pagingData.map { io.paku.climblog.data.mapper.comment.CommentDataMapper.mapToRight(it) }
+            pagingData.map { CommentDataMapper.mapToRight(it) }
         }
     }
 
-    override suspend fun postComment(videoId: Long, content: String): Result<io.paku.climblog.domain.model.comment.Comment> = runCatching {
+    override suspend fun postComment(videoId: Long, content: String): Result<Comment> = runCatching {
         val data = videoRemoteDataSource.postComment(videoId, content)
-        io.paku.climblog.data.mapper.comment.CommentDataMapper.mapToRight(data)
+        CommentDataMapper.mapToRight(data)
     }
 }

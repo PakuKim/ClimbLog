@@ -234,9 +234,9 @@ private fun Video.toResponse() = VideoResponse(
     description = description,
     hlsUrl = hlsUrl,
     thumbnailUrl = thumbnailUrl,
-    status = status,
+    status = enumValueOf(status.name),
     cruxes = videoCruxes.map {
-        VideoResponse.Crux(
+        CruxResponse(
             id = it.id,
             cruxStartTime = it.startTime,
             cruxEndTime = it.endTime

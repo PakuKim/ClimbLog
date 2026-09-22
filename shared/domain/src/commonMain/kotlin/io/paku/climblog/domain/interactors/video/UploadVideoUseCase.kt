@@ -1,18 +1,24 @@
 package io.paku.climblog.domain.interactors.video
 
+import io.paku.climblog.domain.VideoRepository
+import io.paku.climblog.domain.model.MediaSource
+import io.paku.climblog.domain.model.video.Video
+import io.paku.climblog.domain.model.video.VideoQuality
+import io.paku.climblog.domain.provider.VideoCompressor
+
 class UploadVideoUseCase(
-    private val videoRepository: io.paku.climblog.domain.VideoRepository,
-    private val videoCompressor: io.paku.climblog.domain.provider.VideoCompressor
+    private val videoRepository: VideoRepository,
+    private val videoCompressor: VideoCompressor
 ) {
     suspend operator fun invoke(
         title: String,
         description: String?,
-        media: io.paku.climblog.domain.model.MediaSource,
-        quality: io.paku.climblog.domain.model.video.VideoQuality,
+        media: MediaSource,
+        quality: VideoQuality,
         cruxStartTime: Double?,
         cruxEndTime: Double?,
         onProgress: (Float) -> Unit
-    ): Result<io.paku.climblog.domain.model.video.Video> = runCatching {
+    ): Result<Video> = runCatching {
         // 1. Video Compression
         val compressedMedia = videoCompressor.compress(media, quality)
         val videoBytes = compressedMedia.readBytes()

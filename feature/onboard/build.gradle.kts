@@ -5,6 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":core"))
             implementation(project(":shared:domain"))
             implementation(project(":shared:navigation"))
             implementation(project(":shared:ui-common"))

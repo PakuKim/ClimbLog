@@ -15,8 +15,7 @@ tasks.withType<JavaExec> {
 }
 
 dependencies {
-    api(project(":core"))
-    api(project(":shared:contract"))
+    implementation(project(":shared:contract"))
     implementation(libs.logback)
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.coroutines.reactive)

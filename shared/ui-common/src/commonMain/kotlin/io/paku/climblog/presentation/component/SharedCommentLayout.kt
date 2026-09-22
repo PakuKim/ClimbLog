@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
-import io.paku.climblog.business.domain.model.comment.Comment
+import io.paku.climblog.domain.model.comment.Comment
 import io.paku.climblog.presentation.theme.AppComponentColors
 import kotlinx.datetime.LocalDateTime
 

@@ -1,8 +1,8 @@
 package io.paku.climblog.platform.provider.social
 
-import io.paku.climblog.business.domain.model.social.SocialLoginResult
-import io.paku.climblog.business.domain.model.social.SocialLoginType
-import io.paku.climblog.business.domain.provider.social.SocialLoginProvider
+import io.paku.climblog.domain.model.social.SocialLoginResult
+import io.paku.climblog.domain.model.social.SocialLoginType
+import io.paku.climblog.domain.provider.social.SocialLoginProvider
 
 internal class NaverLoginProviderImpl : SocialLoginProvider {
     override suspend fun latestLoginResult(type: SocialLoginType): SocialLoginResult {

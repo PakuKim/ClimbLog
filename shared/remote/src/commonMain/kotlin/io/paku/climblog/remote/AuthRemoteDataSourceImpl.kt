@@ -7,10 +7,12 @@ import io.ktor.client.request.setBody
 import io.paku.climblog.contract.auth.AuthResponse
 import io.paku.climblog.contract.auth.SocialLoginRequest
 import io.paku.climblog.contract.auth.SocialRegisterRequest
+import io.paku.climblog.data.model.auth.AuthData
+import io.paku.climblog.data.source.remote.AuthRemoteDataSource
 
 internal class AuthRemoteDataSourceImpl(
     private val client: HttpClient
-): io.paku.climblog.data.source.remote.AuthRemoteDataSource {
+): AuthRemoteDataSource {
     private companion object {
         const val SOCIAL_LOGIN_URL = "auth/social/login"
         const val SOCIAL_REGISTER_URL = "auth/social/register"
@@ -20,7 +22,7 @@ internal class AuthRemoteDataSourceImpl(
     override suspend fun socialLogin(
         provider: String,
         socialToken: String,
-    ): io.paku.climblog.data.model.auth.AuthData {
+    ): AuthData {
         val request = SocialLoginRequest(
             provider = provider,
             socialToken = socialToken
@@ -30,7 +32,7 @@ internal class AuthRemoteDataSourceImpl(
             setBody(request)
         }.body<AuthResponse>()
 
-        return _root_ide_package_.io.paku.climblog.data.model.auth.AuthData(
+        return AuthData(
             accessToken = response.accessToken,
             refreshToken = response.refreshToken
         )

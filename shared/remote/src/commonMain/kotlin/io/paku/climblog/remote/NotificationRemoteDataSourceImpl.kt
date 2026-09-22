@@ -7,17 +7,20 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.paku.climblog.contract.notification.NotificationResponse
 import io.paku.climblog.contract.notification.UnreadCheckResponse
+import io.paku.climblog.data.model.notification.NotificationData
+import io.paku.climblog.data.source.remote.NotificationRemoteDataSource
+import io.paku.climblog.remote.mapper.notification.NotificationResponseMapper
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
 internal class NotificationRemoteDataSourceImpl(
     private val client: HttpClient
-) : io.paku.climblog.data.source.remote.NotificationRemoteDataSource {
+) : NotificationRemoteDataSource {
 
-    override suspend fun getNotifications(): List<io.paku.climblog.data.model.notification.NotificationData> {
+    override suspend fun getNotifications(): List<NotificationData> {
         return client.get("api/v1/notifications")
             .body<List<NotificationResponse>>()
-            .map(io.paku.climblog.remote.mapper.notification.NotificationResponseMapper::mapToRight)
+            .map(NotificationResponseMapper::mapToRight)
     }
 
     override suspend fun checkUnread(): Boolean {

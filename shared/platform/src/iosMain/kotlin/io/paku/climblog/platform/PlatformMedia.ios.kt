@@ -1,6 +1,6 @@
 package io.paku.climblog.platform
 
-import io.paku.climblog.business.domain.model.MediaSource
+import io.paku.climblog.domain.model.MediaSource
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.UnsafeNumber
 import kotlinx.cinterop.addressOf
