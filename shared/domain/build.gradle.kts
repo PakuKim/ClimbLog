@@ -6,9 +6,9 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":core"))
+            implementation(project(":core"))
             implementation(libs.koin.core)
-            implementation(libs.androidx.paging.common)
+            api(libs.androidx.paging.common)
         }
     }
 }

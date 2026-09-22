@@ -1,7 +1,5 @@
 package io.paku.climblog.presentation.ui.main.settings
 
-import io.paku.climblog.business.domain.interactors.auth.LogoutUseCase
-import io.paku.climblog.business.domain.interactors.user.DeleteUserUseCase
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
 import io.paku.climblog.presentation.base.ViewModelState
@@ -17,8 +15,8 @@ sealed class SettingsViewModelEvent : ViewModelEvent {
 }
 
 internal class SettingsViewModel(
-    private val logoutUseCase: LogoutUseCase,
-    private val deleteUserUseCase: DeleteUserUseCase
+    private val logoutUseCase: io.paku.climblog.domain.interactors.auth.LogoutUseCase,
+    private val deleteUserUseCase: io.paku.climblog.domain.interactors.user.DeleteUserUseCase
 ) : BaseViewModel<SettingsViewModelState, SettingsViewModelEvent, Nothing>() {
 
     override fun createInitialState(): SettingsViewModelState = SettingsViewModelState()

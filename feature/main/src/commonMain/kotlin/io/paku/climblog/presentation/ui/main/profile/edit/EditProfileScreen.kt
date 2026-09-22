@@ -28,7 +28,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import io.paku.climblog.core.rememberImagePicker
+import io.paku.climblog.platform.rememberImagePicker
 import io.paku.climblog.presentation.component.SharedButton
 import io.paku.climblog.presentation.component.SharedInputLayout
 import io.paku.climblog.presentation.component.SharedTextField

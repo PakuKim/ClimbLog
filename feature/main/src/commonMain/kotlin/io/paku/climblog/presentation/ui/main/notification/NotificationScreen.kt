@@ -35,7 +35,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.business.domain.model.Notification
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -111,7 +110,7 @@ private fun NotificationScreen(
 
 @Composable
 fun NotificationItem(
-    notification: Notification,
+    notification: io.paku.climblog.domain.model.Notification,
     onClick: () -> Unit
 ) {
     Row(

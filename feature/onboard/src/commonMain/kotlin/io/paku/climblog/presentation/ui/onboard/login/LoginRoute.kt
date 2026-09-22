@@ -22,7 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.presentation.theme.AppTheme
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
@@ -30,7 +29,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun LoginRoute(
     viewModel: LoginViewModel = koinViewModel(),
-    navigateToRegister: (SocialLoginType) -> Unit
+    navigateToRegister: (io.paku.climblog.domain.model.social.SocialLoginType) -> Unit
 ) {
     val state by viewModel.state
 
@@ -53,7 +52,7 @@ internal fun LoginRoute(
 @Composable
 private fun LoginScreen(
     state: LoginViewModelState,
-    onLoginClick: (SocialLoginType) -> Unit = {},
+    onLoginClick: (io.paku.climblog.domain.model.social.SocialLoginType) -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -80,7 +79,7 @@ private fun LoginScreen(
             text = "Continue with Google",
             containerColor = Color.White,
             contentColor = Color.Black,
-            onClick = { onLoginClick(SocialLoginType.GOOGLE) }
+            onClick = { onLoginClick(io.paku.climblog.domain.model.social.SocialLoginType.GOOGLE) }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -89,7 +88,7 @@ private fun LoginScreen(
             text = "Continue with Kakao",
             containerColor = Color(0xFFFEE500),
             contentColor = Color.Black,
-            onClick = { onLoginClick(SocialLoginType.KAKAO) }
+            onClick = { onLoginClick(io.paku.climblog.domain.model.social.SocialLoginType.KAKAO) }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -98,7 +97,7 @@ private fun LoginScreen(
             text = "Continue with Naver",
             containerColor = Color(0xFF03C75A),
             contentColor = Color.White,
-            onClick = { onLoginClick(SocialLoginType.NAVER) }
+            onClick = { onLoginClick(io.paku.climblog.domain.model.social.SocialLoginType.NAVER) }
         )
 
         if (state.loginError != null) {

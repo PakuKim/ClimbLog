@@ -17,19 +17,19 @@ kotlin {
         }
 
         commonMain.dependencies {
-            api(project(":core"))
-            api(project(":shared:domain"))
-            api(project(":shared:navigation"))
-            api(project(":shared:platform"))
+            implementation(project(":core"))
+            implementation(project(":shared:domain"))
+            implementation(project(":shared:navigation"))
+            implementation(project(":shared:platform"))
             
             api(libs.compose.runtime)
             api(libs.compose.foundation)
             api(libs.compose.material3)
             api(libs.compose.animation)
-            api(libs.compose.navigation)
+            implementation(libs.compose.navigation)
             
-            api(libs.coil3)
-            api(libs.coil3.compose)
+            implementation(libs.coil3)
+            implementation(libs.coil3.compose)
             api(libs.material.icons.extended)
             
             api(libs.androidx.lifecycle.viewmodelCompose)

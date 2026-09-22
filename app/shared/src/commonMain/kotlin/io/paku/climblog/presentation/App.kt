@@ -15,7 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import io.paku.climblog.di.appModule
-import io.paku.climblog.presentation.navigation.AppNavigation
+import io.paku.climblog.navigation.AppNavigation
 import io.paku.climblog.presentation.theme.AppTheme
 import io.paku.climblog.presentation.ui.main.mainGraph
 import io.paku.climblog.presentation.ui.onboard.onboardGraph

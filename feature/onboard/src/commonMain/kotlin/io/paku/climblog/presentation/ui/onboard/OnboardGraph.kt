@@ -3,7 +3,7 @@ package io.paku.climblog.presentation.ui.onboard
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import io.paku.climblog.presentation.navigation.AppNavigation
+import io.paku.climblog.navigation.AppNavigation
 import io.paku.climblog.presentation.ui.onboard.login.LoginRoute
 import io.paku.climblog.presentation.ui.onboard.register.RegisterRoute
 

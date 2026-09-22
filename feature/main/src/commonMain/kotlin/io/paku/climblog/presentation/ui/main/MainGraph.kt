@@ -4,10 +4,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import io.paku.climblog.presentation.navigation.AppNavigation
-import io.paku.climblog.presentation.navigation.FollowListType
-import io.paku.climblog.presentation.navigation.VideoListType
-import io.paku.climblog.presentation.navigation.VideoListTypeNavType
+import io.paku.climblog.navigation.AppNavigation
+import io.paku.climblog.navigation.FollowListType
+import io.paku.climblog.navigation.VideoListType
+import io.paku.climblog.navigation.VideoListTypeNavType
 import io.paku.climblog.presentation.ui.main.follow.FollowListRoute
 import io.paku.climblog.presentation.ui.main.notification.NotificationRoute
 import io.paku.climblog.presentation.ui.main.profile.ProfileRoute

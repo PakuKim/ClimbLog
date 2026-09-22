@@ -11,9 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import io.paku.climblog.navigation.FollowListType
 import io.paku.climblog.presentation.component.SharedTopAppBar
 import io.paku.climblog.presentation.component.UserItem
-import io.paku.climblog.presentation.navigation.FollowListType
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

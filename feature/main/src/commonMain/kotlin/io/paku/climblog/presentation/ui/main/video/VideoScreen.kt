@@ -22,10 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
-import io.paku.climblog.core.shareLink
+import io.paku.climblog.navigation.VideoListType
+import io.paku.climblog.platform.shareLink
 import io.paku.climblog.presentation.component.SharedCommentLayout
 import io.paku.climblog.presentation.component.SharedVideoItem
-import io.paku.climblog.presentation.navigation.VideoListType
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

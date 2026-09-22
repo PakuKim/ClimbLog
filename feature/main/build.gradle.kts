@@ -1,7 +1,5 @@
 plugins {
-    alias(libs.plugins.kmp.kotlinMultiplatform)
-    alias(libs.plugins.kmp.composeMultiplatform)
-    alias(libs.plugins.kmp.kotlinSerialization)
+    alias(libs.plugins.kmp.kotlinMultiplatformFeature)
 }
 
 kotlin {
@@ -11,10 +9,6 @@ kotlin {
             implementation(project(":shared:navigation"))
             implementation(project(":shared:ui-common"))
             implementation(project(":shared:platform"))
-            
-            implementation(libs.koin.core)
-            implementation(libs.koin.compose)
-            implementation(libs.koin.compose.viewModel)
         }
     }
 }

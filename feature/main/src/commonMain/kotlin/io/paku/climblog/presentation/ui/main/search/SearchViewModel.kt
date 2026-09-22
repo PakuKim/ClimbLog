@@ -1,9 +1,5 @@
 package io.paku.climblog.presentation.ui.main.search
 
-import io.paku.climblog.business.domain.interactors.user.SearchUsersUseCase
-import io.paku.climblog.business.domain.interactors.video.GetRandomVideosUseCase
-import io.paku.climblog.business.domain.model.user.User
-import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
 import io.paku.climblog.presentation.base.ViewModelState
@@ -12,8 +8,8 @@ import kotlinx.coroutines.delay
 
 data class SearchViewModelState(
     val query: String = "",
-    val randomVideos: List<Video> = emptyList(),
-    val searchResults: List<User> = emptyList(),
+    val randomVideos: List<io.paku.climblog.domain.model.video.Video> = emptyList(),
+    val searchResults: List<io.paku.climblog.domain.model.user.User> = emptyList(),
     val isSearching: Boolean = false
 ) : ViewModelState
 
@@ -23,8 +19,8 @@ sealed class SearchViewModelEvent : ViewModelEvent {
 }
 
 internal class SearchViewModel(
-    private val searchUsersUseCase: SearchUsersUseCase,
-    private val getRandomVideosUseCase: GetRandomVideosUseCase
+    private val searchUsersUseCase: io.paku.climblog.domain.interactors.user.SearchUsersUseCase,
+    private val getRandomVideosUseCase: io.paku.climblog.domain.interactors.video.GetRandomVideosUseCase
 ) : BaseViewModel<SearchViewModelState, SearchViewModelEvent, Nothing>() {
 
     private var searchJob: Job? = null

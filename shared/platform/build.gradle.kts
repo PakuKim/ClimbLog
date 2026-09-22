@@ -19,9 +19,9 @@ buildkonfig {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":core"))
-            api(project(":shared:domain"))
-            api(project(":shared:local"))
+            implementation(project(":core"))
+            implementation(project(":shared:domain"))
+            implementation(project(":shared:local"))
             implementation(libs.koin.core)
             
             implementation(libs.compose.runtime)

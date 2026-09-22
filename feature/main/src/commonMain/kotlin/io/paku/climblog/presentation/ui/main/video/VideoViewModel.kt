@@ -3,32 +3,22 @@ package io.paku.climblog.presentation.ui.main.video
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import io.paku.climblog.business.domain.interactors.user.FetchUserUseCase
-import io.paku.climblog.business.domain.interactors.video.GetCommentsUseCase
-import io.paku.climblog.business.domain.interactors.video.GetSingleVideoUseCase
-import io.paku.climblog.business.domain.interactors.video.GetUserVideosUseCase
-import io.paku.climblog.business.domain.interactors.video.GetVideoFeedUseCase
-import io.paku.climblog.business.domain.interactors.video.PostCommentUseCase
-import io.paku.climblog.business.domain.interactors.video.SearchVideosUseCase
-import io.paku.climblog.business.domain.interactors.video.ToggleLikeUseCase
-import io.paku.climblog.business.domain.model.comment.Comment
-import io.paku.climblog.business.domain.model.video.Video
+import io.paku.climblog.navigation.VideoListType
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
 import io.paku.climblog.presentation.base.ViewModelState
-import io.paku.climblog.presentation.navigation.VideoListType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 data class SharedVideoViewModelState(
     val videoListType: VideoListType? = null,
-    val videoPagingData: Flow<PagingData<Video>>? = null,
+    val videoPagingData: Flow<PagingData<io.paku.climblog.domain.model.video.Video>>? = null,
     val likedVideoIds: Set<Long> = emptySet(),
     val initialVideoId: Long? = null,
     val currentUserId: Long? = null,
     // Comment related state
     val activeVideoIdForComments: Long? = null,
-    val commentsPagingData: Flow<PagingData<Comment>>? = null,
+    val commentsPagingData: Flow<PagingData<io.paku.climblog.domain.model.comment.Comment>>? = null,
     val isPosting: Boolean = false
 ) : ViewModelState
 
@@ -41,14 +31,14 @@ sealed class SharedVideoViewModelEvent : ViewModelEvent {
 }
 
 internal class SharedVideoViewModel(
-    private val toggleLikeUseCase: ToggleLikeUseCase,
-    private val fetchUserUseCase: FetchUserUseCase,
-    private val getCommentsUseCase: GetCommentsUseCase,
-    private val postCommentUseCase: PostCommentUseCase,
-    private val getVideoFeedUseCase: GetVideoFeedUseCase,
-    private val getUserVideosUseCase: GetUserVideosUseCase,
-    private val searchVideosUseCase: SearchVideosUseCase,
-    private val getSingleVideoUseCase: GetSingleVideoUseCase
+    private val toggleLikeUseCase: io.paku.climblog.domain.interactors.video.ToggleLikeUseCase,
+    private val fetchUserUseCase: io.paku.climblog.domain.interactors.user.FetchUserUseCase,
+    private val getCommentsUseCase: io.paku.climblog.domain.interactors.video.GetCommentsUseCase,
+    private val postCommentUseCase: io.paku.climblog.domain.interactors.video.PostCommentUseCase,
+    private val getVideoFeedUseCase: io.paku.climblog.domain.interactors.video.GetVideoFeedUseCase,
+    private val getUserVideosUseCase: io.paku.climblog.domain.interactors.video.GetUserVideosUseCase,
+    private val searchVideosUseCase: io.paku.climblog.domain.interactors.video.SearchVideosUseCase,
+    private val getSingleVideoUseCase: io.paku.climblog.domain.interactors.video.GetSingleVideoUseCase
 ) : BaseViewModel<SharedVideoViewModelState, SharedVideoViewModelEvent, Nothing>() {
 
     init {

@@ -7,13 +7,13 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":core"))
-            api(project(":shared:domain"))
+            implementation(project(":core"))
+            implementation(project(":shared:domain"))
             
             api(libs.compose.navigation)
-            api(libs.compose.material3)
-            api(libs.material.icons.extended)
-            api(libs.kotlinx.serialization.json)
+            implementation(libs.compose.material3)
+            implementation(libs.material.icons.extended)
+            implementation(libs.kotlinx.serialization.json)
         }
     }
 }

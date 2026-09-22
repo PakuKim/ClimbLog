@@ -1,14 +1,13 @@
 plugins {
-    id("io.paku.climblog.kotlinMultiplatformPure")
+    alias(libs.plugins.kmp.kotlinMultiplatformPure)
     alias(libs.plugins.kmp.kotlinSerialization)
 }
 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(libs.koin.core)
-
-            implementation(libs.logger)
+            implementation(libs.koin.core)
+            api(libs.logger)
         }
     }
 }

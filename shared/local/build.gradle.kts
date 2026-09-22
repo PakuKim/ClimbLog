@@ -8,8 +8,8 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":core"))
-            api(project(":shared:data"))
+            implementation(project(":core"))
+            implementation(project(":shared:data"))
             implementation(libs.koin.core)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.datastore.preferences.core)

@@ -6,8 +6,8 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":core"))
-            api(project(":shared:contract"))
+            implementation(project(":core"))
+            implementation(project(":shared:contract"))
             api(project(":shared:data"))
             implementation(libs.koin.core)
             implementation(libs.ktor.client.core)

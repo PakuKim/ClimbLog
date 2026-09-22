@@ -6,7 +6,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":core"))
+            implementation(project(":core"))
             api(project(":shared:domain"))
             implementation(libs.koin.core)
             implementation(libs.androidx.paging.common)

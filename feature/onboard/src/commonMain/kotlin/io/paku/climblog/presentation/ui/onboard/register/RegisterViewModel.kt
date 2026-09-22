@@ -2,14 +2,11 @@ package io.paku.climblog.presentation.ui.onboard.register
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
-import io.paku.climblog.business.domain.interactors.auth.SocialRegisterUseCase
-import io.paku.climblog.business.domain.interactors.user.CheckHandleUseCase
-import io.paku.climblog.business.domain.model.social.SocialLoginType
-import io.paku.climblog.core.Media
+import io.paku.climblog.navigation.AppNavigation
+import io.paku.climblog.platform.Media
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
 import io.paku.climblog.presentation.base.ViewModelState
-import io.paku.climblog.presentation.navigation.AppNavigation
 
 data class RegisterViewModelState(
     val name: String = "",
@@ -20,7 +17,7 @@ data class RegisterViewModelState(
     val armReach: String = "",
     val gender: String = "M",
     val profileImage: Media.Image? = null,
-    val socialLoginType: SocialLoginType = SocialLoginType.GOOGLE
+    val socialLoginType: io.paku.climblog.domain.model.social.SocialLoginType = io.paku.climblog.domain.model.social.SocialLoginType.GOOGLE
 ): ViewModelState {
     val registrationAvailable: Boolean =
         name.isNotBlank() && handleChecked == true && age.isNotBlank() && height.isNotBlank() && armReach.isNotBlank()
@@ -61,14 +58,14 @@ sealed class RegisterViewModelEvent : ViewModelEvent {
 
 internal class RegisterViewModel(
     savedStateHandle: SavedStateHandle,
-    private val checkHandleUseCase: CheckHandleUseCase,
-    private val socialRegisterUseCase: SocialRegisterUseCase
+    private val checkHandleUseCase: io.paku.climblog.domain.interactors.user.CheckHandleUseCase,
+    private val socialRegisterUseCase: io.paku.climblog.domain.interactors.auth.SocialRegisterUseCase
 ) : BaseViewModel<RegisterViewModelState, RegisterViewModelEvent, Nothing>() {
     private val registerArgs: AppNavigation.Register = savedStateHandle.toRoute()
-    val socialLoginType: SocialLoginType = registerArgs.socialLoginType
+    val socialLoginType: io.paku.climblog.domain.model.social.SocialLoginType = registerArgs.socialLoginType
 
     fun init(
-        socialLoginType: SocialLoginType
+        socialLoginType: io.paku.climblog.domain.model.social.SocialLoginType
     ) {
         updateState {
             copy(

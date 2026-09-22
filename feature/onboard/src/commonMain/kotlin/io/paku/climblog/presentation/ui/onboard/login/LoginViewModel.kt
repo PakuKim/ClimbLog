@@ -1,7 +1,5 @@
 package io.paku.climblog.presentation.ui.onboard.login
 
-import io.paku.climblog.business.domain.interactors.auth.SocialLoginUseCase
-import io.paku.climblog.business.domain.model.social.SocialLoginType
 import io.paku.climblog.core.CommonException
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelAction
@@ -14,17 +12,17 @@ data class LoginViewModelState(
 
 sealed class LoginViewModelEvent: ViewModelEvent {
     data class OnSocialLoginClick(
-        val provider: SocialLoginType
+        val provider: io.paku.climblog.domain.model.social.SocialLoginType
     ) : LoginViewModelEvent()
 }
 sealed class LoginViewModelAction: ViewModelAction {
     data class NavigateToRegister(
-        val socialLoginType: SocialLoginType
+        val socialLoginType: io.paku.climblog.domain.model.social.SocialLoginType
     ): LoginViewModelAction()
 }
 
 internal class LoginViewModel(
-    private val socialLoginUseCase: SocialLoginUseCase
+    private val socialLoginUseCase: io.paku.climblog.domain.interactors.auth.SocialLoginUseCase
 ) : BaseViewModel<LoginViewModelState, LoginViewModelEvent, LoginViewModelAction>() {
     override fun createInitialState(): LoginViewModelState = LoginViewModelState()
 
@@ -40,7 +38,7 @@ internal class LoginViewModel(
         }
     }
 
-    private fun socialLogin(type: SocialLoginType) = launchWithLoading {
+    private fun socialLogin(type: io.paku.climblog.domain.model.social.SocialLoginType) = launchWithLoading {
         socialLoginUseCase(type)
     }.invokeOnCompletion {
         if (it is CommonException && it.code == 404) {

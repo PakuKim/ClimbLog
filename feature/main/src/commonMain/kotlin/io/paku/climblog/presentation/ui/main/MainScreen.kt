@@ -32,9 +32,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import io.paku.climblog.navigation.AppNavigation
+import io.paku.climblog.navigation.MainBottomNavigation
 import io.paku.climblog.presentation.component.PreviewWrapper
-import io.paku.climblog.presentation.navigation.AppNavigation
-import io.paku.climblog.presentation.navigation.MainBottomNavigation
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

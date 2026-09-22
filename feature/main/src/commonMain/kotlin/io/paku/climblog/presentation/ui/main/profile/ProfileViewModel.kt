@@ -4,21 +4,17 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import androidx.paging.cachedIn
-import io.paku.climblog.business.domain.interactors.user.FetchUserUseCase
-import io.paku.climblog.business.domain.interactors.user.GetUserProfileUseCase
-import io.paku.climblog.business.domain.interactors.user.ToggleFollowUseCase
-import io.paku.climblog.business.domain.interactors.video.GetUserVideosUseCase
+import io.paku.climblog.navigation.AppNavigation
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
-import io.paku.climblog.presentation.navigation.AppNavigation
 import kotlinx.coroutines.flow.collectLatest
 
 internal class ProfileViewModel(
     savedStateHandle: SavedStateHandle,
-    private val fetchUserUseCase: FetchUserUseCase,
-    private val getUserProfileUseCase: GetUserProfileUseCase,
-    private val toggleFollowUseCase: ToggleFollowUseCase,
-    private val getUserVideosUseCase: GetUserVideosUseCase,
+    private val fetchUserUseCase: io.paku.climblog.domain.interactors.user.FetchUserUseCase,
+    private val getUserProfileUseCase: io.paku.climblog.domain.interactors.user.GetUserProfileUseCase,
+    private val toggleFollowUseCase: io.paku.climblog.domain.interactors.user.ToggleFollowUseCase,
+    private val getUserVideosUseCase: io.paku.climblog.domain.interactors.video.GetUserVideosUseCase,
 ) : BaseViewModel<ProfileViewModelState, ProfileViewModelEvent, Nothing>() {
     private val args: AppNavigation.UserProfile = savedStateHandle.toRoute()
 

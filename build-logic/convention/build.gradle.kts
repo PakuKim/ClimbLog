@@ -42,6 +42,10 @@ gradlePlugin {
             id = "io.paku.climblog.kotlinMultiplatformPure"
             implementationClass = "KotlinMultiplatformPureConventionPlugin"
         }
+        register("kotlinMultiplatformFeature") {
+            id = "io.paku.climblog.kotlinMultiplatformFeature"
+            implementationClass = "KotlinMultiplatformFeatureConventionPlugin"
+        }
         register("kotlinSerialization") {
             id = "io.paku.climblog.kotlinSerialization"
             implementationClass = "KotlinSerializationConventionPlugin"

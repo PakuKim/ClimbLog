@@ -44,8 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.paku.climblog.business.domain.model.video.Video
 import io.paku.climblog.business.domain.model.video.VideoStatus
-import io.paku.climblog.core.VideoPlayerView
-import io.paku.climblog.core.rememberVideoPlayerController
+import io.paku.climblog.platform.VideoPlayerView
+import io.paku.climblog.platform.rememberVideoPlayerController
 import io.paku.climblog.presentation.ext.noRippleClickable
 import kotlinx.datetime.LocalDateTime
 

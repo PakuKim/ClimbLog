@@ -1,13 +1,11 @@
 package io.paku.climblog.presentation.ui.main.profile.edit
 
-import io.paku.climblog.business.domain.interactors.user.FetchUserUseCase
-import io.paku.climblog.business.domain.interactors.user.UpdateProfileUseCase
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
 
 internal class EditProfileViewModel(
-    private val fetchUserUseCase: FetchUserUseCase,
-    private val updateProfileUseCase: UpdateProfileUseCase
+    private val fetchUserUseCase: io.paku.climblog.domain.interactors.user.FetchUserUseCase,
+    private val updateProfileUseCase: io.paku.climblog.domain.interactors.user.UpdateProfileUseCase
 ) : BaseViewModel<EditProfileViewModelState, EditProfileViewModelEvent, Nothing>() {
 
     override fun createInitialState(): EditProfileViewModelState = EditProfileViewModelState()

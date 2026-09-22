@@ -34,8 +34,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import io.paku.climblog.core.Media
-import io.paku.climblog.core.rememberGalleryManager
+import io.paku.climblog.platform.Media
+import io.paku.climblog.platform.rememberGalleryManager
 import io.paku.climblog.presentation.component.PreviewWrapper
 import io.paku.climblog.presentation.component.SharedButton
 import io.paku.climblog.presentation.component.SharedInputLayout

@@ -41,8 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.paku.climblog.business.domain.model.video.VideoQuality
-import io.paku.climblog.core.rememberVideoPicker
+import io.paku.climblog.platform.rememberVideoPicker
 import io.paku.climblog.presentation.component.SharedTextField
 import io.paku.climblog.presentation.component.SharedTopAppBar
 import org.koin.compose.viewmodel.koinViewModel
@@ -89,7 +88,7 @@ private fun VideoUploadScreen(
     onNavigateBack: () -> Unit,
     onPickVideoClick: () -> Unit,
     onQualityClick: () -> Unit,
-    onQualitySelected: (VideoQuality) -> Unit,
+    onQualitySelected: (io.paku.climblog.domain.model.video.VideoQuality) -> Unit,
     onDismissQualitySheet: () -> Unit,
     onTitleChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
@@ -252,7 +251,7 @@ private fun VideoUploadScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp).padding(bottom = 32.dp)) {
                     Text("업로드 화질 선택", fontWeight = FontWeight.Bold, fontSize = 18.sp, modifier = Modifier.padding(bottom = 16.dp))
-                    VideoQuality.entries.forEach { quality ->
+                    io.paku.climblog.domain.model.video.VideoQuality.entries.forEach { quality ->
                         ListItem(
                             headlineContent = { Text(quality.name) },
                             supportingContent = { Text("${quality.width}x${quality.height}, 30fps") },
