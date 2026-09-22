@@ -22,19 +22,19 @@ kotlin {
             api(project(":shared:navigation"))
             api(project(":shared:platform"))
             
-            implementation(libs.compose.runtime)
-            implementation(libs.compose.foundation)
-            implementation(libs.compose.material3)
-            implementation(libs.compose.animation)
-            implementation(libs.compose.navigation)
+            api(libs.compose.runtime)
+            api(libs.compose.foundation)
+            api(libs.compose.material3)
+            api(libs.compose.animation)
+            api(libs.compose.navigation)
             
-            implementation(libs.coil3)
-            implementation(libs.coil3.compose)
-            implementation(libs.material.icons.extended)
+            api(libs.coil3)
+            api(libs.coil3.compose)
+            api(libs.material.icons.extended)
             
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(libs.androidx.paging.compose)
+            api(libs.androidx.lifecycle.viewmodelCompose)
+            api(libs.androidx.lifecycle.runtimeCompose)
+            api(libs.androidx.paging.compose)
             implementation(libs.androidx.paging.common)
         }
     }

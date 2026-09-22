@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
-class SessionLocalDataSourceImpl(
+internal class SessionLocalDataSourceImpl(
     private val dataStore: DataStore<Preferences>
 ): SessionLocalDataSource {
     companion object {

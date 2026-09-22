@@ -35,7 +35,6 @@ actual val sharedPlatformModule = module {
     single { DataStoreFactory(androidContext()) }
 
     // Platform
-    single<VideoCompressor> { AndroidVideoCompressor(get()) }
     single<EncodeFileProvider> { EncodeFileProviderImpl(androidContext()) }
     single<SocialLoginProvider> {
         val providerMap = mapOf<SocialLoginType, Provider<SocialLoginProvider>>(
@@ -50,4 +49,6 @@ actual val sharedPlatformModule = module {
     factory { KakaoLoginProviderImpl(androidContext()) }
     factory { NaverLoginProviderImpl() }
 
+
+    single<VideoCompressor> { AndroidVideoCompressor(get()) }
 }

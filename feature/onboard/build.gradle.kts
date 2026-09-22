@@ -7,22 +7,14 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":shared:domain"))
-            api(project(":shared:navigation"))
-            api(project(":shared:ui-common"))
-            api(project(":shared:platform"))
-            
+            implementation(project(":shared:domain"))
+            implementation(project(":shared:navigation"))
+            implementation(project(":shared:ui-common"))
+            implementation(project(":shared:platform"))
+
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewModel)
-            
-            implementation(libs.compose.navigation)
-            implementation(libs.compose.material3)
-            implementation(libs.material.icons.extended)
-            implementation(libs.coil3)
-            implementation(libs.coil3.compose)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
         }
     }
 }
