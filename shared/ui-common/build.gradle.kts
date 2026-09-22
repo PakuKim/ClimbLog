@@ -28,8 +28,8 @@ kotlin {
             api(libs.compose.animation)
             implementation(libs.compose.navigation)
             
-            implementation(libs.coil3)
-            implementation(libs.coil3.compose)
+            api(libs.coil3)
+            api(libs.coil3.compose)
             api(libs.material.icons.extended)
             
             api(libs.androidx.lifecycle.viewmodelCompose)
