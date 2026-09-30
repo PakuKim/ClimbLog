@@ -7,7 +7,7 @@ import io.paku.climblog.domain.model.token.AuthToken
 import io.paku.climblog.domain.provider.JwtTokenProvider
 import java.util.Date
 
-class JwtTokenProviderImpl(
+internal class JwtTokenProviderImpl(
     secret: String,
     private val issuer: String,
     private val audience: String

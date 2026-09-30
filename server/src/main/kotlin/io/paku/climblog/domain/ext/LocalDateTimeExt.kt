@@ -6,7 +6,7 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
-fun LocalDateTime.Companion.now(): LocalDateTime {
+internal fun LocalDateTime.Companion.now(): LocalDateTime {
     return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 }
 

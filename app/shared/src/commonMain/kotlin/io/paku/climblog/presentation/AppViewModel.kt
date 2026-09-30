@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.messaging.messaging
+import io.paku.climblog.domain.interactors.notification.SendDeviceTokenUseCase
+import io.paku.climblog.domain.interactors.session.FetchSessionUseCase
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 internal class AppViewModel(
-    private val fetchSessionUseCase: io.paku.climblog.domain.interactors.session.FetchSessionUseCase,
-    private val sendDeviceTokenUseCase: io.paku.climblog.domain.interactors.notification.SendDeviceTokenUseCase
+    private val fetchSessionUseCase: FetchSessionUseCase,
+    private val sendDeviceTokenUseCase: SendDeviceTokenUseCase
 ): ViewModel() {
     private val _isAuthorized: MutableState<Boolean> = mutableStateOf(false)
     val authorized = _isAuthorized

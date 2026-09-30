@@ -7,7 +7,7 @@ import io.paku.climblog.domain.provider.PushProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class PushProviderImpl : PushProvider {
+internal class PushProviderImpl : PushProvider {
     override suspend fun sendPush(
         token: String,
         title: String,

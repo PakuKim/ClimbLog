@@ -1,4 +1,4 @@
-package io.paku.climblog.contract.video
+package io.paku.climblog.presentation.video
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
@@ -13,6 +13,11 @@ import io.ktor.server.routing.route
 import io.paku.climblog.contract.comment.CommentFeedResponse
 import io.paku.climblog.contract.comment.CommentRequest
 import io.paku.climblog.contract.comment.CommentResponse
+import io.paku.climblog.contract.video.CruxResponse
+import io.paku.climblog.contract.video.PresignedPostRequest
+import io.paku.climblog.contract.video.PresignedPostResponse
+import io.paku.climblog.contract.video.RegisterVideoRequest
+import io.paku.climblog.contract.video.VideoFeedResponse
 import io.paku.climblog.domain.ext.getUserId
 import io.paku.climblog.domain.interactor.video.GetVideoCommentsUseCase
 import io.paku.climblog.domain.interactor.video.GetVideoListUseCase
@@ -98,11 +103,13 @@ fun Route.videoRoutes(
                         contentType = request.contentType
                     )
                     
-                    call.respond(HttpStatusCode.OK, PresignedPostResponse(
-                        url = postData.url,
-                        fields = postData.fields,
-                        objectKey = s3Key
-                    ))
+                    call.respond(HttpStatusCode.OK,
+                        PresignedPostResponse(
+                            url = postData.url,
+                            fields = postData.fields,
+                            objectKey = s3Key
+                        )
+                    )
                 }
             }
 
@@ -227,7 +234,7 @@ private fun VideoComment.toResponse() = CommentResponse(
     createdAt = createdAt
 )
 
-private fun Video.toResponse() = VideoResponse(
+private fun Video.toResponse() = _root_ide_package_.io.paku.climblog.contract.video.VideoResponse(
     id = id,
     userId = userId,
     title = title,

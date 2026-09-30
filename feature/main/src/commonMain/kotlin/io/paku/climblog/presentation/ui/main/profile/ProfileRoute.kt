@@ -42,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
+import io.paku.climblog.domain.model.user.User
+import io.paku.climblog.domain.model.user.UserProfile
 import io.paku.climblog.presentation.component.PreviewWrapper
 import io.paku.climblog.presentation.component.SharedTopAppBar
 import io.paku.climblog.presentation.component.VideoThumbnailItem
@@ -146,7 +148,7 @@ private fun ProfileScreen(
 
 @Composable
 fun ProfileHeader(
-    profile: io.paku.climblog.domain.model.user.UserProfile,
+    profile: UserProfile,
     isMyProfile: Boolean,
     isFollowingInProgress: Boolean,
     onFollowClick: () -> Unit,
@@ -309,8 +311,8 @@ private fun ProfileScreenPreview() {
     PreviewWrapper {
         ProfileScreen(
             state = ProfileViewModelState(
-                userProfile = _root_ide_package_.io.paku.climblog.domain.model.user.UserProfile(
-                    user = _root_ide_package_.io.paku.climblog.domain.model.user.User(
+                userProfile = UserProfile(
+                    user = User(
                         id = 1,
                         name = "홍길동",
                         handle = "gildong",

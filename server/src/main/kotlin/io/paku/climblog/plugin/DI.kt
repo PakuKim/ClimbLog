@@ -62,7 +62,6 @@ import io.paku.climblog.domain.provider.MediaConvertProvider
 import io.paku.climblog.domain.provider.PushProvider
 import io.paku.climblog.domain.provider.S3Provider
 import kotlinx.serialization.json.Json
-import org.jetbrains.exposed.v1.core.exposedLogger
 import org.koin.dsl.module
 import org.koin.dsl.onClose
 import org.koin.ktor.plugin.Koin
@@ -76,8 +75,6 @@ fun Application.configureDI() {
     val jwtAudience = environment.config.property("jwt.audience").getString()
 
     val awsAccessKey = environment.config.property("aws.accessKey").getString()
-
-    exposedLogger.info(awsAccessKey)
     val awsSecretKey = environment.config.property("aws.secretKey").getString()
     val awsRegion = environment.config.property("aws.region").getString()
     val awsMediaConvertRoleArn = environment.config.property("aws.mediaConvertRoleArn").getString()

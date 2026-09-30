@@ -36,7 +36,7 @@ import io.paku.climblog.domain.provider.MediaConvertProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class MediaConvertProviderImpl(
+internal class MediaConvertProviderImpl(
     private val accessKey: String,
     private val secretKey: String,
     private val region: String,

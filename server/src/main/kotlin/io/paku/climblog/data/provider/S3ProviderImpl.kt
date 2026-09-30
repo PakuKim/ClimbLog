@@ -18,7 +18,7 @@ import java.util.Date
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-class S3ProviderImpl(
+internal class S3ProviderImpl(
     private val accessKey: String,
     private val secretKey: String,
     private val region: String

@@ -1,4 +1,4 @@
-package io.paku.climblog.contract.notification
+package io.paku.climblog.presentation.notification
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
@@ -10,6 +10,8 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+import io.paku.climblog.contract.notification.NotificationResponse
+import io.paku.climblog.contract.notification.UnreadCheckResponse
 import io.paku.climblog.domain.interactor.notification.CheckUnreadNotificationsUseCase
 import io.paku.climblog.domain.interactor.notification.GetNotificationsUseCase
 import io.paku.climblog.domain.interactor.notification.MarkNotificationsAsReadUseCase

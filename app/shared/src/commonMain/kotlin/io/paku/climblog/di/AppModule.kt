@@ -1,19 +1,22 @@
 package io.paku.climblog.di
 
+import io.paku.climblog.data.di.DataModule
+import io.paku.climblog.domain.di.DomainModule
 import io.paku.climblog.local.di.LocalModule
 import io.paku.climblog.platform.di.sharedPlatformModule
 import io.paku.climblog.presentation.AppViewModel
 import io.paku.climblog.presentation.ui.main.di.MainModule
 import io.paku.climblog.presentation.ui.onboard.di.OnboardModule
+import io.paku.climblog.remote.di.RemoteModule
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 fun appModule() = module {
     includes(
-        _root_ide_package_.io.paku.climblog.domain.di.DomainModule,
-        io.paku.climblog.data.di.DataModule,
+        DomainModule,
+        DataModule,
         LocalModule,
-        io.paku.climblog.remote.di.RemoteModule,
+        RemoteModule,
         MainModule,
         OnboardModule,
         sharedPlatformModule,
