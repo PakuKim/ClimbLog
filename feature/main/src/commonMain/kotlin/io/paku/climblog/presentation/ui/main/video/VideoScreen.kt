@@ -184,7 +184,7 @@ private fun SharedVideoContent(
                                 showCommentsForVideoId = video.id
                                 onCommentClick(video.id)
                             },
-                            onShareClick = { shareLink(video.hlsUrl) },
+                            onShareClick = { shareLink(video.hlsUrl.orEmpty()) },
                             onUserClick = onUserClick
                         )
                     }

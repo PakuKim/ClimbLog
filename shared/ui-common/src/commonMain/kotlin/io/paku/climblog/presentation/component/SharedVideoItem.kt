@@ -60,7 +60,8 @@ fun SharedVideoItem(
     onShareClick: () -> Unit,
     onUserClick: ((Long) -> Unit)? = null
 ) {
-    val controller = rememberVideoPlayerController(video.hlsUrl)
+
+    val controller = rememberVideoPlayerController(video.hlsUrl.orEmpty())
     var isPausedInternal by remember { mutableStateOf(false) }
     var playbackSpeed by remember { mutableStateOf(1.0f) }
 

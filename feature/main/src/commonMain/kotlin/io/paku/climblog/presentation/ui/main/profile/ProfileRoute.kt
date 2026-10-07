@@ -84,13 +84,12 @@ private fun ProfileScreen(
     onFollowersClick: (Long) -> Unit = {},
     onFollowingClick: (Long) -> Unit = {}
 ) {
-    val profile = state.userProfile ?: return
     val pagingItems = state.videoPagingData?.collectAsLazyPagingItems()
 
     Scaffold(
         topBar = {
             SharedTopAppBar(
-                title = profile.user.handle.ifBlank { profile.user.name },
+                title = "프로필",
                 actions = {
                     if (state.isMyProfile) {
                         IconButton(onClick = onUploadClick) {
@@ -104,6 +103,7 @@ private fun ProfileScreen(
             )
         }
     ) { paddingValues ->
+        val profile = state.userProfile ?: return@Scaffold
         Column(
             modifier = Modifier
                 .padding(paddingValues)

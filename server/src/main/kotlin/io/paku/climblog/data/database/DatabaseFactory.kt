@@ -44,7 +44,9 @@ internal object DatabaseFactory {
                 VideoCruxTable,
                 NotificationTable,
                 withLogs = true
-            )
+            ).forEach {
+                exec(it)
+            }
         }
     }
 
