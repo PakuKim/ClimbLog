@@ -41,7 +41,6 @@ dependencies {
     implementation(libs.exposed.jdbc)
     implementation(libs.exposed.kotlin.datetime)
     implementation(libs.awsS3)
-    implementation(libs.awsMediaConvert)
     implementation(libs.firebaseAdmin)
 
     testImplementation(libs.ktor.server.test.host.jvm)

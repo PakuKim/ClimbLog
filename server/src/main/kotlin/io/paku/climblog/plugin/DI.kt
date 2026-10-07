@@ -10,6 +10,7 @@ import io.lettuce.core.ExperimentalLettuceCoroutinesApi
 import io.lettuce.core.api.coroutines.RedisCoroutinesCommands
 import io.paku.climblog.data.NotificationRepositoryImpl
 import io.paku.climblog.data.RefreshTokenRepositoryImpl
+import io.paku.climblog.data.TranscodingJobRepositoryImpl
 import io.paku.climblog.data.UserFollowRepositoryImpl
 import io.paku.climblog.data.UserRepositoryImpl
 import io.paku.climblog.data.VideoCommentRepositoryImpl
@@ -17,12 +18,12 @@ import io.paku.climblog.data.VideoLikeRepositoryImpl
 import io.paku.climblog.data.VideoRepositoryImpl
 import io.paku.climblog.data.provider.BCryptEncodeProviderImpl
 import io.paku.climblog.data.provider.JwtTokenProviderImpl
-import io.paku.climblog.data.provider.MediaConvertProviderImpl
 import io.paku.climblog.data.provider.PushProviderImpl
 import io.paku.climblog.data.provider.S3ProviderImpl
 import io.paku.climblog.data.redis.RedisManager
 import io.paku.climblog.domain.NotificationRepository
 import io.paku.climblog.domain.RefreshTokenRepository
+import io.paku.climblog.domain.TranscodingJobRepository
 import io.paku.climblog.domain.UserFollowRepository
 import io.paku.climblog.domain.UserRepository
 import io.paku.climblog.domain.VideoCommentRepository
@@ -58,7 +59,6 @@ import io.paku.climblog.domain.interactor.video.ToggleLikeUseCase
 import io.paku.climblog.domain.interactor.video.UpdateVideoStatusUseCase
 import io.paku.climblog.domain.provider.BCryptEncodeProvider
 import io.paku.climblog.domain.provider.JwtTokenProvider
-import io.paku.climblog.domain.provider.MediaConvertProvider
 import io.paku.climblog.domain.provider.PushProvider
 import io.paku.climblog.domain.provider.S3Provider
 import kotlinx.serialization.json.Json
@@ -74,11 +74,11 @@ fun Application.configureDI() {
     val jwtIssuer = environment.config.property("jwt.issuer").getString()
     val jwtAudience = environment.config.property("jwt.audience").getString()
 
-    val awsAccessKey = environment.config.property("aws.accessKey").getString()
-    val awsSecretKey = environment.config.property("aws.secretKey").getString()
-    val awsRegion = environment.config.property("aws.region").getString()
-    val awsMediaConvertRoleArn = environment.config.property("aws.mediaConvertRoleArn").getString()
-    val awsMediaConvertQueueArn = environment.config.property("aws.mediaConvertQueueArn").getString()
+    val r2AccessKey = environment.config.propertyOrNull("r2.accessKey")?.getString()
+        ?: environment.config.propertyOrNull("aws.accessKey")?.getString() ?: ""
+    val r2SecretKey = environment.config.propertyOrNull("r2.secretKey")?.getString()
+        ?: environment.config.propertyOrNull("aws.secretKey")?.getString() ?: ""
+    val r2Endpoint = environment.config.propertyOrNull("r2.endpoint")?.getString()
 
     install(Koin) {
         modules(
@@ -87,11 +87,9 @@ fun Application.configureDI() {
                 jwtSecret = jwtSecret,
                 jwtIssuer = jwtIssuer,
                 jwtAudience = jwtAudience,
-                awsAccessKey = awsAccessKey,
-                awsSecretKey = awsSecretKey,
-                awsRegion = awsRegion,
-                awsMediaConvertRoleArn = awsMediaConvertRoleArn,
-                awsMediaConvertQueueArn = awsMediaConvertQueueArn
+                r2AccessKey = r2AccessKey,
+                r2SecretKey = r2SecretKey,
+                r2Endpoint = r2Endpoint
             )
         )
     }
@@ -103,11 +101,9 @@ private fun appModule(
     jwtSecret: String,
     jwtIssuer: String,
     jwtAudience: String,
-    awsAccessKey: String,
-    awsSecretKey: String,
-    awsRegion: String,
-    awsMediaConvertRoleArn: String,
-    awsMediaConvertQueueArn: String
+    r2AccessKey: String,
+    r2SecretKey: String,
+    r2Endpoint: String?
 ) = module {
     // Data
     single { RedisManager(redisUrl) }.onClose { redisManager ->
@@ -125,18 +121,17 @@ private fun appModule(
     }
     single<UserRepository> { UserRepositoryImpl() }
     single<VideoRepository> { VideoRepositoryImpl() }
+    single<TranscodingJobRepository> { TranscodingJobRepositoryImpl() }
     single<VideoCommentRepository> { VideoCommentRepositoryImpl() }
     single<VideoLikeRepository> { VideoLikeRepositoryImpl() }
     single<UserFollowRepository> { UserFollowRepositoryImpl() }
     single<NotificationRepository> { NotificationRepositoryImpl() }
-    single<S3Provider> { S3ProviderImpl(awsAccessKey, awsSecretKey, awsRegion) }
-    single<MediaConvertProvider> {
-        MediaConvertProviderImpl(
-            accessKey = awsAccessKey,
-            secretKey = awsSecretKey,
-            region = awsRegion,
-            roleArn = awsMediaConvertRoleArn,
-            queueArn = awsMediaConvertQueueArn
+    single<S3Provider> {
+        S3ProviderImpl(
+            accessKey = r2AccessKey,
+            secretKey = r2SecretKey,
+            region = "auto",
+            endpoint = r2Endpoint
         )
     }
     single<PushProvider> { PushProviderImpl() }
@@ -172,7 +167,7 @@ private fun appModule(
     factory { GetRandomVideosUseCase(get()) }
     factory { GetVideoListUseCase(get()) }
     factory { GetVideoCommentsUseCase(get()) }
-    factory { RegisterVideoUseCase(get(), get()) }
+    factory { RegisterVideoUseCase(get()) }
     factory { UpdateVideoStatusUseCase(get()) }
     factory { SendNotificationUseCase(get(), get(), get()) }
     factory { GetNotificationsUseCase(get()) }

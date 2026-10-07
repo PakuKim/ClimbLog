@@ -14,21 +14,20 @@ import io.paku.climblog.contract.comment.CommentFeedResponse
 import io.paku.climblog.contract.comment.CommentRequest
 import io.paku.climblog.contract.comment.CommentResponse
 import io.paku.climblog.contract.video.CruxResponse
-import io.paku.climblog.contract.video.PresignedPostRequest
-import io.paku.climblog.contract.video.PresignedPostResponse
+import io.paku.climblog.contract.video.PresignedPutRequest
+import io.paku.climblog.contract.video.PresignedPutResponse
 import io.paku.climblog.contract.video.RegisterVideoRequest
 import io.paku.climblog.contract.video.VideoFeedResponse
+import io.paku.climblog.contract.video.VideoResponse
 import io.paku.climblog.domain.ext.getUserId
 import io.paku.climblog.domain.interactor.video.GetVideoCommentsUseCase
 import io.paku.climblog.domain.interactor.video.GetVideoListUseCase
 import io.paku.climblog.domain.interactor.video.PostCommentUseCase
 import io.paku.climblog.domain.interactor.video.RegisterVideoUseCase
 import io.paku.climblog.domain.interactor.video.ToggleLikeUseCase
-import io.paku.climblog.domain.interactor.video.UpdateVideoStatusUseCase
 import io.paku.climblog.domain.model.video.Video
 import io.paku.climblog.domain.model.video.VideoComment
 import io.paku.climblog.domain.model.video.VideoCrux
-import io.paku.climblog.domain.model.video.VideoStatus
 import io.paku.climblog.domain.provider.S3Provider
 import org.koin.ktor.ext.inject
 import java.util.UUID
@@ -43,7 +42,6 @@ fun Route.videoRoutes(
     val toggleLikeUseCase: ToggleLikeUseCase by inject()
     val postCommentUseCase: PostCommentUseCase by inject()
     val registerVideoUseCase: RegisterVideoUseCase by inject()
-    val updateVideoStatusUseCase: UpdateVideoStatusUseCase by inject()
 
     authenticate("auth-jwt") {
         route("/api/v1/videos") {
@@ -93,85 +91,46 @@ fun Route.videoRoutes(
             }
 
             route("/uploads") {
-                post("/presigned-post") {
-                    val request = call.receive<PresignedPostRequest>()
-                    val s3Key = "raw/${UUID.randomUUID()}_${request.fileName}"
-                    
-                    val postData = s3Provider.generatePresignedPost(
+                post("/presigned-put") {
+                    val request = call.receive<PresignedPutRequest>()
+                    val objectKey = "raw/${UUID.randomUUID()}_${request.fileName}"
+
+                    val uploadUrl = s3Provider.generatePresignedPutUrl(
                         bucketName = s3Bucket,
-                        key = s3Key,
+                        key = objectKey,
                         contentType = request.contentType
                     )
-                    
-                    call.respond(HttpStatusCode.OK,
-                        PresignedPostResponse(
-                            url = postData.url,
-                            fields = postData.fields,
-                            objectKey = s3Key
+
+                    call.respond(
+                        HttpStatusCode.OK,
+                        PresignedPutResponse(
+                            uploadUrl = uploadUrl,
+                            objectKey = objectKey
                         )
                     )
                 }
             }
 
             post {
-                val principal = call.principal<JWTPrincipal>()
-                val userId = principal?.payload?.subject?.toLongOrNull()
-                if (userId == null) {
-                    call.respond(HttpStatusCode.Unauthorized)
-                    return@post
-                }
-
+                val userId = call.getUserId()
                 val request = call.receive<RegisterVideoRequest>()
-                
-                val fileNameWithoutExt = request.s3Key.substringAfterLast("/").substringBeforeLast(".")
-                val hlsUrl = "https://$cloudFrontDomain/processed/$fileNameWithoutExt/master.m3u8"
-                val thumbnailUrl = "https://$cloudFrontDomain/processed/$fileNameWithoutExt/_thumb.0000000.jpg"
 
-                val video = Video(
+                registerVideoUseCase(
                     userId = userId,
                     title = request.title,
                     description = request.description,
-                    hlsUrl = hlsUrl,
-                    thumbnailUrl = thumbnailUrl,
-                    status = VideoStatus.PROCESSING,
-                    videoCruxes = request.cruxes.map {
+                    s3Key = request.s3Key,
+                    cloudFrontDomain = cloudFrontDomain,
+                    cruxes = request.cruxes.map {
                         VideoCrux(
                             startTime = it.startTime,
                             endTime = it.endTime
                         )
                     }
-                )
-
-                registerVideoUseCase(
-                    video = video,
-                    s3Bucket = s3Bucket,
-                    s3Key = request.s3Key,
-                    fileNameWithoutExt = fileNameWithoutExt
                 ).onSuccess { savedVideo ->
                     call.respond(HttpStatusCode.Created, savedVideo.toResponse())
                 }.onFailure {
                     call.respond(HttpStatusCode.InternalServerError)
-                }
-            }
-
-            // MediaConvert Webhook Callback
-            route("/callback/mediaconvert") {
-                post {
-                    val body = call.receive<Map<String, String>>()
-                    val videoId = body["videoId"]?.toLongOrNull() ?: return@post call.respond(HttpStatusCode.BadRequest)
-                    val status = body["status"] // COMPLETE, ERROR
-                    
-                    val videoStatus = when (status) {
-                        "COMPLETE" -> VideoStatus.READY
-                        "ERROR" -> VideoStatus.FAILED
-                        else -> VideoStatus.PROCESSING
-                    }
-                    
-                    updateVideoStatusUseCase(videoId, videoStatus).onSuccess {
-                        call.respond(HttpStatusCode.OK)
-                    }.onFailure {
-                        call.respond(HttpStatusCode.InternalServerError)
-                    }
                 }
             }
 
@@ -234,14 +193,14 @@ private fun VideoComment.toResponse() = CommentResponse(
     createdAt = createdAt
 )
 
-private fun Video.toResponse() = _root_ide_package_.io.paku.climblog.contract.video.VideoResponse(
+private fun Video.toResponse() = VideoResponse(
     id = id,
     userId = userId,
     title = title,
     description = description,
     hlsUrl = hlsUrl,
     thumbnailUrl = thumbnailUrl,
-    status = enumValueOf(status.name),
+    status = io.paku.climblog.contract.video.VideoStatus.valueOf(status.name),
     cruxes = videoCruxes.map {
         CruxResponse(
             id = it.id,

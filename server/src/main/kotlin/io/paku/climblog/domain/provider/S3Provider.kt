@@ -1,29 +1,36 @@
 package io.paku.climblog.domain.provider
 
-import java.net.URL
-
 interface S3Provider {
     /**
-     * Legacy Single Upload (PUT)
+     * Generates a presigned PUT URL for Cloudflare R2 / S3 upload.
      */
-    fun generatePresignedUploadUrl(
+    fun generatePresignedPutUrl(
         bucketName: String,
         key: String,
         contentType: String
-    ): URL
+    ): String
 
     /**
-     * Direction A: Multipart POST Upload (S3 POST Object)
-     * Returns a map of form fields and the target URL.
+     * Uploads a local file to R2 / S3.
      */
-    fun generatePresignedPost(
+    fun uploadFile(
         bucketName: String,
         key: String,
+        file: java.io.File,
         contentType: String
-    ): S3PostData
-}
+    )
 
-data class S3PostData(
-    val url: String,
-    val fields: Map<String, String>
-)
+    /**
+     * Downloads a file from R2 / S3 to local disk.
+     */
+    fun downloadFile(
+        bucketName: String,
+        key: String,
+        destinationFile: java.io.File
+    )
+
+    /**
+     * Checks if an object exists in the S3/R2 bucket.
+     */
+    fun doesObjectExist(bucketName: String, key: String): Boolean
+}

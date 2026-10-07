@@ -23,7 +23,7 @@ data class VideoResponse(
     @SerialName("description")
     val description: String?,
     @SerialName("hlsUrl")
-    val hlsUrl: String,
+    val hlsUrl: String?,
     @SerialName("thumbnailUrl")
     val thumbnailUrl: String?,
     @SerialName("status")
@@ -53,17 +53,15 @@ data class VideoFeedResponse(
 )
 
 @Serializable
-data class PresignedPostResponse(
-    @SerialName("url")
-    val url: String,
-    @SerialName("fields")
-    val fields: Map<String, String>,
+data class PresignedPutResponse(
+    @SerialName("uploadUrl")
+    val uploadUrl: String,
     @SerialName("objectKey")
     val objectKey: String
 )
 
 @Serializable
-data class PresignedPostRequest(
+data class PresignedPutRequest(
     @SerialName("fileName")
     val fileName: String,
     @SerialName("contentType")

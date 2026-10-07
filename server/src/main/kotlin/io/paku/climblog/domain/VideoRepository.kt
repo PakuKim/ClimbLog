@@ -5,8 +5,12 @@ import io.paku.climblog.domain.model.video.VideoStatus
 
 interface VideoRepository {
     suspend fun save(video: Video): Video
+    suspend fun registerVideoWithTranscodingJob(video: Video, inputKey: String): Video
     suspend fun updateStatus(id: Long, status: VideoStatus): Boolean
+    suspend fun updateJobId(id: Long, jobId: String): Boolean
+    suspend fun updateUrls(id: Long, hlsUrl: String, thumbnailUrl: String): Boolean
     suspend fun findById(id: Long): Video?
+    suspend fun findByJobId(jobId: String): Video?
     suspend fun findAllByUserId(userId: Long): List<Video>
     suspend fun findAllPaged(
         userId: Long? = null,

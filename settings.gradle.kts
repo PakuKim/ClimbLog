@@ -38,6 +38,7 @@ include(":app:shared")
 include(":app:webApp")
 include(":core")
 include(":server")
+include(":worker")
 
 include(":shared:domain")
 include(":shared:data")

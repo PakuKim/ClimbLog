@@ -5,6 +5,7 @@ import io.paku.climblog.data.database.table.user.UserDeviceTokenTable
 import io.paku.climblog.data.database.table.user.UserFollowTable
 import io.paku.climblog.data.database.table.user.UserSocialAccountsTable
 import io.paku.climblog.data.database.table.user.UserTable
+import io.paku.climblog.data.database.table.video.TranscodingJobTable
 import io.paku.climblog.data.database.table.video.VideoCommentTable
 import io.paku.climblog.data.database.table.video.VideoCruxTable
 import io.paku.climblog.data.database.table.video.VideoLikeTable
@@ -12,9 +13,9 @@ import io.paku.climblog.data.database.table.video.VideoTable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.v1.jdbc.Database
-import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.migration.jdbc.MigrationUtils
 
 internal object DatabaseFactory {
     fun init(
@@ -31,16 +32,18 @@ internal object DatabaseFactory {
         )
 
         transaction(database) {
-            SchemaUtils.create(
+            MigrationUtils.statementsRequiredForDatabaseMigration(
                 UserTable,
                 UserSocialAccountsTable,
                 UserDeviceTokenTable,
                 UserFollowTable,
                 VideoTable,
+                TranscodingJobTable,
                 VideoCommentTable,
                 VideoLikeTable,
                 VideoCruxTable,
-                NotificationTable
+                NotificationTable,
+                withLogs = true
             )
         }
     }

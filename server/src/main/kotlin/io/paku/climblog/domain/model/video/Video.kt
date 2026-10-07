@@ -8,9 +8,10 @@ data class Video(
     val userId: Long,
     val title: String,
     val description: String?,
-    val hlsUrl: String,
+    val hlsUrl: String? = null,
     val thumbnailUrl: String?,
     val status: VideoStatus = VideoStatus.UPLOADING,
+    val jobId: String? = null,
     val videoCruxes: List<VideoCrux> = emptyList(),
     val createdAt: LocalDateTime = LocalDateTime.now(),
 )

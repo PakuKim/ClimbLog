@@ -7,7 +7,7 @@ data class Video(
     val userId: Long,
     val title: String,
     val description: String?,
-    val hlsUrl: String,
+    val hlsUrl: String?,
     val thumbnailUrl: String?,
     val status: VideoStatus = VideoStatus.UPLOADING,
     val createdAt: LocalDateTime,

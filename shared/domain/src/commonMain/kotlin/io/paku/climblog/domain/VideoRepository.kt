@@ -3,21 +3,21 @@ package io.paku.climblog.domain
 import androidx.paging.PagingData
 import io.paku.climblog.domain.model.comment.Comment
 import io.paku.climblog.domain.model.comment.CommentFeed
-import io.paku.climblog.domain.model.video.PresignedPost
+import io.paku.climblog.domain.model.video.PresignedPut
 import io.paku.climblog.domain.model.video.Video
 import io.paku.climblog.domain.model.video.VideoFeed
 import kotlinx.coroutines.flow.Flow
 
 interface VideoRepository {
-    // S3 POST Upload (Direction A)
-    suspend fun getPresignedPost(
+    // R2 PUT Upload
+    suspend fun getPresignedPut(
         fileName: String,
         contentType: String
-    ): Result<PresignedPost>
+    ): Result<PresignedPut>
 
-    suspend fun uploadVideoToS3Post(
-        url: String,
-        fields: Map<String, String>,
+    suspend fun uploadVideoToR2Put(
+        uploadUrl: String,
+        contentType: String,
         videoBytes: ByteArray,
         onProgress: (Float) -> Unit
     ): Result<Unit>

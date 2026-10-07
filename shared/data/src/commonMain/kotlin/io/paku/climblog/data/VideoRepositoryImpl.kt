@@ -12,7 +12,7 @@ import io.paku.climblog.data.source.remote.VideoRemoteDataSource
 import io.paku.climblog.domain.VideoRepository
 import io.paku.climblog.domain.model.comment.Comment
 import io.paku.climblog.domain.model.comment.CommentFeed
-import io.paku.climblog.domain.model.video.PresignedPost
+import io.paku.climblog.domain.model.video.PresignedPut
 import io.paku.climblog.domain.model.video.Video
 import io.paku.climblog.domain.model.video.VideoFeed
 import kotlinx.coroutines.flow.Flow
@@ -22,22 +22,21 @@ internal class VideoRepositoryImpl(
     private val videoRemoteDataSource: VideoRemoteDataSource
 ) : VideoRepository {
 
-    override suspend fun getPresignedPost(fileName: String, contentType: String): Result<PresignedPost> = runCatching {
-        val data = videoRemoteDataSource.getPresignedPost(fileName, contentType)
-        PresignedPost(
-            url = data.url,
-            fields = data.fields,
+    override suspend fun getPresignedPut(fileName: String, contentType: String): Result<PresignedPut> = runCatching {
+        val data = videoRemoteDataSource.getPresignedPut(fileName, contentType)
+        PresignedPut(
+            uploadUrl = data.uploadUrl,
             objectKey = data.objectKey
         )
     }
 
-    override suspend fun uploadVideoToS3Post(
-        url: String,
-        fields: Map<String, String>,
+    override suspend fun uploadVideoToR2Put(
+        uploadUrl: String,
+        contentType: String,
         videoBytes: ByteArray,
         onProgress: (Float) -> Unit
     ): Result<Unit> = runCatching {
-        videoRemoteDataSource.uploadVideoToS3Post(url, fields, videoBytes, onProgress)
+        videoRemoteDataSource.uploadVideoToR2Put(uploadUrl, contentType, videoBytes, onProgress)
     }
 
     override suspend fun registerVideo(

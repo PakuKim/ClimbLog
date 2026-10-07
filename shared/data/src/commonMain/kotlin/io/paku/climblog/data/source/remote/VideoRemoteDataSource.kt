@@ -2,19 +2,19 @@ package io.paku.climblog.data.source.remote
 
 import io.paku.climblog.data.model.comment.CommentData
 import io.paku.climblog.data.model.comment.CommentFeedData
-import io.paku.climblog.data.model.video.PresignedPostData
+import io.paku.climblog.data.model.video.PresignedPutData
 import io.paku.climblog.data.model.video.VideoData
 import io.paku.climblog.data.model.video.VideoFeedData
 
 interface VideoRemoteDataSource {
-    suspend fun getPresignedPost(
+    suspend fun getPresignedPut(
         fileName: String,
         contentType: String
-    ): PresignedPostData
+    ): PresignedPutData
 
-    suspend fun uploadVideoToS3Post(
-        url: String,
-        fields: Map<String, String>,
+    suspend fun uploadVideoToR2Put(
+        uploadUrl: String,
+        contentType: String,
         videoBytes: ByteArray,
         onProgress: (Float) -> Unit
     )

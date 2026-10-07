@@ -4,23 +4,22 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.onUpload
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.paku.climblog.contract.comment.CommentFeedResponse
 import io.paku.climblog.contract.comment.CommentResponse
-import io.paku.climblog.contract.video.PresignedPostRequest
-import io.paku.climblog.contract.video.PresignedPostResponse
+import io.paku.climblog.contract.video.PresignedPutRequest
+import io.paku.climblog.contract.video.PresignedPutResponse
 import io.paku.climblog.contract.video.VideoFeedResponse
 import io.paku.climblog.contract.video.VideoResponse
 import io.paku.climblog.data.model.comment.CommentData
 import io.paku.climblog.data.model.comment.CommentFeedData
-import io.paku.climblog.data.model.video.PresignedPostData
+import io.paku.climblog.data.model.video.PresignedPutData
 import io.paku.climblog.data.model.video.VideoData
 import io.paku.climblog.data.model.video.VideoFeedData
 import io.paku.climblog.data.source.remote.VideoRemoteDataSource
@@ -35,25 +34,24 @@ internal class VideoRemoteDataSourceImpl(
     private val client: HttpClient
 ) : VideoRemoteDataSource {
     private companion object {
-        const val PRESIGNED_POST = "videos/uploads/presigned-post"
+        const val PRESIGNED_PUT = "videos/uploads/presigned-put"
         const val REGISTER = "videos"
     }
 
-    override suspend fun getPresignedPost(fileName: String, contentType: String): PresignedPostData {
-        val response = client.post(PRESIGNED_POST) {
-            setBody(PresignedPostRequest(fileName, contentType))
-        }.body<PresignedPostResponse>()
-        
-        return PresignedPostData(
-            url = response.url,
-            fields = response.fields,
+    override suspend fun getPresignedPut(fileName: String, contentType: String): PresignedPutData {
+        val response = client.post(PRESIGNED_PUT) {
+            setBody(PresignedPutRequest(fileName, contentType))
+        }.body<PresignedPutResponse>()
+
+        return PresignedPutData(
+            uploadUrl = response.uploadUrl,
             objectKey = response.objectKey
         )
     }
 
-    override suspend fun uploadVideoToS3Post(
-        url: String,
-        fields: Map<String, String>,
+    override suspend fun uploadVideoToR2Put(
+        uploadUrl: String,
+        contentType: String,
         videoBytes: ByteArray,
         onProgress: (Float) -> Unit
     ) {
@@ -62,19 +60,10 @@ internal class VideoRemoteDataSourceImpl(
                 requestTimeoutMillis = 600_000 // 10 mins
             }
         }
-        
-        uploadClient.post(url) {
-            setBody(MultiPartFormDataContent(
-                formData {
-                    fields.forEach { (key, value) ->
-                        append(key, value)
-                    }
-                    append("file", videoBytes, Headers.build {
-                        append(HttpHeaders.ContentType, "video/mp4")
-                        append(HttpHeaders.ContentDisposition, "filename=\"video.mp4\"")
-                    })
-                }
-            ))
+
+        uploadClient.put(uploadUrl) {
+            contentType(ContentType.parse(contentType))
+            setBody(videoBytes)
             onUpload { bytesSentTotal, contentLength ->
                 if (contentLength != null && contentLength > 0) {
                     onProgress(bytesSentTotal.toFloat() / contentLength.toFloat())

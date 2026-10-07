@@ -2,9 +2,11 @@ package io.paku.climblog.data
 
 import io.paku.climblog.data.database.DatabaseFactory.dbQuery
 import io.paku.climblog.data.database.table.user.UserFollowTable
+import io.paku.climblog.data.database.table.video.TranscodingJobTable
 import io.paku.climblog.data.database.table.video.VideoCruxTable
 import io.paku.climblog.data.database.table.video.VideoTable
 import io.paku.climblog.domain.VideoRepository
+import io.paku.climblog.domain.model.video.JobStatus
 import io.paku.climblog.domain.model.video.Video
 import io.paku.climblog.domain.model.video.VideoCrux
 import io.paku.climblog.domain.model.video.VideoStatus
@@ -31,6 +33,7 @@ internal class VideoRepositoryImpl : VideoRepository {
         hlsUrl = this[VideoTable.hlsUrl],
         thumbnailUrl = this[VideoTable.thumbnailUrl],
         status = this[VideoTable.status],
+        jobId = this[VideoTable.jobId],
         createdAt = this[VideoTable.createdAt],
         videoCruxes = videoCruxes
     )
@@ -62,6 +65,7 @@ internal class VideoRepositoryImpl : VideoRepository {
             it[hlsUrl] = video.hlsUrl
             it[thumbnailUrl] = video.thumbnailUrl
             it[status] = video.status
+            it[jobId] = video.jobId
         }[VideoTable.id].value
 
         video.videoCruxes.forEach { crux ->
@@ -75,9 +79,52 @@ internal class VideoRepositoryImpl : VideoRepository {
         findById(videoId)!!
     }
 
+    override suspend fun registerVideoWithTranscodingJob(video: Video, inputKey: String): Video = dbQuery {
+        val videoId = VideoTable.insert {
+            it[userId] = video.userId
+            it[title] = video.title
+            it[description] = video.description
+            it[hlsUrl] = video.hlsUrl
+            it[thumbnailUrl] = video.thumbnailUrl
+            it[status] = video.status
+            it[jobId] = video.jobId
+        }[VideoTable.id].value
+
+        video.videoCruxes.forEach { crux ->
+            VideoCruxTable.insert {
+                it[VideoCruxTable.videoId] = videoId
+                it[cruxStartTime] = crux.startTime
+                it[cruxEndTime] = crux.endTime
+            }
+        }
+
+        TranscodingJobTable.insert {
+            it[TranscodingJobTable.videoId] = videoId
+            it[TranscodingJobTable.inputKey] = inputKey
+            it[outputPrefix] = "processed/$videoId/"
+            it[status] = JobStatus.QUEUED
+            it[attempt] = 0
+        }
+
+        findById(videoId)!!
+    }
+
     override suspend fun updateStatus(id: Long, status: VideoStatus): Boolean = dbQuery {
         VideoTable.update({ VideoTable.id eq id }) {
             it[VideoTable.status] = status
+        } > 0
+    }
+
+    override suspend fun updateJobId(id: Long, jobId: String): Boolean = dbQuery {
+        VideoTable.update({ VideoTable.id eq id }) {
+            it[VideoTable.jobId] = jobId
+        } > 0
+    }
+
+    override suspend fun updateUrls(id: Long, hlsUrl: String, thumbnailUrl: String): Boolean = dbQuery {
+        VideoTable.update({ VideoTable.id eq id }) {
+            it[VideoTable.hlsUrl] = hlsUrl
+            it[VideoTable.thumbnailUrl] = thumbnailUrl
         } > 0
     }
 
@@ -86,6 +133,19 @@ internal class VideoRepositoryImpl : VideoRepository {
             .where { VideoTable.id eq id }
             .singleOrNull() ?: return@dbQuery null
 
+        val cruxes = VideoCruxTable.selectAll()
+            .where { VideoCruxTable.videoId eq id }
+            .map { it.toDomainCrux() }
+
+        videoRow.toDomainVideo(cruxes)
+    }
+
+    override suspend fun findByJobId(jobId: String): Video? = dbQuery {
+        val videoRow = VideoTable.selectAll()
+            .where { VideoTable.jobId eq jobId }
+            .singleOrNull() ?: return@dbQuery null
+
+        val id = videoRow[VideoTable.id].value
         val cruxes = VideoCruxTable.selectAll()
             .where { VideoCruxTable.videoId eq id }
             .map { it.toDomainCrux() }

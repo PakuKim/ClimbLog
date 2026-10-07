@@ -7,7 +7,7 @@ data class VideoData(
     val userId: Long,
     val title: String,
     val description: String?,
-    val hlsUrl: String,
+    val hlsUrl: String?,
     val thumbnailUrl: String?,
     val status: VideoStatusData,
     val createdAt: LocalDateTime,

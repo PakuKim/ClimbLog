@@ -1,5 +1,7 @@
 package io.paku.climblog.presentation.ui.main.upload
 
+import io.paku.climblog.domain.interactors.video.UploadVideoUseCase
+import io.paku.climblog.domain.model.video.VideoQuality
 import io.paku.climblog.platform.Media
 import io.paku.climblog.presentation.base.BaseViewModel
 import io.paku.climblog.presentation.base.ViewModelEvent
@@ -7,7 +9,7 @@ import io.paku.climblog.presentation.base.ViewModelState
 
 data class VideoUploadViewModelState(
     val selectedMedia: Media.Video? = null,
-    val selectedQuality: io.paku.climblog.domain.model.video.VideoQuality = io.paku.climblog.domain.model.video.VideoQuality.STANDARD,
+    val selectedQuality: VideoQuality = VideoQuality.STANDARD,
     val isQualitySheetVisible: Boolean = false,
     val title: String = "",
     val description: String = "",
@@ -20,7 +22,7 @@ data class VideoUploadViewModelState(
 
 sealed class VideoUploadViewModelEvent : ViewModelEvent {
     data class OnMediaSelected(val video: Media.Video?) : VideoUploadViewModelEvent()
-    data class OnQualitySelected(val quality: io.paku.climblog.domain.model.video.VideoQuality) : VideoUploadViewModelEvent()
+    data class OnQualitySelected(val quality: VideoQuality) : VideoUploadViewModelEvent()
     data class SetQualitySheetVisible(val visible: Boolean) : VideoUploadViewModelEvent()
     data class OnTitleChanged(val title: String) : VideoUploadViewModelEvent()
     data class OnDescriptionChanged(val description: String) : VideoUploadViewModelEvent()
@@ -30,7 +32,7 @@ sealed class VideoUploadViewModelEvent : ViewModelEvent {
 }
 
 internal class VideoUploadViewModel(
-    private val uploadVideoUseCase: io.paku.climblog.domain.interactors.video.UploadVideoUseCase
+    private val uploadVideoUseCase: UploadVideoUseCase
 ) : BaseViewModel<VideoUploadViewModelState, VideoUploadViewModelEvent, Nothing>() {
 
     override fun createInitialState(): VideoUploadViewModelState = VideoUploadViewModelState()

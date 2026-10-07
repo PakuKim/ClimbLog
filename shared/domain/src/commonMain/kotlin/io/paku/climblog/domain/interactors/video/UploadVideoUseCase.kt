@@ -23,16 +23,16 @@ class UploadVideoUseCase(
         val compressedMedia = videoCompressor.compress(media, quality)
         val videoBytes = compressedMedia.readBytes()
 
-        // 2. Get Presigned POST Data
-        val presignedPost = videoRepository.getPresignedPost(
+        // 2. Get Presigned PUT URL
+        val presignedPut = videoRepository.getPresignedPut(
             fileName = "video.mp4",
             contentType = "video/mp4"
         ).getOrThrow()
 
-        // 3. Upload directly to S3 via Ktor Multipart
-        videoRepository.uploadVideoToS3Post(
-            url = presignedPost.url,
-            fields = presignedPost.fields,
+        // 3. Upload directly to Cloudflare R2 via HTTP PUT with matching Content-Type
+        videoRepository.uploadVideoToR2Put(
+            uploadUrl = presignedPut.uploadUrl,
+            contentType = "video/mp4",
             videoBytes = videoBytes,
             onProgress = onProgress
         ).getOrThrow()
@@ -41,7 +41,7 @@ class UploadVideoUseCase(
         videoRepository.registerVideo(
             title = title,
             description = description,
-            s3Key = presignedPost.objectKey,
+            s3Key = presignedPut.objectKey,
             cruxStartTime = cruxStartTime,
             cruxEndTime = cruxEndTime
         ).getOrThrow()
